@@ -1,0 +1,34 @@
+{
+  "name": "import-cost-monorepo",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  },
+  "packageManager": "pnpm@7.18.0",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "test": "turbo run test"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "peerDependencies": {
+    "typescript": "^4.9.4"
+  },
+  "devDependencies": {
+    "@luxass/eslint-config": "^2.2.5",
+    "@luxass/prettier-config": "^1.1.3",
+    "@types/node": "^18.11.17",
+    "esbuild": "^0.16.16",
+    "eslint": "^8.30.0",
+    "prettier": "^2.8.2",
+    "tsup": "^6.5.0",
+    "turbo": "^1.6.3",
+    "typescript": "^4.9.4",
+    "vitest": "^0.25.8"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "vscode-import-cost",
+  "publisher": "luxass",
+  "displayName": "Import Cost",
+  "version": "0.0.1",
+  "description": "Calculate cost of imports, powered by esbuild",
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "engines": {
+    "vscode": "^1.73.0"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "browser": "./dist/browser/extension.js",
+  "contributes": {},
+  "scripts": {
+    "vscode:prepublish": "concurrently \"pnpm run build:web --minify\" \"pnpm run build:ext --minify\"",
+    "build": "concurrently \"pnpm run build:web\" \"pnpm run build:ext\"",
+    "build:web": "node --experimental-modules ./scripts/build.mjs --target web --mode production",
+    "build:ext": "node --experimental-modules ./scripts/build.mjs --target ext --mode production",
+    "dev": "concurrently \"pnpm run dev:web\" \"pnpm run dev:ext\"",
+    "dev:web": "node --experimental-modules ./scripts/build.mjs --target web --watch",
+    "dev:ext": "node --experimental-modules ./scripts/build.mjs --target ext --watch",
+    "browser": "vscode-test-web --extensionDevelopmentPath=. --folder-uri=vscode-vfs://github/luxass/import-cost",
+    "web:serve": "npx serve --cors -l 5000",
+    "web:tunnel": "npx localtunnel -p 5000",
+    "package": "pnpm vsce package --no-dependencies",
+    "release": "pnpm vsce publish --no-dependencies",
+    "lint": "eslint --cache {src,tests}/**/*.ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.73.0",
+    "@vscode/test-web": "^0.0.33",
+    "@vscode/vsce": "^2.16.0",
+    "concurrently": "^7.6.0"
+  }
+}
