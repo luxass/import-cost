@@ -25,6 +25,7 @@
     "lint": "eslint --cache {src,tests}/**/*.ts"
   },
   "dependencies": {
+    "@vscode/webview-ui-toolkit": "^1.2.1",
     "preact": "^10.11.3"
   },
   "devDependencies": {

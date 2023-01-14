@@ -1,16 +1,10 @@
-import type { Webview } from "vscode";
-import {
-  commands,
-  Uri,
-  ViewColumn,
-  window,
-  workspace,
-  type ExtensionContext
-} from "vscode";
+import { locateESBuild } from "esbuild-shim";
+import { commands, window, workspace } from "vscode";
+import type { ExtensionContext } from "vscode";
 
-import { getPackages } from "@luxass/import-cost";
+import type { Language } from "@luxass/import-cost";
+import { calculateCost, parsePackages } from "@luxass/import-cost";
 
-import { locateESBuild } from "./esbuild";
 import { openSetupPanel } from "./webviews/setup.webview";
 
 export async function activate(ctx: ExtensionContext) {
@@ -19,26 +13,36 @@ export async function activate(ctx: ExtensionContext) {
 
   ctx.subscriptions.push(
     workspace.onDidChangeTextDocument(async (event) => {
-      console.log("workspace#onDidChangeTextDocument", event);
-      if (event.document.languageId === "javascript") {
-        console.log("workspace#onDidChangeTextDocument#javascript", event);
-        const content = new TextDecoder("utf8").decode(
-          await workspace.fs.readFile(event.document.uri)
-        );
-        console.log(
-          "workspace#onDidChangeTextDocument#javascript#content",
-          content
-        );
-        getPackages(content);
+      const { languageId, fileName } = event.document;
+      if (isAllowedLanguage(languageId, fileName)) {
+        const code = event.document.getText();
+        const result = await calculateCost({
+          path: fileName,
+          language: languageId as Language,
+          external: [],
+          code
+        });
+        console.log("workspace#onDidChangeTextDocument", result);
       }
+      // if (event.document.languageId === "javascript") {
+      //   console.log("workspace#onDidChangeTextDocument#javascript", event);
+      //   const content = new TextDecoder("utf8").decode(
+      //     await workspace.fs.readFile(event.document.uri)
+      //   );
+      //   console.log(
+      //     "workspace#onDidChangeTextDocument#javascript#content",
+      //     content
+      //   );
+      //   getPackages(content);
+      // }
     }),
     window.onDidChangeActiveTextEditor((event) => {
       console.log("window#onDidChangeActiveTextEditor", event);
     }),
-    commands.registerCommand("vscode-import-cost.toggle-declaration", () => {
-      console.log("commands#vscode-import-cost.toggle-declaration");
+    commands.registerCommand("import-cost.toggle-declaration", () => {
+      console.log("commands#import-cost.toggle-declaration");
     }),
-    commands.registerCommand("vscode-import-cost.setup", async () => {
+    commands.registerCommand("import-cost.setup", async () => {
       try {
         openSetupPanel(ctx);
       } catch (error) {
@@ -53,4 +57,22 @@ export async function activate(ctx: ExtensionContext) {
       "ESBuild is not installed. Please install it to use this extension."
     );
   }
+}
+function isAllowedLanguage(language: string, fileName: string): boolean {
+  return (
+    language === "javascriptreact" ||
+    fileName.endsWith(".jsx") ||
+    language === "typescriptreact" ||
+    fileName.endsWith(".tsx") ||
+    language === "javascript" ||
+    fileName.endsWith(".js") ||
+    language === "typescript" ||
+    fileName.endsWith(".ts") ||
+    language === "svelte" ||
+    fileName.endsWith(".svelte") ||
+    language === "astro" ||
+    fileName.endsWith(".astro") ||
+    language === "vue" ||
+    fileName.endsWith(".vue")
+  );
 }

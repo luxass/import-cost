@@ -1,3 +1,4 @@
+import { parsePackages } from "./packages";
 import type { CostResult, Options } from "./types";
 
 export async function calculateCost({
@@ -12,8 +13,12 @@ export async function calculateCost({
     console.log(code);
 
     if (language === "astro" || language === "vue" || language === "svelte") {
-      
+      const code = extractCode(code, language);
     }
+
+    const packages = parsePackages(code, language);
+
+    console.log("packages", packages);
 
     return {
       imports: []
@@ -23,6 +28,12 @@ export async function calculateCost({
     return null;
   }
 }
+function extractCode(code: string, language: string) {
+  if (language === "astro") {
+    
+  } else if (language === "vue" || language === "svelte") {
+  }
+}
 
-export type { CostResult, Options } from "./types";
-export { getPackages } from "./packages";
+export type { CostResult, Options, Language } from "./types";
+export { parsePackages } from "./packages";

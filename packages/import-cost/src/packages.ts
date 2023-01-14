@@ -1,6 +1,8 @@
-import { parse, type ParserPlugin } from "@babel/parser";
+import type { ParserPlugin } from "@babel/parser";
+import { parse } from "@babel/parser";
 
 import { traverse } from "./babel";
+import { Language } from "./types";
 
 // type Languages = "ts" | "tsx" | "js" | "jsx" | "vue" | "tsx"
 
@@ -13,7 +15,7 @@ import { traverse } from "./babel";
 
 // }
 
-export async function getPackages(content: string) {
+export async function parsePackages(content: string, language: Language) {
   const ast = parse(content, {
     sourceType: "module",
     plugins: [

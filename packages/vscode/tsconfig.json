@@ -5,9 +5,14 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "fetch-shim": ["src/env/fetch-node.ts"]
+      "esbuild-shim": ["src/env/esbuild-node.ts"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["src/env/fetch-web.ts"]
+  "exclude": ["src/env/esbuild-web.ts"],
+  "references": [
+    {
+      "path": "../import-cost"
+    }
+  ]
 }

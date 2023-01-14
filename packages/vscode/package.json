@@ -8,33 +8,109 @@
     "Other"
   ],
   "main": "./dist/extension.js",
+  "icon": "media/icon.png",
   "engines": {
     "vscode": "^1.73.0"
   },
   "activationEvents": [
+    "onStartupFinished",
     "onLanguage:javascript",
     "onLanguage:javascriptreact",
     "onLanguage:typescript",
     "onLanguage:typescriptreact",
     "onLanguage:vue",
     "onLanguage:svelte",
-    "onLanguage:astro",
-    "onStartupFinished"
+    "onLanguage:astro"
   ],
   "browser": "./dist/browser/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "vscode-import-cost.toggle-declaration",
+        "command": "import-cost.toggle-declaration",
         "title": "Toggle Import Cost",
         "category": "Import Cost"
       },
       {
-        "command": "vscode-import-cost.setup",
+        "command": "import-cost.setup",
         "title": "Setup Import Cost",
         "category": "Import Cost"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Import Cost",
+      "properties": {
+        "import-cost.colors": {
+          "type": "object",
+          "description": "Colors for the import cost",
+          "properties": {
+            "small": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Small size color for dark theme",
+                  "default": "#7cc36e"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Small size color for light theme",
+                  "default": "#7cc36e"
+                }
+              }
+            },
+            "medium": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Medium size color for dark theme",
+                  "default": "#7cc36e"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Medium size color for light theme",
+                  "default": "#7cc36e"
+                }
+              }
+            },
+            "large": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Large size color for dark theme",
+                  "default": "#d44e40"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Large size color for light theme",
+                  "default": "#d44e40"
+                }
+              }
+            }
+          }
+        },
+        "import-cost.sizes": {
+          "type": "object",
+          "description": "Sizes for the import cost",
+          "properties": {
+            "small": {
+              "type": "number",
+              "description": "Small size in kilo bytes",
+              "default": 50
+            },
+            "medium": {
+              "type": "number",
+              "description": "Medium size in kilo bytes",
+              "default": 100
+            }
+          }
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "concurrently \"pnpm run build:web --minify\" \"pnpm run build:ext --minify\"",
@@ -52,7 +128,8 @@
     "lint": "eslint --cache {src,tests}/**/*.ts"
   },
   "dependencies": {
-    "@luxass/import-cost": "workspace:*"
+    "@luxass/import-cost": "workspace:*",
+    "esbuild-wasm": "^0.17.0"
   },
   "devDependencies": {
     "@types/vscode": "^1.73.0",

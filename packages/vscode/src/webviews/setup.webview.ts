@@ -7,7 +7,7 @@ export function openSetupPanel(ctx: ExtensionContext) {
   const panel = window.createWebviewPanel(
     "vscode-import-cost",
     "Import Cost Setup",
-    ViewColumn.Two,
+    ViewColumn.Beside,
     {
       enableScripts: true,
       retainContextWhenHidden: true

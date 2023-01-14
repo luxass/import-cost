@@ -6,10 +6,10 @@ import presetUno from "@unocss/preset-uno";
 
 export default defineConfig({
   plugins: [
-    preact(),
     Unocss({
       presets: [presetUno()]
-    })
+    }),
+    preact()
   ],
   build: {
     outDir: "../../vscode/dist/webviews/analysis-webview",

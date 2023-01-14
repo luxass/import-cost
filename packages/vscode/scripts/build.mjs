@@ -1,6 +1,5 @@
 // @ts-check
 import { build } from "esbuild";
-import { copy } from "esbuild-plugin-copy";
 
 const args = process.argv.slice(2);
 
@@ -12,20 +11,22 @@ const target = (index >= 0 ? args[index + 1] : undefined) || "node";
 
 const watch = args.includes("--watch");
 const minify = args.includes("--minify");
+
+const webExternals = [
+  "vscode",
+  "child_process",
+  "crypto",
+  "fs",
+  "stream",
+  "os",
+  "node-fetch"
+];
+
+const nodeExternals = ["vscode"];
+
 build({
   entryPoints: ["src/extension.ts"],
-  external:
-    target === "web"
-      ? [
-          "vscode",
-          "child_process",
-          "crypto",
-          "fs",
-          "stream",
-          "os",
-          "node-fetch"
-        ]
-      : ["vscode"],
+  external: target === "web" ? webExternals : nodeExternals,
   format: "cjs",
   bundle: true,
   keepNames: true,
@@ -40,17 +41,6 @@ build({
   treeShaking: true,
   tsconfig: target === "web" ? "tsconfig.web.json" : "tsconfig.json",
   watch,
-  // plugins: [
-  //   copy({
-  //     resolveFrom: process.cwd(),
-  //     assets: [
-  //       {
-  //         from: ["./node_modules/import-cost-webview/dist"],
-  //         to: ["./webviews"]
-  //       }
-  //     ]
-  //   })
-  // ],
   define: {
     IS_WEB: `${target === "web"}`
   }

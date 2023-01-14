@@ -4,7 +4,9 @@ export type Language =
   | "typescript"
   | "ts"
   | "vue"
+  | "javascriptreact"
   | "jsx"
+  | "typescriptreact"
   | "tsx"
   | "svelte"
   | "astro";
@@ -16,10 +18,13 @@ export interface Options {
   external: string[];
 }
 
-export interface ImportSize {}
+export interface ImportSize {
+  size: Record<"gzip" | "bundle", number>;
+  line: string;
+  path: string;
+  name: string;
+}
 
 export interface CostResult {
   imports: ImportSize[];
 }
-
-export interface Package {}

@@ -6,9 +6,14 @@
     "lib": ["dom", "dom.iterable", "es2020"],
     "baseUrl": ".",
     "paths": {
-      "fetch-shim": ["src/env/fetch-web.ts"]
+      "esbuild-shim": ["src/env/esbuild-web.ts"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["src/env/fetch-node.ts"]
+  "exclude": ["src/env/esbuild-node.ts"],
+  "references": [
+    {
+      "path": "../import-cost"
+    }
+  ]
 }

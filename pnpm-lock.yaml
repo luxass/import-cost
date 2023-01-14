@@ -8,7 +8,6 @@ importers:
       '@luxass/prettier-config': ^1.1.4
       '@types/node': ^18.11.17
       esbuild: ^0.16.16
-      esbuild-plugin-copy: ^2.0.1
       eslint: ^8.30.0
       prettier: ^2.8.2
       tsup: ^6.5.0
@@ -20,7 +19,6 @@ importers:
       '@luxass/prettier-config': 1.1.4_prettier@2.8.2
       '@types/node': 18.11.18
       esbuild: 0.16.16
-      esbuild-plugin-copy: 2.0.1_esbuild@0.16.16
       eslint: 8.31.0
       prettier: 2.8.2
       tsup: 6.5.0_typescript@4.9.4
@@ -50,8 +48,10 @@ importers:
       '@vscode/test-web': ^0.0.33
       '@vscode/vsce': ^2.16.0
       concurrently: ^7.6.0
+      esbuild-wasm: ^0.17.0
     dependencies:
       '@luxass/import-cost': link:../import-cost
+      esbuild-wasm: 0.17.0
     devDependencies:
       '@types/vscode': 1.74.0
       '@vscode/test-web': 0.0.33
@@ -79,11 +79,13 @@ importers:
     specifiers:
       '@preact/preset-vite': ^2.4.0
       '@unocss/preset-uno': ^0.48.4
+      '@vscode/webview-ui-toolkit': ^1.2.1
       preact: ^10.11.3
       typescript: ^4.9.3
       unocss: ^0.48.4
       vite: ^4.0.0
     dependencies:
+      '@vscode/webview-ui-toolkit': 1.2.1
       preact: 10.11.3
     devDependencies:
       '@preact/preset-vite': 2.5.0_preact@10.11.3+vite@4.0.4
@@ -735,6 +737,34 @@ packages:
       - supports-color
     dev: true
 
+  /@microsoft/fast-element/1.11.0:
+    resolution: {integrity: sha512-VKJYMkS5zgzHHb66sY7AFpYv6IfFhXrjQcAyNgi2ivD65My1XOhtjfKez5ELcLFRJfgZNAxvI8kE69apXERTkw==}
+    dev: false
+
+  /@microsoft/fast-foundation/2.47.0:
+    resolution: {integrity: sha512-EyFuioaZQ9ngjUNRQi8R3dIPPsaNQdUOS+tP0G7b1MJRhXmQWIitBM6IeveQA6ZvXG6H21dqgrfEWlsYrUZ2sw==}
+    dependencies:
+      '@microsoft/fast-element': 1.11.0
+      '@microsoft/fast-web-utilities': 5.4.1
+      tabbable: 5.3.3
+      tslib: 1.14.1
+    dev: false
+
+  /@microsoft/fast-react-wrapper/0.1.48:
+    resolution: {integrity: sha512-9NvEjru9Kn5ZKjomAMX6v+eF0DR+eDkxKDwDfi+Wb73kTbrNzcnmlwd4diN15ygH97kldgj2+lpvI4CKLQQWLg==}
+    peerDependencies:
+      react: '>=16.9.0'
+    dependencies:
+      '@microsoft/fast-element': 1.11.0
+      '@microsoft/fast-foundation': 2.47.0
+    dev: false
+
+  /@microsoft/fast-web-utilities/5.4.1:
+    resolution: {integrity: sha512-ReWYncndjV3c8D8iq9tp7NcFNc1vbVHvcBFPME2nNFKNbS1XCesYZGlIlf3ot5EmuOXPlrzUHOWzQ2vFpIkqDg==}
+    dependencies:
+      exenv-es6: 1.1.1
+    dev: false
+
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1234,6 +1264,16 @@ packages:
     optionalDependencies:
       keytar: 7.9.0
     dev: true
+
+  /@vscode/webview-ui-toolkit/1.2.1:
+    resolution: {integrity: sha512-ZpVqLxoFWWk8mmAN7jr1v9yjD6NGBIoflAedNSusmaViqwHZ2znKBwAwcumLOlNlqmST6QMkiTVys7O8rzfd0w==}
+    peerDependencies:
+      react: '>=16.9.0'
+    dependencies:
+      '@microsoft/fast-element': 1.11.0
+      '@microsoft/fast-foundation': 2.47.0
+      '@microsoft/fast-react-wrapper': 0.1.48
+    dev: false
 
   /accepts/1.3.8:
     resolution: {integrity: sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==}
@@ -2224,17 +2264,6 @@ packages:
     dev: true
     optional: true
 
-  /esbuild-plugin-copy/2.0.1_esbuild@0.16.16:
-    resolution: {integrity: sha512-/mvriqGv2QAyrkui3REZaLEjwqESBKWZQQJtOZEausI8C4QMChREXGASNzmWpTlHo/v+ipLW73QCiNemBKggMw==}
-    peerDependencies:
-      esbuild: '>= 0.14.0'
-    dependencies:
-      chalk: 4.1.2
-      esbuild: 0.16.16
-      fs-extra: 10.1.0
-      globby: 11.1.0
-    dev: true
-
   /esbuild-sunos-64/0.15.18:
     resolution: {integrity: sha512-On22LLFlBeLNj/YF3FT+cXcyKPEI263nflYlAhz5crxtp3yRG1Ugfr7ITyxmCmjm4vbN/dGrb/B7w7U8yJR9yw==}
     engines: {node: '>=12'}
@@ -2243,6 +2272,12 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /esbuild-wasm/0.17.0:
+    resolution: {integrity: sha512-t07+UptZMOW7p2HiROtgsxLaebev8PiCvJvar5R8lPbI2k8ktabFRxlPyAlLRMj3xIWVXxEiUvZ2HJkxMDMHgw==}
+    engines: {node: '>=12'}
+    hasBin: true
+    dev: false
 
   /esbuild-windows-32/0.15.18:
     resolution: {integrity: sha512-o+eyLu2MjVny/nt+E0uPnBxYuJHBvho8vWsC2lV61A7wwTWC3jkN2w36jtA+yv1UgYkHRihPuQsL23hsCYGcOQ==}
@@ -2736,6 +2771,10 @@ packages:
       strip-final-newline: 2.0.0
     dev: true
 
+  /exenv-es6/1.1.1:
+    resolution: {integrity: sha512-vlVu3N8d6yEMpMsEm+7sUBAI81aqYYuEvfK0jNqmdb/OPXzzH7QWDDnVjMvDSY47JdHEqx/dfC/q8WkfoTmpGQ==}
+    dev: false
+
   /expand-template/2.0.3:
     resolution: {integrity: sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==}
     engines: {node: '>=6'}
@@ -2847,15 +2886,6 @@ packages:
 
   /fs-constants/1.0.0:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
-    dev: true
-
-  /fs-extra/10.1.0:
-    resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
-    engines: {node: '>=12'}
-    dependencies:
-      graceful-fs: 4.2.10
-      jsonfile: 6.1.0
-      universalify: 2.0.0
     dev: true
 
   /fs.realpath/1.0.0:
@@ -3475,14 +3505,6 @@ packages:
       eslint-visitor-keys: 3.3.0
       espree: 9.4.1
       semver: 7.3.8
-    dev: true
-
-  /jsonfile/6.1.0:
-    resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
-    dependencies:
-      universalify: 2.0.0
-    optionalDependencies:
-      graceful-fs: 4.2.10
     dev: true
 
   /jsx-ast-utils/3.3.3:
@@ -4813,6 +4835,10 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
+  /tabbable/5.3.3:
+    resolution: {integrity: sha512-QD9qKY3StfbZqWOPLp0++pOrAVb/HbUi5xCc8cUo4XjP19808oaMiDzn0leBY5mCespIBM0CIZePzZjgzR83kA==}
+    dev: false
+
   /tar-fs/2.1.1:
     resolution: {integrity: sha512-V0r2Y9scmbDRLCNex/+hYzvp/zyYjvFbHPNgVTKfQvVrb6guiE/fxP+XblDNR011utopbkex2nM4dHNV6GDsng==}
     dependencies:
@@ -4941,7 +4967,6 @@ packages:
 
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
-    dev: true
 
   /tslib/2.4.1:
     resolution: {integrity: sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==}
@@ -5175,11 +5200,6 @@ packages:
     resolution: {integrity: sha512-3faScn5I+hy9VleOq/qNbAd6pAx7iH5jYBMS9I1HgQVijz/4mv5Bvw5iw1sC/90CODiKo81G/ps8AJrISn687g==}
     dependencies:
       '@types/unist': 2.0.6
-    dev: true
-
-  /universalify/2.0.0:
-    resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
-    engines: {node: '>= 10.0.0'}
     dev: true
 
   /unocss/0.48.4_vite@4.0.4:
