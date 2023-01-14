@@ -12,10 +12,30 @@
     "vscode": "^1.73.0"
   },
   "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:vue",
+    "onLanguage:svelte",
+    "onLanguage:astro",
     "onStartupFinished"
   ],
   "browser": "./dist/browser/extension.js",
-  "contributes": {},
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-import-cost.toggle-declaration",
+        "title": "Toggle Import Cost",
+        "category": "Import Cost"
+      },
+      {
+        "command": "vscode-import-cost.setup",
+        "title": "Setup Import Cost",
+        "category": "Import Cost"
+      }
+    ]
+  },
   "scripts": {
     "vscode:prepublish": "concurrently \"pnpm run build:web --minify\" \"pnpm run build:ext --minify\"",
     "build": "concurrently \"pnpm run build:web\" \"pnpm run build:ext\"",
@@ -30,6 +50,9 @@
     "package": "pnpm vsce package --no-dependencies",
     "release": "pnpm vsce publish --no-dependencies",
     "lint": "eslint --cache {src,tests}/**/*.ts"
+  },
+  "dependencies": {
+    "@luxass/import-cost": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "^1.73.0",

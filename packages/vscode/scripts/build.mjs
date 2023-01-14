@@ -1,5 +1,6 @@
 // @ts-check
 import { build } from "esbuild";
+import { copy } from "esbuild-plugin-copy";
 
 const args = process.argv.slice(2);
 
@@ -39,6 +40,17 @@ build({
   treeShaking: true,
   tsconfig: target === "web" ? "tsconfig.web.json" : "tsconfig.json",
   watch,
+  // plugins: [
+  //   copy({
+  //     resolveFrom: process.cwd(),
+  //     assets: [
+  //       {
+  //         from: ["./node_modules/import-cost-webview/dist"],
+  //         to: ["./webviews"]
+  //       }
+  //     ]
+  //   })
+  // ],
   define: {
     IS_WEB: `${target === "web"}`
   }

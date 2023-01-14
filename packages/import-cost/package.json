@@ -21,6 +21,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     }
   },
@@ -44,7 +45,13 @@
       "optional": true
     }
   },
+  "dependencies": {
+    "@babel/parser": "^7.20.7",
+    "@babel/traverse": "^7.20.12",
+    "@babel/types": "^7.20.7"
+  },
   "devDependencies": {
+    "@types/babel__traverse": "^7.18.3",
     "esbuild": "^0.16.16"
   }
 }

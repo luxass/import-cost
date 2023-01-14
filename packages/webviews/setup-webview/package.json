@@ -1,0 +1,37 @@
+{
+  "name": "setup-webview",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Setup Webview used for the import-cost extension",
+  "author": {
+    "name": "Lucas Norgaard",
+    "email": "lucasnrgaard@gmail.com",
+    "url": "https://luxass.dev"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/luxass/import-cost/blob/main/packages/webviews/setup-webview#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luxass/import-cost",
+    "directory": "packages/webviews/setup-webview"
+  },
+  "bugs": {
+    "url": "https://github.com/luxass/import-cost/issues"
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsc && vite build",
+    "lint": "eslint --cache {src,tests}/**/*.ts"
+  },
+  "dependencies": {
+    "preact": "^10.11.3"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.4.0",
+    "@unocss/preset-uno": "^0.48.4",
+    "typescript": "^4.9.3",
+    "unocss": "^0.48.4",
+    "vite": "^4.0.0"
+  }
+}

@@ -7,14 +7,20 @@
       "group": "build",
       "problemMatcher": "$esbuild-watch",
       "isBackground": true,
-      "label": "npm: watch"
+      "label": "npm: watch",
+      "presentation": {
+        "reveal": "silent"
+      }
     },
     {
       "type": "npm",
       "script": "build",
       "group": "build",
       "problemMatcher": "$esbuild",
-      "label": "npm: build"
+      "label": "npm: build",
+      "presentation": {
+        "reveal": "silent"
+      }
     }
   ]
 }

@@ -2,5 +2,8 @@
   "root": true,
   "extends": [
     "@luxass/eslint-config"
-  ]
+  ],
+  "rules": {
+    "arrow-parens": ["error", "always"]
+  }
 }
