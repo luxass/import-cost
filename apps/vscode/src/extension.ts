@@ -1,46 +1,32 @@
 import { locateESBuild } from "esbuild-shim";
+import type { ExtensionContext, TextDocument } from "vscode";
 import { commands, window, workspace } from "vscode";
-import type { ExtensionContext } from "vscode";
 
 import type { Language } from "@luxass/import-cost";
-import { calculateCost, parsePackages } from "@luxass/import-cost";
+import { calculateCost } from "@luxass/import-cost";
 
+import { config } from "./configuration";
+import { flush } from "./declaration";
 import { openSetupPanel } from "./webviews/setup.webview";
 
 export async function activate(ctx: ExtensionContext) {
   const esbuildPath = locateESBuild();
   console.log("located esbuild", esbuildPath);
 
+  const enable = config.get("enable");
+  const sizes = config.get("sizes");
+
+  console.log("enable", enable);
+  console.log("sizes", sizes);
+
   ctx.subscriptions.push(
-    workspace.onDidChangeTextDocument(async (event) => {
-      const { languageId, fileName } = event.document;
-      if (isAllowedLanguage(languageId, fileName)) {
-        const code = event.document.getText();
-        const result = await calculateCost({
-          path: fileName,
-          language: languageId as Language,
-          external: [],
-          code
-        });
-        console.log("workspace#onDidChangeTextDocument", result);
-      }
-      // if (event.document.languageId === "javascript") {
-      //   console.log("workspace#onDidChangeTextDocument#javascript", event);
-      //   const content = new TextDecoder("utf8").decode(
-      //     await workspace.fs.readFile(event.document.uri)
-      //   );
-      //   console.log(
-      //     "workspace#onDidChangeTextDocument#javascript#content",
-      //     content
-      //   );
-      //   getPackages(content);
-      // }
-    }),
-    window.onDidChangeActiveTextEditor((event) => {
-      console.log("window#onDidChangeActiveTextEditor", event);
-    }),
+    workspace.onDidChangeTextDocument(async (event) => scan(event.document)),
+    window.onDidChangeActiveTextEditor(async (event) => scan(event?.document)),
     commands.registerCommand("import-cost.toggle-declaration", () => {
-      console.log("commands#import-cost.toggle-declaration");
+      const enable = config.get("enable");
+      config.set("enable", !enable);
+      flush();
+      window.showInformationMessage(`Import Cost is now turned ${enable}`);
     }),
     commands.registerCommand("import-cost.setup", async () => {
       try {
@@ -58,6 +44,28 @@ export async function activate(ctx: ExtensionContext) {
     );
   }
 }
+
+let scani = 0;
+
+async function scan(document: TextDocument | undefined) {
+  if (document && config.get("enable")) {
+    scani++;
+    console.log("ASJDKJLASJKLDASJLKD", scani);
+
+    const { languageId, fileName, getText } = document;
+    if (isAllowedLanguage(languageId, fileName)) {
+      const code = getText();
+      const result = await calculateCost({
+        path: fileName,
+        language: languageId as Language,
+        external: [],
+        code
+      });
+      console.log("workspace#onDidChangeTextDocument", result);
+    }
+  }
+}
+
 function isAllowedLanguage(language: string, fileName: string): boolean {
   return (
     language === "javascriptreact" ||

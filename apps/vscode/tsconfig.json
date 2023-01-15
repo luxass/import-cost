@@ -12,7 +12,7 @@
   "exclude": ["src/env/esbuild-web.ts"],
   "references": [
     {
-      "path": "../import-cost"
+      "path": "../../packages/import-cost"
     }
   ]
 }

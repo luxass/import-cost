@@ -8,17 +8,14 @@ export async function calculateCost({
   code
 }: Options): Promise<CostResult | null> {
   try {
-    console.log(path, language, external);
-
-    console.log(code);
 
     if (language === "astro" || language === "vue" || language === "svelte") {
-      const code = extractCode(code, language);
+      let c = extractCode(code, language);
     }
 
-    const packages = parsePackages(code, language);
+    // const packages = parsePackages(code, language);
 
-    console.log("packages", packages);
+    // console.log("packages", packages);
 
     return {
       imports: []
@@ -28,6 +25,7 @@ export async function calculateCost({
     return null;
   }
 }
+
 function extractCode(code: string, language: string) {
   if (language === "astro") {
     const match = code.match(/<script>([\s\S]*)<\/script>/);
