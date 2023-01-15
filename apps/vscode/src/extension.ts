@@ -38,7 +38,7 @@ export async function activate(ctx: ExtensionContext) {
   );
 
   if (!esbuildPath) {
-    openSetupPanel(ctx);
+    // openSetupPanel(ctx);
     window.showErrorMessage(
       "ESBuild is not installed. Please install it to use this extension."
     );

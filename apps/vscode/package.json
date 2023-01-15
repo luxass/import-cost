@@ -280,7 +280,8 @@
   },
   "dependencies": {
     "@luxass/import-cost": "workspace:*",
-    "esbuild-wasm": "^0.17.0"
+    "esbuild-wasm": "^0.17.0",
+    "setup-webview": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "^1.73.0",

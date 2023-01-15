@@ -1,7 +1,7 @@
 import type { ExtensionContext } from "vscode";
-import { Uri, ViewColumn, window } from "vscode";
+import { ExtensionMode, Uri, ViewColumn, window } from "vscode";
 
-import { getNonce } from "./utils";
+import { getHTML } from "./html";
 
 export function openSetupPanel(ctx: ExtensionContext) {
   const panel = window.createWebviewPanel(
@@ -26,26 +26,9 @@ export function openSetupPanel(ctx: ExtensionContext) {
     Uri.joinPath(setupPath, "assets", "index.css")
   );
 
-  const nonce = getNonce();
-
-  const html = /* html */ `
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" type="text/css" href="${stylesUri}">
-        <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${panel.webview.cspSource}; script-src 'nonce-${nonce}';">
-        <script nonce="${nonce}">
-          const vscode = acquireVsCodeApi();
-        </script>
-      </head>
-      <body>
-        <div id="app"></div>
-        <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
-      </body>
-    </html>
-  `;
-
-  panel.webview.html = html;
+  panel.webview.html = getHTML(ctx, {
+    stylesUri: stylesUri.toString(),
+    scriptUri: scriptUri.toString(),
+    cspSource: panel.webview.cspSource
+  });
 }

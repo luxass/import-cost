@@ -18,8 +18,7 @@ const webExternals = [
   "crypto",
   "fs",
   "stream",
-  "os",
-  "node-fetch"
+  "os"
 ];
 
 const nodeExternals = ["vscode"];

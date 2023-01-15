@@ -10,29 +10,24 @@
     "url": "https://luxass.dev"
   },
   "license": "MIT",
-  "homepage": "https://github.com/luxass/import-cost/blob/main/packages/webviews/setup-webview#readme",
+  "homepage": "https://github.com/luxass/import-cost/blob/main/packages/setup-webview#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/luxass/import-cost",
-    "directory": "packages/webviews/setup-webview"
+    "directory": "packages/setup-webview"
   },
   "bugs": {
     "url": "https://github.com/luxass/import-cost/issues"
   },
   "scripts": {
-    "dev": "vite build --watch",
-    "build": "tsc && vite build",
-    "lint": "eslint --cache {src,tests}/**/*.ts"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
     "@vscode/webview-ui-toolkit": "^1.2.1",
-    "preact": "^10.11.3"
-  },
-  "devDependencies": {
-    "@preact/preset-vite": "^2.4.0",
-    "@unocss/preset-uno": "^0.48.4",
-    "typescript": "^4.9.3",
-    "unocss": "^0.48.4",
-    "vite": "^4.0.0"
+    "astro": "^1.9.0"
   }
 }
