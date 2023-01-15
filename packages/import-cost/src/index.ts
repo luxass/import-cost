@@ -30,8 +30,14 @@ export async function calculateCost({
 }
 function extractCode(code: string, language: string) {
   if (language === "astro") {
-    
+    const match = code.match(/<script>([\s\S]*)<\/script>/);
+
+    console.log("MATCH", match);
+
   } else if (language === "vue" || language === "svelte") {
+    const match = code.match(/<script>([\s\S]*)<\/script>/);
+
+    console.log("MATCH", match);
   }
 }
 

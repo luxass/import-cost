@@ -14,7 +14,8 @@
     "test": "turbo run test"
   },
   "workspaces": [
-    "packages/**/*"
+    "packages/**/*",
+    "apps/**/*"
   ],
   "peerDependencies": {
     "typescript": "^4.9.4"

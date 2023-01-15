@@ -12,7 +12,7 @@ export default defineConfig({
     preact()
   ],
   build: {
-    outDir: "../../vscode/dist/webviews/analysis-webview",
+    outDir: "../../../apps/vscode/dist/webviews/analysis-webview",
     emptyOutDir: true,
     rollupOptions: {
       output: {
