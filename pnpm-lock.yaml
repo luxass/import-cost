@@ -34,9 +34,11 @@ importers:
       '@vscode/vsce': ^2.16.0
       concurrently: ^7.6.0
       esbuild-wasm: ^0.17.0
+      setup-webview: workspace:*
     dependencies:
       '@luxass/import-cost': link:../../packages/import-cost
       esbuild-wasm: 0.17.0
+      setup-webview: link:../../packages/setup-webview
     devDependencies:
       '@types/vscode': 1.74.0
       '@vscode/test-web': 0.0.33

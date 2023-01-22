@@ -44,11 +44,6 @@
           "description": "Enable or disable the import cost",
           "default": true
         },
-        "import-cost.debug": {
-          "type": "boolean",
-          "description": "Enable debug logging",
-          "default": true
-        },
         "import-cost.decorator": {
           "type": "string",
           "description": "Which decorator to use for the import cost",
@@ -259,6 +254,24 @@
               "astro"
             ]
           }
+        },
+        "import-cost.packageManager": {
+          "type": "array",
+          "description": "Package managers to use for installing esbuild",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pnpm",
+              "yarn",
+              "npm"
+            ]
+          },
+          "uniqueItems": true,
+          "default": [
+            "pnpm",
+            "yarn",
+            "npm"
+          ]
         }
       }
     }

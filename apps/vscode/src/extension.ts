@@ -1,23 +1,21 @@
 import { locateESBuild } from "esbuild-shim";
-import type { ExtensionContext, TextDocument } from "vscode";
+import type { ExtensionContext } from "vscode";
 import { commands, window, workspace } from "vscode";
-
-import type { Language } from "@luxass/import-cost";
-import { calculateCost } from "@luxass/import-cost";
 
 import { config } from "./configuration";
 import { flush } from "./declaration";
+import { log } from "./log";
+import { scan } from "./scan";
 import { openSetupPanel } from "./webviews/setup.webview";
 
 export async function activate(ctx: ExtensionContext) {
   const esbuildPath = locateESBuild();
-  console.log("located esbuild", esbuildPath);
+  log.info("located esbuild", esbuildPath);
 
   const enable = config.get("enable");
   const sizes = config.get("sizes");
 
-  console.log("enable", enable);
-  console.log("sizes", sizes);
+  log.info("Import Cost is turned", enable ? "on" : "off");
 
   ctx.subscriptions.push(
     workspace.onDidChangeTextDocument(async (event) => scan(event.document)),
@@ -39,48 +37,14 @@ export async function activate(ctx: ExtensionContext) {
 
   if (!esbuildPath) {
     // openSetupPanel(ctx);
-    window.showErrorMessage(
-      "ESBuild is not installed. Please install it to use this extension."
+    const action = await window.showErrorMessage(
+      "ESBuild is not installed. Please install it to use this extension.",
+      "Install ESBuild",
+      "Skip"
     );
-  }
-}
 
-let scani = 0;
-
-async function scan(document: TextDocument | undefined) {
-  if (document && config.get("enable")) {
-    scani++;
-    console.log("ASJDKJLASJKLDASJLKD", scani);
-
-    const { languageId, fileName, getText } = document;
-    if (isAllowedLanguage(languageId, fileName)) {
-      const code = getText();
-      const result = await calculateCost({
-        path: fileName,
-        language: languageId as Language,
-        external: [],
-        code
-      });
-      console.log("workspace#onDidChangeTextDocument", result);
+    if (action === "Install ESBuild") {
+      // Install ESBuild globally with npm
     }
   }
-}
-
-function isAllowedLanguage(language: string, fileName: string): boolean {
-  return (
-    language === "javascriptreact" ||
-    fileName.endsWith(".jsx") ||
-    language === "typescriptreact" ||
-    fileName.endsWith(".tsx") ||
-    language === "javascript" ||
-    fileName.endsWith(".js") ||
-    language === "typescript" ||
-    fileName.endsWith(".ts") ||
-    language === "svelte" ||
-    fileName.endsWith(".svelte") ||
-    language === "astro" ||
-    fileName.endsWith(".astro") ||
-    language === "vue" ||
-    fileName.endsWith(".vue")
-  );
 }

@@ -1,7 +1,7 @@
 import { window } from "vscode";
 
 const _log = window.createOutputChannel("Import Cost");
-
+console.log(_log)
 export const log = {
   info: (...args: any[]) => {
     console.log(...args);
