@@ -1,12 +1,12 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts"],
+  entry: ["src/extension.ts"],
   format: ["cjs"],
-  dts: true,
   clean: true,
   treeshake: true,
-  splitting: true,
-  external: ["vscode", "esbuild"],
+  bundle: true,
+  target: ["es2020", "chrome91", "node16"],
+  external: ["vscode"],
   tsconfig: "tsconfig.json"
 });
