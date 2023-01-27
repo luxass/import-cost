@@ -38,7 +38,7 @@
     "lint": "eslint --cache {src,tests}/**/*.ts"
   },
   "peerDependencies": {
-    "esbuild": "^0.16.16"
+    "esbuild": "^0.16.17"
   },
   "peerDependenciesMeta": {
     "esbuild": {
@@ -48,10 +48,11 @@
   "dependencies": {
     "@babel/parser": "^7.20.7",
     "@babel/traverse": "^7.20.12",
-    "@babel/types": "^7.20.7"
+    "@babel/types": "^7.20.7",
+    "elysius": "^0.1.0"
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.18.3",
-    "esbuild": "^0.16.16"
+    "esbuild": "^0.16.17"
   }
 }

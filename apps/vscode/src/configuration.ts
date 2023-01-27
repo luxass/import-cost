@@ -1,4 +1,10 @@
-import { ConfigurationScope, ConfigurationTarget, workspace } from "vscode";
+import {
+  ConfigurationTarget,
+  workspace
+} from "vscode";
+import type {
+  ConfigurationScope
+} from "vscode";
 
 export interface Config {
   enable: boolean;
@@ -41,13 +47,13 @@ export const config = {
     scope?: ConfigurationScope,
     defaultValue?: PathValue<Config, T>
   ): PathValue<Config, T> {
-    const value = !defaultValue
-      ? workspace
-          .getConfiguration("import-cost", scope)
-          .get<PathValue<Config, T>>(key)!
-      : workspace
-          .getConfiguration("import-cost", scope)
-          .get<PathValue<Config, T>>(key, defaultValue)!;
+    const value = !defaultValue ?
+      workspace
+        .getConfiguration("import-cost", scope)
+        .get<PathValue<Config, T>>(key)! :
+      workspace
+        .getConfiguration("import-cost", scope)
+        .get<PathValue<Config, T>>(key, defaultValue)!;
 
     return value;
   },
@@ -63,9 +69,9 @@ export const config = {
 type SubPath<T, Key extends keyof T> = Key extends string
   ? T[Key] extends Record<string, any>
     ?
-        | `${Key}.${SubPath<T[Key], Exclude<keyof T[Key], keyof any[]>> &
-            string}`
-        | `${Key}.${Exclude<keyof T[Key], keyof any[]> & string}`
+      | `${Key}.${SubPath<T[Key], Exclude<keyof T[Key], keyof any[]>> &
+      string}`
+      | `${Key}.${Exclude<keyof T[Key], keyof any[]> & string}`
     : never
   : never;
 
@@ -78,5 +84,5 @@ type PathValue<T, P extends Path<T>> = P extends `${infer Key}.${infer Rest}`
       : never
     : never
   : P extends keyof T
-  ? T[P]
-  : never;
+    ? T[P]
+    : never;

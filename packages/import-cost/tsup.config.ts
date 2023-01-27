@@ -5,5 +5,8 @@ export default defineConfig({
   format: ["esm", "cjs"],
   dts: true,
   clean: true,
-  treeshake: true
+  treeshake: true,
+  splitting: true,
+  external: ["esbuild"],
+  tsconfig: "tsconfig.json"
 });

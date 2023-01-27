@@ -2,9 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist",
-    "allowJs": true,
-    "skipLibCheck": true
+    "outDir": "./dist"
   },
   "include": ["src/**/*"],
   "references": [{ "path": "../import-cost" }]

@@ -5,6 +5,7 @@ import type { Language } from "@luxass/import-cost";
 
 import { config } from "./configuration";
 import { isAllowedLanguage } from "./utils";
+import { log } from "./log";
 
 export async function scan(document: TextDocument | undefined) {
   if (document && config.get("enable")) {
@@ -14,10 +15,10 @@ export async function scan(document: TextDocument | undefined) {
       const result = await calculateCost({
         path: fileName,
         language: languageId as Language,
-        external: [],
+        externals: [],
         code
       });
-      console.log("workspace#onDidChangeTextDocument", result);
+      log.info(`RESULT - ${fileName}`, result);
     }
   }
 }

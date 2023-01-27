@@ -34,6 +34,11 @@
         "command": "import-cost.setup",
         "title": "Setup Import Cost",
         "category": "Import Cost"
+      },
+      {
+        "command": "import-cost.clear-import-cache",
+        "title": "Clear Cache",
+        "category": "Import Cost"
       }
     ],
     "configuration": {
@@ -284,7 +289,7 @@
     "dev": "concurrently \"pnpm run dev:web\" \"pnpm run dev:ext\"",
     "dev:web": "node --experimental-modules ./scripts/build.mjs --target web --watch",
     "dev:ext": "node --experimental-modules ./scripts/build.mjs --target ext --watch",
-    "browser": "vscode-test-web --extensionDevelopmentPath=. --folder-uri=vscode-vfs://github/luxass/import-cost",
+    "browser": "vscode-test-web --extensionDevelopmentPath=.",
     "web:serve": "npx serve --cors -l 5000",
     "web:tunnel": "npx localtunnel -p 5000",
     "package": "pnpm vsce package --no-dependencies",

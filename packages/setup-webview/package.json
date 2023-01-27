@@ -20,7 +20,7 @@
     "url": "https://github.com/luxass/import-cost/issues"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --port 4000",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",

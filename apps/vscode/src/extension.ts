@@ -1,9 +1,9 @@
-import { locateESBuild } from "esbuild-shim";
 import type { ExtensionContext } from "vscode";
 import { commands, window, workspace } from "vscode";
 
 import { config } from "./configuration";
 import { flush } from "./declaration";
+import { locateESBuild } from "./locate";
 import { log } from "./log";
 import { scan } from "./scan";
 import { openSetupPanel } from "./webviews/setup.webview";
@@ -12,9 +12,24 @@ export async function activate(ctx: ExtensionContext) {
   const esbuildPath = locateESBuild();
   log.info("located esbuild", esbuildPath);
 
-  const enable = config.get("enable");
   const sizes = config.get("sizes");
 
+  console.log("SIZES", sizes);
+
+  if (!esbuildPath) {
+    // openSetupPanel(ctx);
+    const action = await window.showErrorMessage(
+      "ESBuild is not installed. Please install it to use this extension.\nYou can read more about why [here](https://luxass.dev/import-cost)",
+      "Install ESBuild",
+      "Skip"
+    );
+
+    if (action === "Install ESBuild") {
+      log.info("Installing ESBuild");
+    }
+  }
+
+  const enable = config.get("enable");
   log.info("Import Cost is turned", enable ? "on" : "off");
 
   ctx.subscriptions.push(
@@ -32,19 +47,9 @@ export async function activate(ctx: ExtensionContext) {
       } catch (error) {
         console.error(error);
       }
+    }),
+    commands.registerCommand("import-cost.clear-cache", () => {
+      window.showInformationMessage("Import Cost cache cleared");
     })
   );
-
-  if (!esbuildPath) {
-    // openSetupPanel(ctx);
-    const action = await window.showErrorMessage(
-      "ESBuild is not installed. Please install it to use this extension.",
-      "Install ESBuild",
-      "Skip"
-    );
-
-    if (action === "Install ESBuild") {
-      // Install ESBuild globally with npm
-    }
-  }
 }

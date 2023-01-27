@@ -15,8 +15,7 @@ dist/
 .env
 .env.production
 .turbo
-
-
+.vscode-test-web
 
 
 

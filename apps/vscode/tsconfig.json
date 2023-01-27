@@ -2,14 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist",
-    "baseUrl": ".",
-    "paths": {
-      "esbuild-shim": ["src/env/esbuild-node.ts"]
-    }
+    "outDir": "./dist"
   },
   "include": ["src/**/*"],
-  "exclude": ["src/env/esbuild-web.ts"],
   "references": [
     {
       "path": "../../packages/import-cost"

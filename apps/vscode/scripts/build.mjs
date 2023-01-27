@@ -18,10 +18,11 @@ const webExternals = [
   "crypto",
   "fs",
   "stream",
-  "os"
+  "os",
+  "esbuild"
 ];
 
-const nodeExternals = ["vscode"];
+const nodeExternals = ["vscode", "esbuild", "esbuild-wasm"];
 
 build({
   entryPoints: ["src/extension.ts"],
