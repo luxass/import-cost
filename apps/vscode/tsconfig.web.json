@@ -5,11 +5,11 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "esbuild-shim": ["src/env/esbuild-node.ts"]
+      "esbuild-shim": ["src/env/esbuild-web.ts"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["src/env/esbuild-web.ts"],
+  "exclude": ["src/env/esbuild-node.ts"],
   "references": [
     {
       "path": "../../packages/import-cost"
