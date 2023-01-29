@@ -1,3 +1,14 @@
+import type { Message } from "esbuild";
+
+import type { defaultLog } from "./log";
+
+interface SharedOptions {
+  /**
+   * Log the result to the console.
+   */
+  log?: typeof defaultLog;
+}
+
 export type Language =
   | "javascript"
   | "js"
@@ -13,7 +24,7 @@ export type Language =
   | "svelte-ts"
   | "astro";
 
-export interface Options {
+export interface Options extends SharedOptions {
   /**
    * The path to the file to calculate the cost of.
    */
@@ -58,7 +69,9 @@ export interface ImportSize {
 }
 
 export interface CostResult {
-  imports: ImportSize[];
+  imports: Array<ImportSize>;
+  warnings: Array<Message>;
+  errors: Array<Message>;
 }
 
 export interface ParsedImport {
@@ -66,9 +79,10 @@ export interface ParsedImport {
   name: string;
   line: number;
   code: string;
+  version?: string;
 }
 
-export interface CalculateSizeOptions {
+export interface CalculateSizeOptions extends SharedOptions {
   /**
    * The format to bundle the code in.
    */
@@ -83,4 +97,13 @@ export interface CalculateSizeOptions {
    * The path to the esbuild binary.
    */
   esbuild?: string;
+}
+
+export interface CalculateSizeResult {
+  errors: Array<Message>;
+  warnings: Array<Message>;
+  pkg: ParsedImport & {
+    size: number;
+    gzip: number;
+  };
 }

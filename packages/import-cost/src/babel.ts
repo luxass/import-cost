@@ -36,6 +36,7 @@ export function getParserPlugins(language: Language): Array<ParserPlugin> {
     case "typescript":
     case "ts":
       return TS_PLUGINS;
+      
     case "typescriptreact":
     case "tsx":
     case "vue-ts":

@@ -7,6 +7,5 @@ export default defineConfig({
   clean: true,
   treeshake: true,
   splitting: true,
-  external: ["esbuild"],
-  tsconfig: "tsconfig.json"
+  external: ["esbuild"]
 });

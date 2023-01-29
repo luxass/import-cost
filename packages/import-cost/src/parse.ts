@@ -1,12 +1,19 @@
 import type { ParserPlugin } from "@babel/parser";
 import { parse } from "@babel/parser";
-import type { CallExpression } from "@babel/types";
-import { isIdentifier, isStringLiteral, isTemplateLiteral } from "@babel/types";
+import type { CallExpression, ImportDeclaration, Node } from "@babel/types";
+import {
+  isIdentifier,
+  isImportDefaultSpecifier,
+  isImportNamespaceSpecifier,
+  isImportSpecifier,
+  isStringLiteral,
+  isTemplateLiteral
+} from "@babel/types";
 
 import { getParserPlugins, traverse } from "./babel";
 import type { Language, ParsedImport } from "./types";
 
-export function parseImport(
+export function parseImports(
   fileName: string,
   content: string,
   language: Language
@@ -20,35 +27,85 @@ export function parseImport(
 
   traverse(ast, {
     ImportDeclaration({ node }) {
+      console.log("importdecl", node);
+
       if (node.importKind !== "type") {
         imports.push({
           fileName,
           name: node.source.value,
           line: node.loc?.end.line || 0,
-          code: ""
+          code: getImportString(node)
         });
       }
     },
     CallExpression({ node }) {
+      console.log("callexpr", node);
+
       if (node.callee.type === "Import") {
         imports.push({
           fileName,
           name: getImportName(node),
           line: node.loc?.end.line || 0,
-          code: ""
+          code: `import("${getImportName(node)}")`
         });
       } else if ("name" in node.callee && node.callee.name === "require") {
         imports.push({
           fileName,
           name: getImportName(node),
           line: node.loc?.end.line || 0,
-          code: ""
+          code: `require("${getImportName(node)}")`
         });
       }
     }
   });
 
   return imports;
+}
+
+function getImportString(node: ImportDeclaration) {
+  let importSpecifiers: string | undefined, importString: string;
+  if (node.specifiers && node.specifiers.length > 0) {
+    importString = ([] as ImportDeclaration["specifiers"])
+      .concat(node.specifiers)
+      .sort((s1, s2) => {
+        if (isImportSpecifier(s1) && isImportSpecifier(s2)) {
+          return nameOrValue(s1.imported).localeCompare(
+            nameOrValue(s2.imported)
+          );
+        }
+        return 0;
+      })
+      .map((specifier, i) => {
+        if (isImportNamespaceSpecifier(specifier)) {
+          return `* as ${specifier.local.name}`;
+        } else if (isImportDefaultSpecifier(specifier)) {
+          return specifier.local.name;
+        } else if (isImportSpecifier(specifier)) {
+          if (!importSpecifiers) importSpecifiers = "{";
+
+          importSpecifiers += nameOrValue(specifier.imported);
+          if (
+            node.specifiers[i + 1] &&
+            isImportSpecifier(node.specifiers[i + 1])
+          ) {
+            importSpecifiers += ", ";
+            return undefined;
+          } else {
+            const result = `${importSpecifiers}}`;
+            importSpecifiers = undefined;
+            return result;
+          }
+        } else {
+          return undefined;
+        }
+      })
+      .filter(Boolean)
+      .join(", ");
+  } else {
+    importString = "* as tmp";
+  }
+  return `import ${importString} from '${node.source.value}';
+console.log(${importString.replace("* as ", "")});`;
 }
 
 function getImportName(node: CallExpression): string {
@@ -61,4 +118,10 @@ function getImportName(node: CallExpression): string {
     (isIdentifier(argument) && argument.name) ||
     ""
   );
+}
+
+function nameOrValue(node: Node) {
+  if (isIdentifier(node)) return node.name;
+  else if (isStringLiteral(node)) return node.value;
+  else return "";
 }

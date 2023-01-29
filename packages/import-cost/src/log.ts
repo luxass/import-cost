@@ -1,12 +1,8 @@
-import { window } from "vscode";
-
-const _log = window.createOutputChannel("Import Cost");
-
-export const log = {
+export const defaultLog = {
   info: (...args: any[]) => {
     console.log(...args);
     const time = new Date().toLocaleTimeString();
-    _log.appendLine(`[INFO ${time}] ${args.join(" ")}`);
+    console.log(`[INFO ${time}] ${args.join(" ")}`);
   },
   error: (...args: any[]) => {
     console.error(...args);
@@ -17,6 +13,6 @@ export const log = {
         args[i] = `[ERROR ${err.name}] ${err.message}\n${err.stack}`;
       }
     }
-    _log.appendLine(`[ERROR ${time}] ${args.join(" ")}`);
+    console.error(`[ERROR ${time}] ${args.join(" ")}`);
   }
 } as const;

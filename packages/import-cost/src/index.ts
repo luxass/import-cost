@@ -1,11 +1,14 @@
 import { readFile } from "node:fs/promises";
 import { builtinModules } from "node:module";
+import path from "node:path";
 
 import { find } from "elysius";
+import type { Message } from "esbuild";
 
 import { calculateSize } from "./build";
-import { parseImport } from "./parse";
-import type { CostResult, Options } from "./types";
+import { defaultLog } from "./log";
+import { parseImports } from "./parse";
+import type { CostResult, ImportSize, Options, ParsedImport } from "./types";
 
 export async function calculateCost({
   path,
@@ -13,10 +16,13 @@ export async function calculateCost({
   externals,
   code,
   cwd = process.cwd(),
-  esbuild
+  esbuild,
+  log = defaultLog
 }: Options): Promise<CostResult | null> {
   try {
-    externals ??= await resolveExternals(cwd);
+    externals = await resolveExternals(cwd);
+
+    log.info(`Resolving ${externals.length} externals for ${path}`);
     if (language === "astro" || language === "vue" || language === "svelte") {
       const extracted = extractCode(code, language);
       if (extracted) {
@@ -25,20 +31,36 @@ export async function calculateCost({
       }
     }
 
-    const imports = parseImport(path, code, language);
+    const parsedImports = parseImports(path, code, language).filter(
+      (pkg) => !pkg.fileName.startsWith(".")
+    );
 
-    console.log("packages", imports);
-    for await (const result of imports.map((_import) =>
+    await Promise.allSettled(
+      parsedImports.map(
+        async (_import) => (_import.version = await getVersion(_import))
+      )
+    );
+
+    const warnings: Array<Message> = [];
+    const errors: Array<Message> = [];
+    const imports: Array<ImportSize> = [];
+
+    for await (const result of parsedImports.map((_import) =>
       calculateSize(_import, {
         externals,
         format: language === "ts" ? "esm" : "cjs",
         esbuild
       })
     )) {
-      console.log(result);
+      result.errors = result.errors.concat(result.errors);
+      result.warnings = result.warnings.concat(result.warnings);
+      // TODO: Change this - but for now we need to see everything.
+      imports.push(result.pkg as unknown as ImportSize);
     }
     return {
-      imports: []
+      imports,
+      errors,
+      warnings
     };
   } catch (e) {
     console.error(e);
@@ -86,5 +108,25 @@ function extractCode(
   return null;
 }
 
+async function getVersion(pkg: ParsedImport): Promise<string | undefined> {
+  try {
+    console.log("pkg", pkg);
+
+    const node_modules = await find("node_modules", {
+      cwd: path.dirname(pkg.fileName)
+    });
+
+    console.log("node_modules", node_modules);
+
+    if (node_modules) {
+      const pkgPath = path.join(node_modules, pkg.name, "package.json");
+      const version = JSON.parse(await readFile(pkgPath, "utf-8")).version;
+      return `${pkg.name}@${version}`;
+    }
+  } catch (e) {
+    return undefined;
+  }
+}
+
 export type { CostResult, Options, Language } from "./types";
-export { parseImport as parsePackages } from "./parse";
+export { parseImports } from "./parse";

@@ -30,11 +30,6 @@
         "category": "Import Cost"
       },
       {
-        "command": "import-cost.setup",
-        "title": "Setup Import Cost",
-        "category": "Import Cost"
-      },
-      {
         "command": "import-cost.clear-import-cache",
         "title": "Clear Cache",
         "category": "Import Cost"
@@ -290,8 +285,7 @@
     "lint": "eslint --cache {src,tests}/**/*.ts"
   },
   "dependencies": {
-    "@luxass/import-cost": "workspace:*",
-    "setup-webview": "workspace:*"
+    "@luxass/import-cost": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "^1.73.0",
