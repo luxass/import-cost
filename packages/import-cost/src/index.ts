@@ -31,7 +31,7 @@ export async function calculateCost({
       }
     }
 
-    const parsedImports = parseImports(path, code, language).filter(
+    let parsedImports = parseImports(path, code, language).filter(
       (pkg) => !pkg.fileName.startsWith(".")
     );
 
@@ -40,6 +40,14 @@ export async function calculateCost({
         async (_import) => (_import.version = await getVersion(_import))
       )
     );
+
+    log.info(`Found ${parsedImports.length} imports for ${path}`);
+
+    parsedImports = parsedImports.filter((_import) => {
+      log.info(`${_import.version ? "✅" : "❌"} ${_import.name}`)
+      return !!_import.version;
+    })
+
 
     const warnings: Array<Message> = [];
     const errors: Array<Message> = [];
@@ -119,13 +127,23 @@ async function getVersion(pkg: ParsedImport): Promise<string | undefined> {
     console.log("node_modules", node_modules);
 
     if (node_modules) {
-      const pkgPath = path.join(node_modules, pkg.name, "package.json");
+      const name = getPackageName(pkg);
+      const pkgPath = path.join(node_modules, name, "package.json");
       const version = JSON.parse(await readFile(pkgPath, "utf-8")).version;
-      return `${pkg.name}@${version}`;
+      return `${name}@${version}`;
     }
   } catch (e) {
     return undefined;
   }
+}
+
+function getPackageName(pkg: ParsedImport): string {
+  const pkgParts = pkg.name.split("/");
+  let pkgName = pkgParts.shift() || pkg.name;
+  if (pkgName && pkgName.startsWith("@")) {
+    pkgName += `/${pkgParts.shift()}`;
+  }
+  return pkgName;
 }
 
 export type { CostResult, Options, Language } from "./types";
