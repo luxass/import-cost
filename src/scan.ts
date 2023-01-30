@@ -2,10 +2,9 @@ import { dirname } from "node:path";
 
 import type { TextDocument } from "vscode";
 
-import { calculateCost } from "@luxass/import-cost";
-import type { Language } from "@luxass/import-cost";
-
 import { config } from "./configuration";
+import { calculateCost } from "./engine";
+import type { Language } from "./engine";
 import { log } from "./log";
 import { isAllowedLanguage } from "./utils";
 
@@ -20,10 +19,9 @@ export async function scan(document: TextDocument | undefined) {
         language: languageId as Language,
         externals: [],
         code,
-        log,
         cwd: dirname(uri.fsPath)
       });
-      console.log(JSON.stringify(result, null, 2))
+      console.log(JSON.stringify(result, null, 2));
       log.info(`RESULT - ${fileName}`, result?.imports.join(", "));
     }
   }

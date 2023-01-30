@@ -1,14 +1,5 @@
 import type { Message } from "esbuild";
 
-import type { defaultLog } from "./log";
-
-interface SharedOptions {
-  /**
-   * Log the result to the console.
-   */
-  log?: typeof defaultLog;
-}
-
 export type Language =
   | "javascript"
   | "js"
@@ -24,7 +15,7 @@ export type Language =
   | "svelte-ts"
   | "astro";
 
-export interface Options extends SharedOptions {
+export interface Options {
   /**
    * The path to the file to calculate the cost of.
    */
@@ -88,7 +79,7 @@ export interface ParsedImport {
   directives: ImportDirectives;
 }
 
-export interface CalculateSizeOptions extends SharedOptions {
+export interface CalculateSizeOptions {
   /**
    * The format to bundle the code in.
    */
