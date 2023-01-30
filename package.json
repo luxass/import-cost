@@ -4,14 +4,26 @@
   "displayName": "Import Cost",
   "version": "0.0.1",
   "description": "Calculate cost of imports, powered by esbuild",
+  "author": {
+    "name": "Luxass",
+    "email": "lucasnrgaard@gmail.com",
+    "url": "https://luxass.dev"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luxass/import-cost"
+  },
+  "bugs": {
+    "url": "https://github.com/luxass/import-cost/issues"
+  },
   "categories": [
     "Other"
   ],
   "main": "./dist/extension.js",
   "icon": "media/icon.png",
   "engines": {
-    "vscode": "^1.73.0"
+    "vscode": "^1.72.0"
   },
   "packageManager": "pnpm@7.18.0",
   "activationEvents": [
@@ -296,7 +308,8 @@
     "@luxass/prettier-config": "^1.1.4",
     "@types/babel__traverse": "^7.18.3",
     "@types/node": "^18.11.17",
-    "@types/vscode": "^1.74.0",
+    "@types/vscode": "^1.72.0",
+    "@vscode/test-web": "^0.0.34",
     "@vscode/vsce": "^2.17.0",
     "esbuild": "^0.16.16",
     "eslint": "^8.30.0",
