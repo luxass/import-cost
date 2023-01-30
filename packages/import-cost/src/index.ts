@@ -44,10 +44,9 @@ export async function calculateCost({
     log.info(`Found ${parsedImports.length} imports for ${path}`);
 
     parsedImports = parsedImports.filter((_import) => {
-      log.info(`${_import.version ? "✅" : "❌"} ${_import.name}`)
+      log.info(`${_import.version ? "✅" : "❌"} ${_import.name}`);
       return !!_import.version;
-    })
-
+    });
 
     const warnings: Array<Message> = [];
     const errors: Array<Message> = [];
@@ -57,7 +56,8 @@ export async function calculateCost({
       calculateSize(_import, {
         externals,
         format: language === "ts" ? "esm" : "cjs",
-        esbuild
+        esbuild,
+        log
       })
     )) {
       result.errors = result.errors.concat(result.errors);

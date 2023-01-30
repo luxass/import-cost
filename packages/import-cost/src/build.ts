@@ -13,7 +13,15 @@ export async function calculateSize(
   options?: CalculateSizeOptions
 ): Promise<CalculateSizeResult> {
   try {
+    // Add caching here.
+
     const { build } = await import(options?.esbuild ?? "esbuild");
+
+    const directives = parsedImport.directives;
+
+    const platform = directives?.platform || "node";
+    options?.log?.info(`Building ${parsedImport.name} for ${platform}...`);
+    options?.log?.info("Directives: ", directives);
 
     const { errors, warnings, outputFiles } = await build({
       stdin: {
@@ -21,7 +29,7 @@ export async function calculateSize(
         resolveDir: dirname(parsedImport.fileName),
         sourcefile: parsedImport.fileName
       },
-      platform: "node",
+      platform,
       bundle: true,
       format: options?.format || "esm",
       // metafile: true,
