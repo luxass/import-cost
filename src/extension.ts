@@ -1,9 +1,9 @@
+import { locateESBuild } from "env:locate";
 import type { ExtensionContext } from "vscode";
 import { commands, window, workspace } from "vscode";
 
 import { config } from "./configuration";
 import { flush } from "./decoration";
-import { locateESBuild } from "./locate";
 import { log } from "./log";
 import { scan } from "./scan";
 
@@ -11,7 +11,7 @@ export async function activate(ctx: ExtensionContext) {
   const esbuildPath = locateESBuild();
 
   if (!esbuildPath) {
-    log.error("Couldn't locate ESBuild")
+    log.error("Couldn't locate ESBuild");
     const action = await window.showErrorMessage(
       "ESBuild is not installed. Please install it to use this extension.\nYou can read more about why [here](https://luxass.dev/import-cost)",
       "Install ESBuild",
