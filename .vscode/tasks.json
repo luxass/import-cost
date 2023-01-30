@@ -5,7 +5,7 @@
       "type": "npm",
       "script": "dev",
       "group": "build",
-      "problemMatcher": "$esbuild-watch",
+      "problemMatcher": "$tsup-cjs-watch",
       "isBackground": true,
       "label": "npm: watch",
       "presentation": {
@@ -16,7 +16,8 @@
       "type": "npm",
       "script": "build",
       "group": "build",
-      "problemMatcher": "$esbuild",
+      "problemMatcher": "$tsup-cjs",
+      "isBackground": true,
       "label": "npm: build",
       "presentation": {
         "reveal": "silent"

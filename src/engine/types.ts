@@ -1,3 +1,5 @@
+import type { Message } from "esbuild";
+
 export type Language =
   | "javascript"
   | "js"
@@ -58,7 +60,14 @@ export interface ImportSize {
 }
 
 export interface CostResult {
-  imports: ImportSize[];
+  imports: Array<ImportSize>;
+  warnings: Array<Message>;
+  errors: Array<Message>;
+}
+
+export interface ImportDirectives {
+  external?: boolean;
+  platform?: "browser" | "node";
 }
 
 export interface ParsedImport {
@@ -66,6 +75,8 @@ export interface ParsedImport {
   name: string;
   line: number;
   code: string;
+  version?: string;
+  directives: ImportDirectives;
 }
 
 export interface CalculateSizeOptions {
@@ -83,4 +94,13 @@ export interface CalculateSizeOptions {
    * The path to the esbuild binary.
    */
   esbuild?: string;
+}
+
+export interface CalculateSizeResult {
+  errors: Array<Message>;
+  warnings: Array<Message>;
+  pkg: ParsedImport & {
+    size: number;
+    gzip: number;
+  };
 }
