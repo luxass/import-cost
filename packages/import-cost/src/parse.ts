@@ -71,12 +71,12 @@ function getDirectives(
       if (comment.value.includes("import-cost: ")) {
         const directive = comment.value.trim().replace("import-cost: ", "");
 
-        if (directive === "mark-as-external") {
+        if (directive === "mark-external") {
           directives.external = true;
           return;
         }
 
-        if (directive === "mark-as-browser") {
+        if (directive === "platform-browser") {
           directives.platform = "browser";
         }
       }
