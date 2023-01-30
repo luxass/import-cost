@@ -1,34 +1,307 @@
 {
-  "name": "import-cost-monorepo",
-  "private": true,
+  "name": "vscode-import-cost",
+  "publisher": "luxass",
+  "displayName": "Import Cost",
+  "version": "0.0.1",
+  "description": "Calculate cost of imports, powered by esbuild",
   "license": "MIT",
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "icon": "media/icon.png",
   "engines": {
-    "node": ">=16"
+    "vscode": "^1.73.0"
   },
   "packageManager": "pnpm@7.18.0",
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
-    "lint": "turbo run lint",
-    "test": "turbo run test"
-  },
-  "workspaces": [
-    "packages/**/*",
-    "apps/**/*"
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:vue",
+    "onLanguage:svelte",
+    "onLanguage:astro"
   ],
-  "peerDependencies": {
-    "typescript": "^4.9.4"
+  "contributes": {
+    "commands": [
+      {
+        "command": "import-cost.toggle-declaration",
+        "title": "Toggle Import Cost",
+        "category": "Import Cost"
+      },
+      {
+        "command": "import-cost.clear-import-cache",
+        "title": "Clear Cache",
+        "category": "Import Cost"
+      }
+    ],
+    "configuration": {
+      "title": "Import Cost",
+      "properties": {
+        "import-cost.enable": {
+          "type": "boolean",
+          "description": "Enable or disable the import cost",
+          "default": true
+        },
+        "import-cost.decorator": {
+          "type": "string",
+          "description": "Which decorator to use for the import cost",
+          "enum": [
+            "both",
+            "minified",
+            "compressed"
+          ],
+          "default": "both"
+        },
+        "import-cost.colors": {
+          "type": "object",
+          "description": "Colors for the import cost",
+          "properties": {
+            "small": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Small size color for dark theme",
+                  "default": "#7cc36e"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Small size color for light theme",
+                  "default": "#7cc36e"
+                }
+              },
+              "default": {
+                "dark": "#7cc36e",
+                "light": "#7cc36e"
+              }
+            },
+            "medium": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Medium size color for dark theme",
+                  "default": "#7cc36e"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Medium size color for light theme",
+                  "default": "#7cc36e"
+                }
+              },
+              "default": {
+                "dark": "#7cc36e",
+                "light": "#7cc36e"
+              }
+            },
+            "large": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Large size color for dark theme",
+                  "default": "#d44e40"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Large size color for light theme",
+                  "default": "#d44e40"
+                }
+              },
+              "default": {
+                "dark": "#d44e40",
+                "light": "#d44e40"
+              }
+            },
+            "extreme": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Large size color for dark theme",
+                  "default": "#d44e40"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Large size color for light theme",
+                  "default": "#d44e40"
+                }
+              },
+              "default": {
+                "dark": "#d44e40",
+                "light": "#d44e40"
+              }
+            }
+          },
+          "default": {
+            "small": {
+              "dark": "#7cc36e",
+              "light": "#7cc36e"
+            },
+            "medium": {
+              "dark": "#7cc36e",
+              "light": "#7cc36e"
+            },
+            "large": {
+              "dark": "#d44e40",
+              "light": "#d44e40"
+            },
+            "extreme": {
+              "dark": "#d44e40",
+              "light": "#d44e40"
+            }
+          }
+        },
+        "import-cost.sizes": {
+          "type": "object",
+          "description": "Sizes for the import cost",
+          "properties": {
+            "small": {
+              "type": "number",
+              "description": "Small size in kilo bytes",
+              "default": 50
+            },
+            "medium": {
+              "type": "number",
+              "description": "Medium size in kilo bytes",
+              "default": 100
+            },
+            "large": {
+              "type": "number",
+              "description": "Large size in kilo bytes",
+              "default": 500
+            }
+          },
+          "default": {
+            "small": 50,
+            "medium": 100,
+            "large": 500
+          }
+        },
+        "import-cost.extensions": {
+          "properties": {
+            "javascript": {
+              "type": "array",
+              "description": "File extension for JavaScript",
+              "items": {
+                "type": "string",
+                "default": [
+                  "js"
+                ]
+              }
+            },
+            "typescript": {
+              "type": "array",
+              "description": "File extension for TypeScript",
+              "items": {
+                "type": "string",
+                "default": [
+                  "ts"
+                ]
+              }
+            },
+            "vue": {
+              "type": "array",
+              "description": "File extension for Vue",
+              "items": {
+                "type": "string",
+                "default": [
+                  "vue"
+                ]
+              }
+            },
+            "svelte": {
+              "type": "array",
+              "description": "File extension for Svelte",
+              "items": {
+                "type": "string",
+                "default": [
+                  "svelte"
+                ]
+              }
+            },
+            "astro": {
+              "type": "array",
+              "description": "File extension for Astro",
+              "items": {
+                "type": "string",
+                "default": [
+                  "astro"
+                ]
+              }
+            }
+          },
+          "default": {
+            "javascript": [
+              "js"
+            ],
+            "typescript": [
+              "ts"
+            ],
+            "vue": [
+              "vue"
+            ],
+            "svelte": [
+              "svelte"
+            ],
+            "astro": [
+              "astro"
+            ]
+          }
+        },
+        "import-cost.packageManager": {
+          "type": "array",
+          "description": "Package managers to use for installing esbuild",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pnpm",
+              "yarn",
+              "npm"
+            ]
+          },
+          "uniqueItems": true,
+          "default": [
+            "pnpm",
+            "yarn",
+            "npm"
+          ]
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run build -- --minify",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "package": "pnpm vsce package --no-dependencies",
+    "release": "pnpm vsce publish --no-dependencies",
+    "lint": "eslint --cache {src,tests}/**/*.ts"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.20.13",
+    "@babel/traverse": "^7.20.13",
+    "@babel/types": "^7.20.7",
+    "elysius": "^0.1.0"
   },
   "devDependencies": {
     "@luxass/eslint-config": "^2.2.6",
     "@luxass/prettier-config": "^1.1.4",
+    "@types/babel__traverse": "^7.18.3",
     "@types/node": "^18.11.17",
+    "@types/vscode": "^1.74.0",
+    "@vscode/vsce": "^2.17.0",
     "esbuild": "^0.16.16",
     "eslint": "^8.30.0",
     "prettier": "^2.8.2",
     "tsup": "^6.5.0",
-    "turbo": "^1.6.3",
-    "typescript": "^4.9.4",
-    "vitest": "^0.25.8"
+    "typescript": "^4.9.4"
   }
 }

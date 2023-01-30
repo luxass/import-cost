@@ -4,6 +4,8 @@
     "module": "ESNext",
     "lib": ["ESNext"],
     "moduleResolution": "node",
+    "rootDir": "./src",
+    "outDir": "./dist",
     "esModuleInterop": true,
     "strict": true,
     "declaration": true,
@@ -13,5 +15,6 @@
     "preserveSymlinks": true,
     "forceConsistentCasingInFileNames": true
   },
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

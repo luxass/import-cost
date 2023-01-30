@@ -2,7 +2,6 @@
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "luxass.tsup-problem-matchers",
-    "astro-build.astro-vscode"
+    "luxass.tsup-problem-matchers"
   ]
 }

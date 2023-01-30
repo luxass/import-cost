@@ -2,6 +2,7 @@ import { dirname } from "node:path";
 
 import type { BuildOptions } from "esbuild";
 
+import { log } from "../log";
 import type {
   CalculateSizeOptions,
   CalculateSizeResult,
@@ -20,8 +21,8 @@ export async function calculateSize(
     const directives = parsedImport.directives;
 
     const platform = directives?.platform || "node";
-    options?.log?.info(`Building ${parsedImport.name} for ${platform}...`);
-    options?.log?.info("Directives: ", directives);
+    log.info(`Building ${parsedImport.name} for ${platform}...`);
+    log.info("Directives: ", directives);
 
     const { errors, warnings, outputFiles } = await build({
       stdin: {
@@ -57,7 +58,7 @@ export async function calculateSize(
       }
     };
   } catch (e) {
-    options?.log?.error(e);
+    log.error(e);
     return {
       errors: e.errors,
       warnings: e.warnings,

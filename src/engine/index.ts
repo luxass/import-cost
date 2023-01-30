@@ -5,8 +5,8 @@ import path from "node:path";
 import { find } from "elysius";
 import type { Message } from "esbuild";
 
+import { log } from "../log";
 import { calculateSize } from "./build";
-import { defaultLog } from "./log";
 import { parseImports } from "./parse";
 import type { CostResult, ImportSize, Options, ParsedImport } from "./types";
 
@@ -16,8 +16,7 @@ export async function calculateCost({
   externals,
   code,
   cwd = process.cwd(),
-  esbuild,
-  log = defaultLog
+  esbuild
 }: Options): Promise<CostResult | null> {
   try {
     externals = await resolveExternals(cwd);
@@ -56,8 +55,7 @@ export async function calculateCost({
       calculateSize(_import, {
         externals,
         format: language === "ts" ? "esm" : "cjs",
-        esbuild,
-        log
+        esbuild
       })
     )) {
       result.errors = result.errors.concat(result.errors);
