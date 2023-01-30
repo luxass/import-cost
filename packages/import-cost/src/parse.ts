@@ -38,13 +38,14 @@ export function parseImports(
       }
     },
     CallExpression({ node }) {
+      const directives = getDirectives(node);
       if (node.callee.type === "Import") {
         imports.push({
           fileName,
           name: getImportName(node),
           line: node.loc?.end.line || 0,
           code: `import("${getImportName(node)}")`,
-          directives: getDirectives(node)
+          directives
         });
       } else if ("name" in node.callee && node.callee.name === "require") {
         imports.push({
@@ -52,7 +53,7 @@ export function parseImports(
           name: getImportName(node),
           line: node.loc?.end.line || 0,
           code: `require("${getImportName(node)}")`,
-          directives: getDirectives(node)
+          directives
         });
       }
     }

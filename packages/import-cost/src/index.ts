@@ -118,13 +118,9 @@ function extractCode(
 
 async function getVersion(pkg: ParsedImport): Promise<string | undefined> {
   try {
-    console.log("pkg", pkg);
-
     const node_modules = await find("node_modules", {
       cwd: path.dirname(pkg.fileName)
     });
-
-    console.log("node_modules", node_modules);
 
     if (node_modules) {
       const name = getPackageName(pkg);
