@@ -9,5 +9,5 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["src/env/web/*"]
+  "exclude": ["src/env/node/*"]
 }
