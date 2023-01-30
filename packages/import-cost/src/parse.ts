@@ -11,7 +11,7 @@ import {
 } from "@babel/types";
 
 import { getParserPlugins, traverse } from "./babel";
-import type { Language, ParsedImport } from "./types";
+import type { ImportDirectives, Language, ParsedImport } from "./types";
 
 export function parseImports(
   fileName: string,
@@ -27,39 +27,63 @@ export function parseImports(
 
   traverse(ast, {
     ImportDeclaration({ node }) {
-      console.log("importdecl", node);
-
       if (node.importKind !== "type") {
         imports.push({
           fileName,
           name: node.source.value,
           line: node.loc?.end.line || 0,
-          code: getImportString(node)
+          code: getImportString(node),
+          directives: getDirectives(node)
         });
       }
     },
     CallExpression({ node }) {
-      console.log("callexpr", node);
-
       if (node.callee.type === "Import") {
         imports.push({
           fileName,
           name: getImportName(node),
           line: node.loc?.end.line || 0,
-          code: `import("${getImportName(node)}")`
+          code: `import("${getImportName(node)}")`,
+          directives: getDirectives(node)
         });
       } else if ("name" in node.callee && node.callee.name === "require") {
         imports.push({
           fileName,
           name: getImportName(node),
           line: node.loc?.end.line || 0,
-          code: `require("${getImportName(node)}")`
+          code: `require("${getImportName(node)}")`,
+          directives: getDirectives(node)
         });
       }
     }
   });
 
   return imports;
+}
+
+function getDirectives(
+  node: CallExpression | ImportDeclaration
+): ImportDirectives {
+  const directives: ImportDirectives = {};
+
+  if (node.leadingComments) {
+    node.leadingComments.forEach((comment) => {
+      if (comment.value.includes("import-cost: ")) {
+        const directive = comment.value.trim().replace("import-cost: ", "");
+
+        if (directive === "mark-as-external") {
+          directives.external = true;
+          return;
+        }
+
+        if (directive === "mark-as-browser") {
+          directives.platform = "browser";
+        }
+      }
+    });
+  }
+
+  return directives;
 }
 
 function getImportString(node: ImportDeclaration) {

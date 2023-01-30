@@ -74,12 +74,18 @@ export interface CostResult {
   errors: Array<Message>;
 }
 
+export interface ImportDirectives {
+  external?: boolean;
+  platform?: "browser" | "node";
+}
+
 export interface ParsedImport {
   fileName: string;
   name: string;
   line: number;
   code: string;
   version?: string;
+  directives: ImportDirectives;
 }
 
 export interface CalculateSizeOptions extends SharedOptions {
