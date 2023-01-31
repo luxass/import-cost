@@ -1,3 +1,4 @@
+import { writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
 import type { BuildOptions } from "esbuild";
@@ -24,7 +25,7 @@ export async function calculateSize(
     log.info(`Building ${parsedImport.name} for ${platform}...`);
     log.info("Directives: ", directives);
 
-    const { errors, warnings, outputFiles } = await build({
+    const { errors, warnings, outputFiles, metafile } = await build({
       stdin: {
         contents: parsedImport.code,
         resolveDir: dirname(parsedImport.fileName),
@@ -33,13 +34,23 @@ export async function calculateSize(
       platform,
       bundle: true,
       format: options?.format || "esm",
-      // metafile: true,
+      metafile: true,
       write: false,
       external: options?.externals || [],
       outdir: "dist",
       allowOverwrite: true,
       minify: true
     } satisfies BuildOptions);
+
+    log.info("Build result: ", {
+      metafile
+    });
+
+    await writeFile(
+      "/home/luxas/Desktop/my-t3-app/meta.json",
+      JSON.stringify(metafile, null, 2),
+      "utf-8"
+    );
 
     let size = 0;
     const gzip = 0;

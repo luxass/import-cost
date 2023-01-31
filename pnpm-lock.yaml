@@ -16,6 +16,7 @@ importers:
       '@vscode/vsce': ^2.17.0
       elysius: ^0.1.0
       esbuild: ^0.16.16
+      esbuild-wasm: ^0.17.5
       eslint: ^8.30.0
       prettier: ^2.8.2
       tsup: ^6.5.0
@@ -25,6 +26,7 @@ importers:
       '@babel/traverse': 7.20.13
       '@babel/types': 7.20.7
       elysius: 0.1.0
+      esbuild-wasm: 0.17.5
     devDependencies:
       '@luxass/eslint-config': 2.2.6_iukboom6ndih5an6iafl45j2fe
       '@luxass/prettier-config': 1.1.4_prettier@2.8.2
@@ -2026,6 +2028,12 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /esbuild-wasm/0.17.5:
+    resolution: {integrity: sha512-Sm34YFT8ENLbOLJeMWdbAwSXpMuYivp8KfJR/b+x74034XNkFAJPwgzUMVwu9wLzGd4APadwVUfXCLukmJwC9g==}
+    engines: {node: '>=12'}
+    hasBin: true
+    dev: false
 
   /esbuild-windows-32/0.15.18:
     resolution: {integrity: sha512-o+eyLu2MjVny/nt+E0uPnBxYuJHBvho8vWsC2lV61A7wwTWC3jkN2w36jtA+yv1UgYkHRihPuQsL23hsCYGcOQ==}

@@ -3,9 +3,9 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "env:*": ["src/env/node/*"]
+      "env:*": ["env/node/*"]
     }
   },
   "include": ["src/**/*"],

@@ -9,7 +9,7 @@ export default defineConfig([
     bundle: true,
     target: ["es2020", "chrome91", "node16"],
     platform: "node",
-    external: ["vscode"],
+    external: ["vscode", "esbuild-wasm"],
     tsconfig: "tsconfig.json"
   },
   {
@@ -19,7 +19,7 @@ export default defineConfig([
     clean: true,
     treeshake: true,
     bundle: true,
-    target: ["es2020", "chrome91", "node16"],
+    target: ["es2020", "chrome91"],
     platform: "browser",
     external: ["fs", "vscode"],
     tsconfig: "tsconfig.web.json"

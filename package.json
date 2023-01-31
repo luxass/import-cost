@@ -283,7 +283,8 @@
     "@babel/parser": "^7.20.13",
     "@babel/traverse": "^7.20.13",
     "@babel/types": "^7.20.7",
-    "elysius": "^0.1.0"
+    "elysius": "^0.1.0",
+    "esbuild-wasm": "^0.17.5"
   },
   "devDependencies": {
     "@luxass/eslint-config": "^2.2.6",

@@ -1,10 +1,5 @@
-import {
-  ConfigurationTarget,
-  workspace
-} from "vscode";
-import type {
-  ConfigurationScope
-} from "vscode";
+import { ConfigurationTarget, workspace } from "vscode";
+import type { ConfigurationScope } from "vscode";
 
 export interface Config {
   enable: boolean;
@@ -13,6 +8,8 @@ export interface Config {
   colors: ColorsConfig;
   sizes: SizesConfig;
   extensions: ExtensionsConfig;
+
+  packageManager: "npm" | "yarn" | "pnpm" | "auto";
 }
 
 export interface ColorsConfig {
@@ -42,21 +39,26 @@ export interface ExtensionsConfig {
 }
 
 export const config = {
-  get<T extends Path<Config>>(
-    key: T,
-    scope?: ConfigurationScope,
-    defaultValue?: PathValue<Config, T>
-  ): PathValue<Config, T> {
+  get<T extends Path<Config>>(key: T, options?: {
+    scope?: ConfigurationScope;
+    defaultValue?: PathValue<Config, T>;
+    section: string;
+  }): PathValue<Config, T> {
+    const section = options?.section ?? "import-cost";
+    const defaultValue = options?.defaultValue;
+    const scope = options?.scope;
+    
     const value = !defaultValue ?
       workspace
-        .getConfiguration("import-cost", scope)
+        .getConfiguration(section, scope)
         .get<PathValue<Config, T>>(key)! :
       workspace
-        .getConfiguration("import-cost", scope)
+        .getConfiguration(section, scope)
         .get<PathValue<Config, T>>(key, defaultValue)!;
 
     return value;
   },
+
   set<T extends Path<Config>>(
     key: T,
     value: PathValue<Config, T>,

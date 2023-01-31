@@ -8,8 +8,9 @@ import { log } from "./log";
 import { scan } from "./scan";
 
 export async function activate(ctx: ExtensionContext) {
-  const esbuildPath = locateESBuild();
-
+  const esbuildPath = await locateESBuild(
+    workspace.workspaceFolders![0].uri
+  );
   if (!esbuildPath) {
     log.error("Couldn't locate ESBuild");
     const action = await window.showErrorMessage(
