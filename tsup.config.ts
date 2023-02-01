@@ -21,7 +21,7 @@ export default defineConfig([
     bundle: true,
     target: ["es2020", "chrome91"],
     platform: "browser",
-    external: ["fs", "vscode"],
+    external: ["vscode"],
     tsconfig: "tsconfig.web.json"
   }
 ]);

@@ -8,28 +8,18 @@ import { log } from "./log";
 import { scan } from "./scan";
 
 export async function activate(ctx: ExtensionContext) {
-  const esbuildPath = await locateESBuild(
-    workspace.workspaceFolders![0].uri
-  );
-  if (!esbuildPath) {
-    log.error("Couldn't locate ESBuild");
-    const action = await window.showErrorMessage(
-      "ESBuild is not installed. Please install it to use this extension.\nYou can read more about why [here](https://luxass.dev/import-cost)",
-      "Install ESBuild",
-      "Skip"
-    );
-
-    if (action === "Install ESBuild") {
-      log.info("Installing ESBuild");
-    }
-  }
-
+  const esbuildPath = await locateESBuild();
+  log.info("ESBuild path", esbuildPath);
   const enable = config.get("enable");
   log.info("Import Cost is turned", enable ? "on" : "off");
 
   ctx.subscriptions.push(
-    workspace.onDidChangeTextDocument(async (event) => scan(event.document)),
-    window.onDidChangeActiveTextEditor(async (event) => scan(event?.document)),
+    workspace.onDidChangeTextDocument(async (event) =>
+      scan(event.document, esbuildPath)
+    ),
+    window.onDidChangeActiveTextEditor(async (event) =>
+      scan(event?.document, esbuildPath)
+    ),
     commands.registerCommand("import-cost.toggle-declaration", () => {
       const enable = config.get("enable");
       config.set("enable", !enable);
@@ -42,5 +32,5 @@ export async function activate(ctx: ExtensionContext) {
     })
   );
 
-  scan(window.activeTextEditor?.document);
+  scan(window.activeTextEditor?.document, esbuildPath);
 }

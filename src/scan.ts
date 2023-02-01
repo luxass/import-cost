@@ -26,7 +26,10 @@ function isAllowedLanguage(language: string, fileName: string): boolean {
   );
 }
 
-export async function scan(document: TextDocument | undefined) {
+export async function scan(
+  document: TextDocument | undefined,
+  esbuildPath: string
+) {
   if (document && config.get("enable")) {
     const { languageId, fileName, getText, uri } = document;
     if (isAllowedLanguage(languageId, fileName)) {
@@ -37,7 +40,8 @@ export async function scan(document: TextDocument | undefined) {
         language: languageId as Language,
         externals: [],
         code,
-        cwd: dirname(uri.fsPath)
+        cwd: dirname(uri.fsPath),
+        esbuild: esbuildPath
       });
       console.log(JSON.stringify(result, null, 2));
       log.info(`RESULT - ${fileName}`, result?.imports.join(", "));
