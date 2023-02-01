@@ -47,6 +47,12 @@
         "command": "import-cost.clear-import-cache",
         "title": "Clear Cache",
         "category": "Import Cost"
+      },
+      {
+        "command": "import-cost.install-esbuild",
+        "title": "Install ESBuild Globally",
+        "category": "Import Cost",
+        "enablement": "!isWeb"
       }
     ],
     "configuration": {

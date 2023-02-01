@@ -2,7 +2,7 @@ import { spawnSync } from "child_process";
 import { join } from "path";
 
 import { getPackageManager } from "pm";
-import { Uri, window, workspace } from "vscode";
+import { commands, Uri, window, workspace } from "vscode";
 
 import { log } from "../../log";
 
@@ -35,7 +35,7 @@ export async function locateESBuild() {
 
     if (action === "Install ESBuild") {
       log.info("Installing ESBuild");
-      install(cmd);
+      await commands.executeCommand("import-cost.install-esbuild");
       esbuildPath = join(
         getGlobalDirectory(cmd, args),
         pm === "yarn"
@@ -54,14 +54,4 @@ function getGlobalDirectory(pm: string, args: string[]): string {
     encoding: "utf8"
   });
   return stdout.trim();
-}
-
-function install(cmd: string) {
-  const args = cmd.startsWith("yarn")
-    ? ["global", "add", "esbuild"]
-    : ["add", "-g", "esbuild"];
-  spawnSync(cmd, args, {
-    shell: true,
-    encoding: "utf8"
-  });
 }
