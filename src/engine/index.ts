@@ -79,6 +79,8 @@ async function resolveExternals(cwd: string) {
     cwd
   });
 
+
+
   if (pkg) {
     const { peerDependencies } = JSON.parse(await readFile(pkg, "utf8"));
     return builtinModules.concat(Object.keys(peerDependencies || {}));

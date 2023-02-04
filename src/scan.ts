@@ -27,7 +27,7 @@ function isAllowedLanguage(language: string, fileName: string): boolean {
 }
 
 export async function scan(
-  document: TextDocument | undefined,
+  document: TextDocument,
   esbuildPath: string
 ) {
   if (document && config.get("enable")) {

@@ -24,8 +24,24 @@ export async function activate(ctx: ExtensionContext) {
   if (!IS_WEB) {
     ctx.subscriptions.push(
       commands.registerCommand("import-cost.install-esbuild", async () => {
-        const pm = await getPackageManager(workspace.workspaceFolders![0].uri);
-        const args = pm === "yarn" ? ["global", "add", "esbuild"] : ["install", "-g", "esbuild"];
+        const workspaceFolders = workspace.workspaceFolders;
+        let pm: "npm" | "yarn" | "pnpm" = "npm";
+        if (!workspaceFolders) {
+          const result = await window.showQuickPick(["npm", "yarn", "pnpm"], {
+            title: "Select a package manager"
+          });
+
+          if (result) {
+            pm = result as "npm" | "yarn" | "pnpm";
+          }
+        } else {
+          // TODO: Support multiple workspaces
+          pm = await getPackageManager(workspaceFolders[0].uri);
+        }
+        const args =
+          pm === "yarn"
+            ? ["global", "add", "esbuild"]
+            : ["install", "-g", "esbuild"];
         tasks.executeTask(
           new Task(
             {
@@ -48,23 +64,33 @@ export async function activate(ctx: ExtensionContext) {
   log.info("Import Cost is turned", enable ? "on" : "off");
 
   ctx.subscriptions.push(
-    workspace.onDidChangeTextDocument(async (event) =>
-      scan(event.document, esbuildPath)
-    ),
-    window.onDidChangeActiveTextEditor(async (event) =>
-      scan(event?.document, esbuildPath)
-    ),
+    workspace.onDidChangeTextDocument(async (event) => {
+      if (!event?.document) return;
+      scan(event.document, esbuildPath);
+    }),
+    window.onDidChangeActiveTextEditor(async (event) => {
+      if (!event?.document) return;
+      scan(event.document, esbuildPath);
+    })
+  );
+
+  ctx.subscriptions.push(
     commands.registerCommand("import-cost.toggle-declaration", () => {
       const enable = config.get("enable");
       config.set("enable", !enable);
       flush();
       window.showInformationMessage(`Import Cost is now turned ${enable}`);
-    }),
+    })
+  );
+
+  ctx.subscriptions.push(
     commands.registerCommand("import-cost.clear-cache", () => {
       window.showInformationMessage("Import Cost cache cleared");
       flush();
     })
   );
 
-  scan(window.activeTextEditor?.document, esbuildPath);
+  if (window.activeTextEditor?.document) {
+    scan(window.activeTextEditor.document, esbuildPath);
+  }
 }

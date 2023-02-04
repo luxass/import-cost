@@ -1,4 +1,3 @@
-import { writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
 import type { BuildOptions } from "esbuild";
@@ -45,12 +44,6 @@ export async function calculateSize(
     log.info("Build result: ", {
       metafile
     });
-
-    await writeFile(
-      "/home/luxas/Desktop/my-t3-app/meta.json",
-      JSON.stringify(metafile, null, 2),
-      "utf-8"
-    );
 
     let size = 0;
     const gzip = 0;
