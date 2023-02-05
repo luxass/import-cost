@@ -80,6 +80,10 @@ function getDirectives(
         if (directive === "platform-browser") {
           directives.platform = "browser";
         }
+
+        if (directive === "skip") {
+          directives.skip = true;
+        }
       }
     });
   }

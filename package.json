@@ -292,14 +292,15 @@
     "@babel/parser": "^7.20.13",
     "@babel/traverse": "^7.20.13",
     "@babel/types": "^7.20.7",
-    "elysius": "^0.1.0",
-    "esbuild-wasm": "^0.17.5"
+    "esbuild-wasm": "^0.17.5",
+    "path-browserify": "^1.0.1"
   },
   "devDependencies": {
     "@luxass/eslint-config": "^2.2.6",
     "@luxass/prettier-config": "^1.1.4",
     "@types/babel__traverse": "^7.18.3",
     "@types/node": "^18.11.17",
+    "@types/path-browserify": "^1.0.0",
     "@types/vscode": "^1.72.0",
     "@vscode/test-web": "^0.0.34",
     "@vscode/vsce": "^2.17.0",

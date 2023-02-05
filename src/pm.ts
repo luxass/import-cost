@@ -1,5 +1,5 @@
-import { find } from "elysius";
-import type { Uri } from "vscode";
+import { find } from "engine/find";
+import { Uri } from "vscode";
 
 import { config } from "./configuration";
 import { log } from "./log";
@@ -14,7 +14,7 @@ export async function getPackageManager(workspaceUri: Uri) {
     const file = await find(
       ["package-lock.json", "yarn.lock", "pnpm-lock.yaml"],
       {
-        cwd: workspaceUri.fsPath
+        cwd: workspaceUri
       }
     );
 

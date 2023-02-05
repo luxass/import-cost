@@ -1,4 +1,5 @@
 import type { Message } from "esbuild";
+import { Uri } from "vscode";
 
 export type Language =
   | "javascript"
@@ -39,10 +40,8 @@ export interface Options {
   /**
    * The current working directory to resolve the package.json from.
    * Only used when external is not provided.
-   *
-   * @default process.cwd()
    */
-  cwd?: string;
+  cwd: Uri;
 
   /**
    * The path to the esbuild binary.
@@ -68,6 +67,7 @@ export interface CostResult {
 export interface ImportDirectives {
   external?: boolean;
   platform?: "browser" | "node";
+  skip?: boolean;
 }
 
 export interface ParsedImport {

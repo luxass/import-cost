@@ -1,12 +1,12 @@
-import { readFile } from "node:fs/promises";
 import { builtinModules } from "node:module";
-import path from "node:path";
 
-import { find } from "elysius";
+import { join } from "env:path";
 import type { Message } from "esbuild";
+import { Uri, workspace } from "vscode";
 
 import { log } from "../log";
 import { calculateSize } from "./build";
+import { find } from "./find";
 import { parseImports } from "./parse";
 import type { CostResult, ImportSize, Options, ParsedImport } from "./types";
 
@@ -15,7 +15,7 @@ export async function calculateCost({
   language,
   externals,
   code,
-  cwd = process.cwd(),
+  cwd,
   esbuild
 }: Options): Promise<CostResult | null> {
   try {
@@ -30,9 +30,13 @@ export async function calculateCost({
       }
     }
 
-    let parsedImports = parseImports(path, code, language).filter(
-      (pkg) => !pkg.fileName.startsWith(".")
-    );
+    let parsedImports = parseImports(path, code, language).filter((pkg) => {
+      if (pkg.directives.skip) {
+        log.info(`Skipping ${pkg.name} because of skip directive`);
+      }
+
+      return !pkg.fileName.startsWith(".") && !pkg.directives.skip;
+    });
 
     await Promise.allSettled(
       parsedImports.map(
@@ -74,15 +78,15 @@ export async function calculateCost({
   }
 }
 
-async function resolveExternals(cwd: string) {
+async function resolveExternals(cwd: Uri) {
   const pkg = await find("package.json", {
     cwd
   });
 
-
-
   if (pkg) {
-    const { peerDependencies } = JSON.parse(await readFile(pkg, "utf8"));
+    const { peerDependencies } = JSON.parse(
+      new TextDecoder().decode(await workspace.fs.readFile(Uri.file(pkg)))
+    );
     return builtinModules.concat(Object.keys(peerDependencies || {}));
   }
 
@@ -119,13 +123,15 @@ function extractCode(
 async function getVersion(pkg: ParsedImport): Promise<string | undefined> {
   try {
     const node_modules = await find("node_modules", {
-      cwd: path.dirname(pkg.fileName)
+      cwd: Uri.file(pkg.fileName)
     });
 
     if (node_modules) {
       const name = getPackageName(pkg);
-      const pkgPath = path.join(node_modules, name, "package.json");
-      const version = JSON.parse(await readFile(pkgPath, "utf-8")).version;
+      const pkgPath = join(node_modules, name, "package.json");
+      const version = JSON.parse(
+        new TextDecoder().decode(await workspace.fs.readFile(Uri.file(pkgPath)))
+      ).version;
       return `${name}@${version}`;
     }
   } catch (e) {
