@@ -13,9 +13,9 @@ export async function calculateSize(
   options?: CalculateSizeOptions
 ): Promise<CalculateSizeResult> {
   try {
-    // const cacheKey = `${parsedImport.fileName}:${parsedImport.version}`;
-    // log.info(`Calculating size for ${cacheKey}...`)
-    // log.info(JSON.stringify(parsedImport))
+    const cacheKey = `${parsedImport.fileName}:${parsedImport.version}`;
+    log.info(`Calculating size for ${cacheKey}...`)
+    log.info(JSON.stringify(parsedImport))
 
     const { build } = await import(options?.esbuild ?? "esbuild");
 

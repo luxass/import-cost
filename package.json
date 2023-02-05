@@ -315,7 +315,7 @@
   "scripts": {
     "vscode:prepublish": "pnpm run build -- --minify",
     "build": "tsup",
-    "dev": "tsup --watch --sourcemap",
+    "dev": "tsup --watch",
     "package": "pnpm vsce package --no-dependencies",
     "release": "pnpm vsce publish --no-dependencies",
     "test": "vitest --run",
