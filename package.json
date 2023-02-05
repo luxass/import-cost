@@ -322,7 +322,8 @@
     "lint": "eslint --cache {src,tests}/**/*.ts",
     "browser": "vscode-test-web --extensionDevelopmentPath=. --folder-uri=vscode-vfs://github/luxass/import-cost",
     "web:serve": "npx serve --cors -l 5000",
-    "web:tunnel": "npx localtunnel -p 5000"
+    "web:tunnel": "npx localtunnel -p 5000",
+    "update:builtins": "node scripts/generate-builtins.mjs"
   },
   "dependencies": {
     "@babel/parser": "^7.20.13",

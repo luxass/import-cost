@@ -1,11 +1,10 @@
-import { builtinModules } from "node:module";
-
 import { join } from "env:path";
 import type { Message } from "esbuild";
 import { Uri, workspace } from "vscode";
 
 import { log } from "../log";
 import { calculateSize } from "./build";
+import { builtins } from "./builtins";
 import { find } from "./find";
 import { parseImports } from "./parse";
 import type { CostResult, ImportSize, Options, ParsedImport } from "./types";
@@ -87,10 +86,10 @@ async function resolveExternals(cwd: Uri) {
     const { peerDependencies } = JSON.parse(
       new TextDecoder().decode(await workspace.fs.readFile(Uri.file(pkg)))
     );
-    return builtinModules.concat(Object.keys(peerDependencies || {}));
+    return builtins.concat(Object.keys(peerDependencies || {}));
   }
 
-  return builtinModules;
+  return builtins;
 }
 
 function extractCode(
