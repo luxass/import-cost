@@ -1,4 +1,4 @@
-import { dirname } from "node:path";
+import { dirname } from "env:path";
 
 import type { BuildOptions } from "esbuild";
 
