@@ -1,7 +1,9 @@
+import { log } from "./log";
+
 export function flush() {
-  console.error("flush")
+  log.info("flush")
 }
 
 export function decorate() {
-  
+  log.info("decorate")
 }

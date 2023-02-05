@@ -1,5 +1,4 @@
 import { dirname } from "env:path";
-
 import type { BuildOptions } from "esbuild";
 
 import { log } from "../log";
@@ -14,7 +13,9 @@ export async function calculateSize(
   options?: CalculateSizeOptions
 ): Promise<CalculateSizeResult> {
   try {
-    // Add caching here.
+    // const cacheKey = `${parsedImport.fileName}:${parsedImport.version}`;
+    // log.info(`Calculating size for ${cacheKey}...`)
+    // log.info(JSON.stringify(parsedImport))
 
     const { build } = await import(options?.esbuild ?? "esbuild");
 
@@ -22,7 +23,7 @@ export async function calculateSize(
 
     const platform = directives?.platform || "node";
     log.info(`Building ${parsedImport.name} for ${platform}...`);
-    log.info("Directives: ", directives);
+    // log.info("Directives: ", directives);
 
     const { errors, warnings, outputFiles, metafile } = await build({
       stdin: {

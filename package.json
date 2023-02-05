@@ -273,6 +273,41 @@
               "astro"
             ]
           }
+        },
+        "import-cost.externals": {
+          "type": "array",
+          "description": "Dependencies to mark as external, so they are not included in the bundle size",
+          "oneOf": [
+            {
+              "type": "string",
+              "examples": [
+                "react",
+                "react@18"
+              ]
+            }
+          ]
+        },
+        "import-cost.browser": {
+          "type": "array",
+          "description": "Dependencies to mark as browser platform, so esbuild bundles them for the browser",
+          "oneOf": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "import-cost.skip": {
+          "type": "array",
+          "description": "Dependencies to skip",
+          "oneOf": [
+            {
+              "type": "string",
+              "examples": [
+                "react",
+                "react@18"
+              ]
+            }
+          ]
         }
       }
     }
@@ -280,9 +315,10 @@
   "scripts": {
     "vscode:prepublish": "pnpm run build -- --minify",
     "build": "tsup",
-    "dev": "tsup --watch",
+    "dev": "tsup --watch --sourcemap",
     "package": "pnpm vsce package --no-dependencies",
     "release": "pnpm vsce publish --no-dependencies",
+    "test": "vitest --run",
     "lint": "eslint --cache {src,tests}/**/*.ts",
     "browser": "vscode-test-web --extensionDevelopmentPath=. --folder-uri=vscode-vfs://github/luxass/import-cost",
     "web:serve": "npx serve --cors -l 5000",
@@ -308,6 +344,7 @@
     "eslint": "^8.30.0",
     "prettier": "^2.8.2",
     "tsup": "^6.5.0",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "vitest": "^0.28.4"
   }
 }

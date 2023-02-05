@@ -1,3 +1,4 @@
+import { cache } from "engine/caching";
 import { locateESBuild } from "env:locate";
 import { getPackageManager } from "pm";
 import type { ExtensionContext } from "vscode";
@@ -85,8 +86,9 @@ export async function activate(ctx: ExtensionContext) {
 
   ctx.subscriptions.push(
     commands.registerCommand("import-cost.clear-cache", () => {
-      window.showInformationMessage("Import Cost cache cleared");
+      cache.clear();
       flush();
+      window.showInformationMessage("Import Cost cache cleared");
     })
   );
 

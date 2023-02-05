@@ -8,6 +8,11 @@ export interface Config {
   colors: ColorsConfig;
   sizes: SizesConfig;
   extensions: ExtensionsConfig;
+  
+  // Just like the directives - but if you want to add multiple very easily.
+  externals: string[];
+  browser: string[];
+  skip: string[];
 
   packageManager: "npm" | "yarn" | "pnpm" | "auto";
 }

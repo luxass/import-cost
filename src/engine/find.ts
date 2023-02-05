@@ -17,8 +17,6 @@ export async function find(
   while (dir !== root) {
     for (const name of fileNames) {
       const file = Uri.file(resolve(dir, name));
-      console.log(file.fsPath);
-      console.log("resolve", resolve(dir, name));
 
       try {
         await workspace.fs.stat(file);
