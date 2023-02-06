@@ -3,11 +3,11 @@ import { locateESBuild } from "env:locate";
 import { getPackageManager } from "pm";
 import type { ExtensionContext } from "vscode";
 import {
-  commands,
   ShellExecution,
   Task,
-  tasks,
   TaskScope,
+  commands,
+  tasks,
   window,
   workspace
 } from "vscode";
