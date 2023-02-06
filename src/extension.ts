@@ -39,10 +39,15 @@ export async function activate(ctx: ExtensionContext) {
           // TODO: Support multiple workspaces
           pm = await getPackageManager(workspaceFolders[0].uri);
         }
-        const args =
-          pm === "yarn"
-            ? ["global", "add", "esbuild"]
-            : ["install", "-g", "esbuild"];
+
+        let args = ["install", "--location=global", "esbuild"];
+
+        if (pm === "yarn") {
+          args = ["global", ...args];
+        } else if (pm === "pnpm") {
+          args = ["add", "-g", ...args];
+        }
+
         tasks.executeTask(
           new Task(
             {
@@ -66,11 +71,11 @@ export async function activate(ctx: ExtensionContext) {
 
   ctx.subscriptions.push(
     workspace.onDidChangeTextDocument(async (event) => {
-      if (!event?.document) return;
+      if (!event?.document || !esbuildPath) return;
       scan(event.document, esbuildPath);
     }),
     window.onDidChangeActiveTextEditor(async (event) => {
-      if (!event?.document) return;
+      if (!event?.document || !esbuildPath) return;
       scan(event.document, esbuildPath);
     })
   );
@@ -92,7 +97,7 @@ export async function activate(ctx: ExtensionContext) {
     })
   );
 
-  if (window.activeTextEditor?.document) {
+  if (window.activeTextEditor?.document && esbuildPath) {
     scan(window.activeTextEditor.document, esbuildPath);
   }
 }

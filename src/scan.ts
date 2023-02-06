@@ -28,7 +28,7 @@ export async function scan(
   document: TextDocument,
   esbuildPath: string
 ) {
-  if (document && config.get("enable")) {
+  if (config.get("enable")) {
     const { languageId, fileName, getText, uri } = document;
     if (isAllowedLanguage(languageId, fileName)) {
       const code = getText();

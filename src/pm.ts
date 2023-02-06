@@ -1,5 +1,5 @@
 import { find } from "engine/find";
-import { Uri } from "vscode";
+import type { Uri } from "vscode";
 
 import { config } from "./configuration";
 import { log } from "./log";

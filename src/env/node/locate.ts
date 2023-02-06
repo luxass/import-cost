@@ -1,8 +1,8 @@
-import { spawnSync } from "child_process";
-import { join } from "path";
+import { spawnSync } from "node:child_process";
+import { join } from "node:path";
 
 import { getPackageManager } from "pm";
-import { commands, Uri, window, workspace } from "vscode";
+import { Uri, commands, window, workspace } from "vscode";
 
 import { log } from "../../log";
 
@@ -12,7 +12,13 @@ export async function locateESBuild() {
   const isWin = process.platform === "win32";
 
   const cmd = isWin ? `${pm}.cmd` : pm;
-  const args = pm === "yarn" ? ["global", "dir"] : ["root", "-g"];
+  let args = ["root", "--location=global"];
+
+  if (pm === "yarn") {
+    args = ["global", "dir"];
+  } else if (pm === "pnpm") {
+    args = ["root", "-g"];
+  }
 
   let esbuildPath = join(
     getGlobalDirectory(cmd, args),

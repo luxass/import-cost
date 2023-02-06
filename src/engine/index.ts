@@ -1,4 +1,4 @@
-import { join } from "env:path";
+import { dirname, join } from "env:path";
 import type { Message } from "esbuild";
 import { Uri, workspace } from "vscode";
 
@@ -122,7 +122,7 @@ function extractCode(
 async function getVersion(pkg: ParsedImport): Promise<string | undefined> {
   try {
     const node_modules = await find("node_modules", {
-      cwd: Uri.file(pkg.fileName)
+      cwd: Uri.file(dirname(pkg.fileName))
     });
 
     if (node_modules) {
