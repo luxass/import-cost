@@ -1,3 +1,4 @@
+import { gzip } from "env:gzip";
 import { dirname } from "env:path";
 import type { BuildOptions } from "esbuild";
 
@@ -14,8 +15,8 @@ export async function calculateSize(
 ): Promise<CalculateSizeResult> {
   try {
     const cacheKey = `${parsedImport.fileName}:${parsedImport.version}`;
-    log.info(`Calculating size for ${cacheKey}...`)
-    log.info(JSON.stringify(parsedImport))
+    log.info(`Calculating size for ${cacheKey}...`);
+    log.info(JSON.stringify(parsedImport));
 
     const { build } = await import(options?.esbuild ?? "esbuild");
 
@@ -47,10 +48,12 @@ export async function calculateSize(
     });
 
     let size = 0;
-    const gzip = 0;
+    let gzipSize = 0;
     if (outputFiles.length > 0) {
       size = outputFiles[0].contents.length;
-      // gzip = outputFiles[0].text.length;
+      gzipSize = await gzip(outputFiles[0].contents, {
+        level: 9
+      }).then(({ length }) => length);
     }
 
     return {
@@ -59,7 +62,7 @@ export async function calculateSize(
       pkg: {
         ...parsedImport,
         size,
-        gzip
+        gzip: gzipSize
       }
     };
   } catch (e) {

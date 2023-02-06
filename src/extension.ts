@@ -43,9 +43,9 @@ export async function activate(ctx: ExtensionContext) {
         let args = ["install", "--location=global", "esbuild"];
 
         if (pm === "yarn") {
-          args = ["global", ...args];
+          args = ["global", "add", "esbuild"];
         } else if (pm === "pnpm") {
-          args = ["add", "-g", ...args];
+          args = ["add", "-g", "esbuild"];
         }
 
         tasks.executeTask(
