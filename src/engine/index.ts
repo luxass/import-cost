@@ -18,7 +18,7 @@ export async function calculateCost({
   esbuild
 }: Options): Promise<CostResult | null> {
   try {
-    externals = await resolveExternals(cwd);
+    externals = await resolveExternals(Uri.file(dirname(cwd.fsPath)));
 
     log.info(`Resolving ${externals.length} externals for ${path}`);
     if (language === "astro" || language === "vue" || language === "svelte") {
