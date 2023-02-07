@@ -345,6 +345,7 @@
     "@babel/traverse": "^7.20.13",
     "@babel/types": "^7.20.7",
     "esbuild-wasm": "^0.16.17",
+    "filesize": "^10.0.6",
     "pako": "^2.1.0",
     "path-browserify": "^1.0.1"
   },

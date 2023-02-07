@@ -4,7 +4,7 @@ import { build } from "esbuild";
 const args = process.argv.slice(2);
 
 let index = args.indexOf("--mode");
-const mode = (index >= 0 ? args[index + 1] : undefined) || "production";
+const mode = (index >= 0 ? args[index + 1] : undefined) || "development";
 
 index = args.indexOf("--target");
 const target = (index >= 0 ? args[index + 1] : undefined) || "node";

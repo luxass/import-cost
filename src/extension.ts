@@ -33,7 +33,7 @@ export async function activate(ctx: ExtensionContext) {
             ? ["global", "add", "esbuild"]
             : ["install", "-g", "esbuild"];
 
-        tasks.executeTask(
+        await tasks.executeTask(
           new Task(
             {
               type: "npm"

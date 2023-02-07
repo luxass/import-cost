@@ -63,8 +63,16 @@ export async function calculateCost({
     )) {
       result.errors = result.errors.concat(result.errors);
       result.warnings = result.warnings.concat(result.warnings);
-      // TODO: Change this - but for now we need to see everything.
-      imports.push(result.pkg as unknown as ImportSize);
+      imports.push({
+        name: result.pkg.name,
+        version: result.pkg.version,
+        line: result.pkg.line,
+        path: result.pkg.fileName,
+        size: {
+          bytes: result.pkg.size,
+          gzip: result.pkg.gzip
+        }
+      });
     }
     return {
       imports,

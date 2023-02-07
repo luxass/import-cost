@@ -38,7 +38,14 @@ export async function locateESBuild() {
     if (action === "Install ESBuild") {
       log.info("Installing ESBuild");
       await commands.executeCommand("import-cost.install-esbuild");
+      // TODO: Check if its installed. If not, show error.
       esbuildPath = getGlobalDirectory(pm);
+      log.info("ESBuild path 23", esbuildPath)
+      try {
+        await workspace.fs.stat(Uri.file(esbuildPath));
+      } catch (e) {
+        window.showErrorMessage("Couldn't install ESBuild. Please try again.")
+      }
     }
   }
 
@@ -48,6 +55,8 @@ export async function locateESBuild() {
 function getGlobalDirectory(pm: string): string {
   const cmd = IS_WIN ? `${pm}.cmd` : pm;
   const args = pm === "yarn" ? ["global", "dir"] : ["root", "-g"];
+  log.info("CMD", cmd);
+  log.info("ARGS", args);
   const { stdout } = spawnSync(cmd, args, {
     shell: true,
     encoding: "utf8"

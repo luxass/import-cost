@@ -20,6 +20,7 @@ importers:
       esbuild: ^0.16.17
       esbuild-wasm: ^0.16.17
       eslint: ^8.30.0
+      filesize: ^10.0.6
       pako: ^2.1.0
       path-browserify: ^1.0.1
       prettier: ^2.8.2
@@ -30,6 +31,7 @@ importers:
       '@babel/traverse': 7.20.13
       '@babel/types': 7.20.7
       esbuild-wasm: 0.16.17
+      filesize: 10.0.6
       pako: 2.1.0
       path-browserify: 1.0.1
     devDependencies:
@@ -2268,6 +2270,11 @@ packages:
     resolution: {integrity: sha512-YPcTBDV+2Tm0VqjybVd32MHdlEGAtuxS3VAYsumFokDSMG+ROT5wawGlnHDoz7bfMcMDt9hxuXvXwoKUx2fkOg==}
     engines: {node: '>=4'}
     dev: true
+
+  /filesize/10.0.6:
+    resolution: {integrity: sha512-rzpOZ4C9vMFDqOa6dNpog92CoLYjD79dnjLk2TYDDtImRIyLTOzqojCb05Opd1WuiWjs+fshhCgTd8cl7y5t+g==}
+    engines: {node: '>= 10.4.0'}
+    dev: false
 
   /fill-range/7.0.1:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}

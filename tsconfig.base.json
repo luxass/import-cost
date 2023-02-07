@@ -11,7 +11,8 @@
     "useUnknownInCatchVariables": false,
     "resolveJsonModule": true,
     "preserveSymlinks": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "."
   },
   "exclude": ["node_modules", "dist"]
 }

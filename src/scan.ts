@@ -42,6 +42,8 @@ export async function scan(
         esbuild: esbuildPath
       });
       log.info(`RESULT - ${fileName}`, result?.imports.join(", "));
+      // TODO: Add decorator to the line.
+      
     }
   }
 }

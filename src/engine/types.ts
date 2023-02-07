@@ -52,7 +52,10 @@ export interface Options {
 }
 
 export interface ImportSize {
-  size: Record<"gzip" | "bundle", number>;
+  size: {
+    bytes: number;
+    gzip: number;
+  };
   line: string;
   path: string;
   name: string;
@@ -99,6 +102,7 @@ export interface CalculateSizeOptions {
 export interface CalculateSizeResult {
   errors: Array<Message>;
   warnings: Array<Message>;
+  // TODO: This type should probably be changed
   pkg: ParsedImport & {
     size: number;
     gzip: number;
