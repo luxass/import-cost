@@ -17,8 +17,8 @@ export function parseImports(
   fileName: string,
   content: string,
   language: Language
-): Array<ParsedImport> {
-  const imports: Array<ParsedImport> = [];
+): ParsedImport[] {
+  const imports: ParsedImport[] = [];
 
   const ast = parse(content, {
     sourceType: "module",

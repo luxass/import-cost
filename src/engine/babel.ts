@@ -8,7 +8,7 @@ export const traverse: typeof import("@types/babel__traverse").default =
   // @ts-expect-error @babel/traverse is not a valid export in esm.
   babelTraverse.default || babelTraverse;
 
-const SHARED_PLUGINS: Array<ParserPlugin> = [
+const SHARED_PLUGINS: ParserPlugin[] = [
   "doExpressions",
   "objectRestSpread",
   ["decorators", { decoratorsBeforeExport: true }],
@@ -19,11 +19,11 @@ const SHARED_PLUGINS: Array<ParserPlugin> = [
   "dynamicImport"
 ];
 
-const JS_PLUGINS: Array<ParserPlugin> = [...SHARED_PLUGINS, "jsx"];
-const TS_PLUGINS: Array<ParserPlugin> = [...SHARED_PLUGINS, "typescript"];
-const TSX_PLUGINS: Array<ParserPlugin> = [...TS_PLUGINS, "jsx"];
+const JS_PLUGINS: ParserPlugin[] = [...SHARED_PLUGINS, "jsx"];
+const TS_PLUGINS: ParserPlugin[] = [...SHARED_PLUGINS, "typescript"];
+const TSX_PLUGINS: ParserPlugin[] = [...TS_PLUGINS, "jsx"];
 
-export function getParserPlugins(language: Language): Array<ParserPlugin> {
+export function getParserPlugins(language: Language): ParserPlugin[] {
   switch (language) {
     case "javascript":
     case "js":

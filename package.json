@@ -74,6 +74,16 @@
           ],
           "default": "both"
         },
+        "import-cost.sizeColor": {
+          "type": "string",
+          "description": "Which size to use for selecting the color",
+          "enum": [
+            "minified",
+            "compressed"
+          ],
+          "default": "minified"
+
+        },
         "import-cost.colors": {
           "type": "object",
           "description": "Colors for the import cost",

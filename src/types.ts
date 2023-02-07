@@ -3,7 +3,9 @@ export type PackageManager = "npm" | "yarn" | "pnpm";
 export interface Config {
   enable: boolean;
   debug: boolean;
-  decorator: "both" | "minfied" | "compressed";
+  decorator: "both" | "minified" | "compressed";
+  sizeColor: "minified" | "compressed";
+
   colors: ColorsConfig;
   sizes: SizesConfig;
   extensions: ExtensionsConfig;

@@ -50,9 +50,9 @@ export async function calculateCost({
       return !!_import.version;
     });
 
-    const warnings: Array<Message> = [];
-    const errors: Array<Message> = [];
-    const imports: Array<ImportSize> = [];
+    const warnings: Message[] = [];
+    const errors: Message[] = [];
+    const imports: ImportSize[] = [];
 
     for await (const result of parsedImports.map((_import) =>
       calculateSize(_import, {
@@ -80,7 +80,7 @@ export async function calculateCost({
       warnings
     };
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     return null;
   }
 }

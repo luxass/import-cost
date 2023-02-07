@@ -35,7 +35,7 @@ export interface Options {
   /**
    * An array of dependencies to exclude from the calculation.
    */
-  externals: Array<string>;
+  externals: string[];
 
   /**
    * The current working directory to resolve the package.json from.
@@ -56,15 +56,15 @@ export interface ImportSize {
     bytes: number;
     gzip: number;
   };
-  line: string;
+  line: number;
   path: string;
   name: string;
 }
 
 export interface CostResult {
-  imports: Array<ImportSize>;
-  warnings: Array<Message>;
-  errors: Array<Message>;
+  imports: ImportSize[];
+  warnings: Message[];
+  errors: Message[];
 }
 
 export interface ImportDirectives {
@@ -91,7 +91,7 @@ export interface CalculateSizeOptions {
   /**
    * An array of dependencies to exclude from the calculation.
    */
-  externals: Array<string>;
+  externals: string[];
 
   /**
    * The path to the esbuild binary.
@@ -100,8 +100,8 @@ export interface CalculateSizeOptions {
 }
 
 export interface CalculateSizeResult {
-  errors: Array<Message>;
-  warnings: Array<Message>;
+  errors: Message[];
+  warnings: Message[];
   // TODO: This type should probably be changed
   pkg: ParsedImport & {
     size: number;

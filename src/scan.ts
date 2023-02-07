@@ -4,6 +4,7 @@ import { config } from "./configuration";
 import { calculateCost } from "./engine";
 import type { Language } from "./engine";
 import { log } from "./logger";
+import { decorate } from "./decoration";
 
 function isAllowedLanguage(language: string, fileName: string): boolean {
   return (
@@ -24,10 +25,7 @@ function isAllowedLanguage(language: string, fileName: string): boolean {
   );
 }
 
-export async function scan(
-  document: TextDocument,
-  esbuildPath: string
-) {
+export async function scan(document: TextDocument, esbuildPath: string) {
   if (config.get("enable")) {
     const { languageId, fileName, getText, uri } = document;
     if (isAllowedLanguage(languageId, fileName)) {
@@ -41,9 +39,11 @@ export async function scan(
         cwd: uri,
         esbuild: esbuildPath
       });
+
       log.info(`RESULT - ${fileName}`, result?.imports.join(", "));
       // TODO: Add decorator to the line.
-      
+
+      decorate(document, result?.imports ?? []);
     }
   }
 }

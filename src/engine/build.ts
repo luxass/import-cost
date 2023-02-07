@@ -35,11 +35,9 @@ export async function calculateSize(
       platform,
       bundle: true,
       format: options?.format || "esm",
-      metafile: true,
       write: false,
       external: options?.externals || [],
       outdir: "dist",
-      allowOverwrite: true,
       minify: true
     } satisfies BuildOptions);
 
