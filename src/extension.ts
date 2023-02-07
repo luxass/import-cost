@@ -1,7 +1,4 @@
-import { cache } from "engine/caching";
 import { locateESBuild } from "env:locate";
-import { getPackageManager } from "pm";
-import type { PackageManager } from "types";
 import type { ExtensionContext } from "vscode";
 import {
   ShellExecution,
@@ -15,8 +12,11 @@ import {
 
 import { config } from "./configuration";
 import { flush } from "./decoration";
-import { log } from "./log";
+import { cache } from "./engine/caching";
+import { log } from "./logger";
+import { getPackageManager } from "./pm";
 import { scan } from "./scan";
+import type { PackageManager } from "./types";
 
 declare global {
   const IS_WEB: boolean;
@@ -31,7 +31,7 @@ export async function activate(ctx: ExtensionContext) {
         const args =
           pm === "yarn"
             ? ["global", "add", "esbuild"]
-            : ["add", "-g", "esbuild"];
+            : ["install", "-g", "esbuild"];
 
         tasks.executeTask(
           new Task(

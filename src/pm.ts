@@ -1,9 +1,9 @@
-import { find } from "engine/find";
-import type { Uri } from "vscode";
-import { window, workspace } from "vscode";
+import { Uri, workspace } from "vscode";
 
 import { config } from "./configuration";
-import { log } from "./log";
+import { find } from "./engine/find";
+import { log } from "./logger";
+import type { PackageManager } from "./types";
 
 export async function findPackageManager(workspaceUri: Uri) {
   let pkgManager = config.get("packageManager", {
@@ -36,16 +36,12 @@ export async function findPackageManager(workspaceUri: Uri) {
 export async function getPackageManager() {
   const workspaceFolders = workspace.workspaceFolders;
 
-  let pm: "npm" | "yarn" | "pnpm" = "npm";
-  if (!workspaceFolders) {
-    const result = await window.showQuickPick(["npm", "yarn", "pnpm"], {
-      title: "Select a package manager"
-    });
-
-    if (result) {
-      pm = result as "npm" | "yarn" | "pnpm";
-    }
-  } else {
+  let pm: PackageManager = config.get("fallback") || "npm";
+  if (workspaceFolders?.length) {
+    const work = workspace.getWorkspaceFolder(
+      Uri.file("/home/luxas/Desktop/my-t3-app/src/pages/index.tsx")
+    );
+    log.info("Workspace", work);
     // TODO: Support multiple workspaces
     pm = await findPackageManager(workspaceFolders[0].uri);
   }

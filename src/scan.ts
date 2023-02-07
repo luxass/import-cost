@@ -3,7 +3,7 @@ import type { TextDocument } from "vscode";
 import { config } from "./configuration";
 import { calculateCost } from "./engine";
 import type { Language } from "./engine";
-import { log } from "./log";
+import { log } from "./logger";
 
 function isAllowedLanguage(language: string, fileName: string): boolean {
   return (

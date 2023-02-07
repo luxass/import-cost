@@ -2,7 +2,7 @@ import { dirname, join } from "env:path";
 import type { Message } from "esbuild";
 import { Uri, workspace } from "vscode";
 
-import { log } from "../log";
+import { log } from "../logger";
 import { calculateSize } from "./build";
 import { builtins } from "./builtins";
 import { find } from "./find";

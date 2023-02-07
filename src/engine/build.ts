@@ -2,7 +2,7 @@ import { gzip } from "env:gzip";
 import { dirname } from "env:path";
 import type { BuildOptions } from "esbuild";
 
-import { log } from "../log";
+import { log } from "../logger";
 import type {
   CalculateSizeOptions,
   CalculateSizeResult,

@@ -1,29 +1,25 @@
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 
-import { getPackageManager } from "pm";
 import { Uri, commands, window, workspace } from "vscode";
 
-import { log } from "../../log";
+import { config } from "../../configuration";
+import { log } from "../../logger";
+import { findPackageManager } from "../../pm";
+import type { PackageManager } from "../../types";
+
+const IS_WIN = process.platform === "win32";
 
 export async function locateESBuild() {
-  const pm = await getPackageManager();
+  const workspaceFolders = workspace.workspaceFolders;
 
-  const isWin = process.platform === "win32";
+  let pm: PackageManager = config.get("fallback") || "npm";
+  if (workspaceFolders?.length) {
+    // TODO: Support multiple workspaces
+    pm = await findPackageManager(workspaceFolders[0].uri);
+  }
 
-  const cmd = isWin ? `${pm}.cmd` : pm;
-  const args = pm === "yarn" ? ["global", "dir"] : ["root", "-g"];
-
-  // TODO: Also check the other global directories, we dont want to install 3 seperate esbuilds....
-  // Maybe introduce a new setting to set a fallback path?
-  // Like npm is default.
-  const createGlobal = () =>
-    join(
-      getGlobalDirectory(cmd, args),
-      pm === "yarn" ? "node_modules/esbuild/lib/main.js" : "esbuild/lib/main.js"
-    );
-
-  let esbuildPath = createGlobal();
+  let esbuildPath = getGlobalDirectory(pm);
 
   try {
     await workspace.fs.stat(Uri.file(esbuildPath));
@@ -42,17 +38,23 @@ export async function locateESBuild() {
     if (action === "Install ESBuild") {
       log.info("Installing ESBuild");
       await commands.executeCommand("import-cost.install-esbuild");
-      esbuildPath = createGlobal();
+      esbuildPath = getGlobalDirectory(pm);
     }
   }
 
   return esbuildPath;
 }
 
-function getGlobalDirectory(pm: string, args: string[]): string {
-  const { stdout } = spawnSync(pm, args, {
+function getGlobalDirectory(pm: string): string {
+  const cmd = IS_WIN ? `${pm}.cmd` : pm;
+  const args = pm === "yarn" ? ["global", "dir"] : ["root", "-g"];
+  const { stdout } = spawnSync(cmd, args, {
     shell: true,
     encoding: "utf8"
   });
-  return stdout.trim();
+
+  return join(
+    stdout.trim(),
+    pm === "yarn" ? "node_modules/esbuild/lib/main.js" : "esbuild/lib/main.js"
+  );
 }

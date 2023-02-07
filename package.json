@@ -309,6 +309,16 @@
               ]
             }
           ]
+        },
+        "import-cost.fallback": {
+          "type": "string",
+          "description": "Fallback package manager to use for global install",
+          "enum": [
+            "npm",
+            "pnpm",
+            "yarn"
+          ],
+          "default": "npm"
         }
       }
     }
