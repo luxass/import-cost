@@ -7,10 +7,8 @@ import { Uri, commands, window, workspace } from "vscode";
 import { log } from "../../log";
 
 export async function locateESBuild() {
-  // TODO: Support multiple workspaces
-  const pm = await getPackageManager(workspace.workspaceFolders![0].uri);
+  const pm = await getPackageManager();
 
-  
   const isWin = process.platform === "win32";
 
   const cmd = isWin ? `${pm}.cmd` : pm;
@@ -19,11 +17,13 @@ export async function locateESBuild() {
   // TODO: Also check the other global directories, we dont want to install 3 seperate esbuilds....
   // Maybe introduce a new setting to set a fallback path?
   // Like npm is default.
+  const createGlobal = () =>
+    join(
+      getGlobalDirectory(cmd, args),
+      pm === "yarn" ? "node_modules/esbuild/lib/main.js" : "esbuild/lib/main.js"
+    );
 
-  let esbuildPath = join(
-    getGlobalDirectory(cmd, args),
-    pm === "yarn" ? "node_modules/esbuild/lib/main.js" : "esbuild/lib/main.js"
-  );
+  let esbuildPath = createGlobal();
 
   try {
     await workspace.fs.stat(Uri.file(esbuildPath));
@@ -42,12 +42,7 @@ export async function locateESBuild() {
     if (action === "Install ESBuild") {
       log.info("Installing ESBuild");
       await commands.executeCommand("import-cost.install-esbuild");
-      esbuildPath = join(
-        getGlobalDirectory(cmd, args),
-        pm === "yarn"
-          ? "node_modules/esbuild/lib/main.js"
-          : "esbuild/lib/main.js"
-      );
+      esbuildPath = createGlobal();
     }
   }
 

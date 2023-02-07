@@ -1,5 +1,5 @@
 import type { Message } from "esbuild";
-import { Uri } from "vscode";
+import type { Uri } from "vscode";
 
 export type Language =
   | "javascript"

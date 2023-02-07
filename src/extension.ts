@@ -1,6 +1,7 @@
 import { cache } from "engine/caching";
 import { locateESBuild } from "env:locate";
 import { getPackageManager } from "pm";
+import type { PackageManager } from "types";
 import type { ExtensionContext } from "vscode";
 import {
   ShellExecution,
@@ -25,22 +26,7 @@ export async function activate(ctx: ExtensionContext) {
   if (!IS_WEB) {
     ctx.subscriptions.push(
       commands.registerCommand("import-cost.install-esbuild", async () => {
-        const workspaceFolders = workspace.workspaceFolders;
-        let pm: "npm" | "yarn" | "pnpm" = "npm";
-        if (!workspaceFolders) {
-          const result = await window.showQuickPick(["npm", "yarn", "pnpm"], {
-            title: "Select a package manager"
-          });
-
-          if (result) {
-            pm = result as "npm" | "yarn" | "pnpm";
-          }
-        } else {
-          // TODO: Support multiple workspaces
-          pm = await getPackageManager(workspaceFolders[0].uri);
-        }
-
-        
+        const pm: PackageManager = await getPackageManager();
 
         const args =
           pm === "yarn"
