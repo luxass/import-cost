@@ -40,13 +40,12 @@ export async function activate(ctx: ExtensionContext) {
           pm = await getPackageManager(workspaceFolders[0].uri);
         }
 
-        let args = ["install", "--location=global", "esbuild"];
+        
 
-        if (pm === "yarn") {
-          args = ["global", "add", "esbuild"];
-        } else if (pm === "pnpm") {
-          args = ["add", "-g", "esbuild"];
-        }
+        const args =
+          pm === "yarn"
+            ? ["global", "add", "esbuild"]
+            : ["add", "-g", "esbuild"];
 
         tasks.executeTask(
           new Task(

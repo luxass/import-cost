@@ -41,7 +41,6 @@ export async function scan(
         cwd: uri,
         esbuild: esbuildPath
       });
-      console.log(JSON.stringify(result, null, 2));
       log.info(`RESULT - ${fileName}`, result?.imports.join(", "));
     }
   }

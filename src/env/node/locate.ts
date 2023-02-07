@@ -7,18 +7,18 @@ import { Uri, commands, window, workspace } from "vscode";
 import { log } from "../../log";
 
 export async function locateESBuild() {
+  // TODO: Support multiple workspaces
   const pm = await getPackageManager(workspace.workspaceFolders![0].uri);
 
+  
   const isWin = process.platform === "win32";
 
   const cmd = isWin ? `${pm}.cmd` : pm;
-  let args = ["root", "--location=global"];
+  const args = pm === "yarn" ? ["global", "dir"] : ["root", "-g"];
 
-  if (pm === "yarn") {
-    args = ["global", "dir"];
-  } else if (pm === "pnpm") {
-    args = ["root", "-g"];
-  }
+  // TODO: Also check the other global directories, we dont want to install 3 seperate esbuilds....
+  // Maybe introduce a new setting to set a fallback path?
+  // Like npm is default.
 
   let esbuildPath = join(
     getGlobalDirectory(cmd, args),
