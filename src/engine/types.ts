@@ -1,4 +1,5 @@
 import type { Message } from "esbuild";
+import type { Uri } from "vscode";
 
 export type Language =
   | "javascript"
@@ -39,10 +40,8 @@ export interface Options {
   /**
    * The current working directory to resolve the package.json from.
    * Only used when external is not provided.
-   *
-   * @default process.cwd()
    */
-  cwd?: string;
+  cwd: Uri;
 
   /**
    * The path to the esbuild binary.
@@ -53,7 +52,10 @@ export interface Options {
 }
 
 export interface ImportSize {
-  size: Record<"gzip" | "bundle", number>;
+  size: {
+    bytes: number;
+    gzip: number;
+  };
   line: string;
   path: string;
   name: string;
@@ -68,6 +70,7 @@ export interface CostResult {
 export interface ImportDirectives {
   external?: boolean;
   platform?: "browser" | "node";
+  skip?: boolean;
 }
 
 export interface ParsedImport {
@@ -99,6 +102,7 @@ export interface CalculateSizeOptions {
 export interface CalculateSizeResult {
   errors: Array<Message>;
   warnings: Array<Message>;
+  // TODO: This type should probably be changed
   pkg: ParsedImport & {
     size: number;
     gzip: number;

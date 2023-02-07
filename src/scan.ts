@@ -1,11 +1,9 @@
-import { dirname } from "node:path";
-
 import type { TextDocument } from "vscode";
 
 import { config } from "./configuration";
 import { calculateCost } from "./engine";
 import type { Language } from "./engine";
-import { log } from "./log";
+import { log } from "./logger";
 
 function isAllowedLanguage(language: string, fileName: string): boolean {
   return (
@@ -26,8 +24,11 @@ function isAllowedLanguage(language: string, fileName: string): boolean {
   );
 }
 
-export async function scan(document: TextDocument | undefined) {
-  if (document && config.get("enable")) {
+export async function scan(
+  document: TextDocument,
+  esbuildPath: string
+) {
+  if (config.get("enable")) {
     const { languageId, fileName, getText, uri } = document;
     if (isAllowedLanguage(languageId, fileName)) {
       const code = getText();
@@ -37,10 +38,12 @@ export async function scan(document: TextDocument | undefined) {
         language: languageId as Language,
         externals: [],
         code,
-        cwd: dirname(uri.fsPath)
+        cwd: uri,
+        esbuild: esbuildPath
       });
-      console.log(JSON.stringify(result, null, 2));
       log.info(`RESULT - ${fileName}`, result?.imports.join(", "));
+      // TODO: Add decorator to the line.
+      
     }
   }
 }

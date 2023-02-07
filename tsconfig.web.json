@@ -3,9 +3,8 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "baseUrl": ".",
     "paths": {
-      "env:*": ["src/env/node/*"]
+      "env:*": ["src/env/web/*"]
     }
   },
   "include": ["src/**/*"],

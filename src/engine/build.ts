@@ -1,8 +1,8 @@
-import { dirname } from "node:path";
-
+import { gzip } from "env:gzip";
+import { dirname } from "env:path";
 import type { BuildOptions } from "esbuild";
 
-import { log } from "../log";
+import { log } from "../logger";
 import type {
   CalculateSizeOptions,
   CalculateSizeResult,
@@ -14,7 +14,9 @@ export async function calculateSize(
   options?: CalculateSizeOptions
 ): Promise<CalculateSizeResult> {
   try {
-    // Add caching here.
+    const cacheKey = `${parsedImport.fileName}:${parsedImport.version}`;
+    log.info(`Calculating size for ${cacheKey}...`);
+    log.info(JSON.stringify(parsedImport));
 
     const { build } = await import(options?.esbuild ?? "esbuild");
 
@@ -22,9 +24,9 @@ export async function calculateSize(
 
     const platform = directives?.platform || "node";
     log.info(`Building ${parsedImport.name} for ${platform}...`);
-    log.info("Directives: ", directives);
+    // log.info("Directives: ", directives);
 
-    const { errors, warnings, outputFiles } = await build({
+    const { errors, warnings, outputFiles, metafile } = await build({
       stdin: {
         contents: parsedImport.code,
         resolveDir: dirname(parsedImport.fileName),
@@ -33,7 +35,7 @@ export async function calculateSize(
       platform,
       bundle: true,
       format: options?.format || "esm",
-      // metafile: true,
+      metafile: true,
       write: false,
       external: options?.externals || [],
       outdir: "dist",
@@ -41,11 +43,17 @@ export async function calculateSize(
       minify: true
     } satisfies BuildOptions);
 
+    log.info("Build result: ", {
+      metafile
+    });
+
     let size = 0;
-    const gzip = 0;
+    let gzipSize = 0;
     if (outputFiles.length > 0) {
       size = outputFiles[0].contents.length;
-      // gzip = outputFiles[0].text.length;
+      gzipSize = await gzip(outputFiles[0].contents, {
+        level: 9
+      }).then(({ length }) => length);
     }
 
     return {
@@ -54,7 +62,7 @@ export async function calculateSize(
       pkg: {
         ...parsedImport,
         size,
-        gzip
+        gzip: gzipSize
       }
     };
   } catch (e) {

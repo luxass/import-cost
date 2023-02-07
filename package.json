@@ -21,6 +21,7 @@
     "Other"
   ],
   "main": "./dist/extension.js",
+  "browser": "./dist/web/extension.js",
   "icon": "media/icon.png",
   "engines": {
     "vscode": "^1.72.0"
@@ -47,6 +48,12 @@
         "command": "import-cost.clear-import-cache",
         "title": "Clear Cache",
         "category": "Import Cost"
+      },
+      {
+        "command": "import-cost.install-esbuild",
+        "title": "Install ESBuild Globally",
+        "category": "Import Cost",
+        "enablement": "!isWeb"
       }
     ],
     "configuration": {
@@ -267,36 +274,96 @@
               "astro"
             ]
           }
+        },
+        "import-cost.externals": {
+          "type": "array",
+          "description": "Dependencies to mark as external, so they are not included in the bundle size",
+          "oneOf": [
+            {
+              "type": "string",
+              "examples": [
+                "react",
+                "react@18"
+              ]
+            }
+          ]
+        },
+        "import-cost.browser": {
+          "type": "array",
+          "description": "Dependencies to mark as browser platform, so esbuild bundles them for the browser",
+          "oneOf": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "import-cost.skip": {
+          "type": "array",
+          "description": "Dependencies to skip",
+          "oneOf": [
+            {
+              "type": "string",
+              "examples": [
+                "react",
+                "react@18"
+              ]
+            }
+          ]
+        },
+        "import-cost.fallback": {
+          "type": "string",
+          "description": "Fallback package manager to use for global install",
+          "enum": [
+            "npm",
+            "pnpm",
+            "yarn"
+          ],
+          "default": "npm"
         }
       }
     }
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run build -- --minify",
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "vscode:prepublish": "concurrently \"pnpm run build:web --minify\" \"pnpm run build:ext --minify\"",
+    "build": "concurrently \"pnpm run build:web\" \"pnpm run build:ext\"",
+    "build:web": "node ./scripts/build.mjs --target web --mode production",
+    "build:ext": "node ./scripts/build.mjs --target ext --mode production",
+    "dev": "concurrently \"pnpm run dev:web\" \"pnpm run dev:ext\"",
+    "dev:web": "node ./scripts/build.mjs --target web --watch",
+    "dev:ext": "node ./scripts/build.mjs --target ext --watch",
     "package": "pnpm vsce package --no-dependencies",
     "release": "pnpm vsce publish --no-dependencies",
-    "lint": "eslint --cache {src,tests}/**/*.ts"
+    "test": "vitest --run",
+    "lint": "eslint --cache {src,tests}/**/*.ts",
+    "browser": "vscode-test-web --extensionDevelopmentPath=.",
+    "web:serve": "npx serve --cors -l 5000",
+    "web:tunnel": "npx localtunnel -p 5000",
+    "update:builtins": "node scripts/generate-builtins.mjs"
   },
   "dependencies": {
     "@babel/parser": "^7.20.13",
     "@babel/traverse": "^7.20.13",
     "@babel/types": "^7.20.7",
-    "elysius": "^0.1.0"
+    "esbuild-wasm": "^0.16.17",
+    "filesize": "^10.0.6",
+    "pako": "^2.1.0",
+    "path-browserify": "^1.0.1"
   },
   "devDependencies": {
     "@luxass/eslint-config": "^2.2.6",
-    "@luxass/prettier-config": "^1.1.4",
+    "@luxass/prettier-config": "^1.1.9",
     "@types/babel__traverse": "^7.18.3",
     "@types/node": "^18.11.17",
+    "@types/pako": "^2.0.0",
+    "@types/path-browserify": "^1.0.0",
     "@types/vscode": "^1.72.0",
     "@vscode/test-web": "^0.0.34",
     "@vscode/vsce": "^2.17.0",
-    "esbuild": "^0.16.16",
+    "concurrently": "^7.6.0",
+    "esbuild": "^0.16.17",
     "eslint": "^8.30.0",
     "prettier": "^2.8.2",
-    "tsup": "^6.5.0",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5",
+    "vitest": "^0.28.4"
   }
 }

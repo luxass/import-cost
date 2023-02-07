@@ -2,6 +2,6 @@
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "luxass.tsup-problem-matchers"
+    "connor4312.esbuild-problem-matchers"
   ]
 }

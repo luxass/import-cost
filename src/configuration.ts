@@ -1,62 +1,32 @@
-import {
-  ConfigurationTarget,
-  workspace
-} from "vscode";
-import type {
-  ConfigurationScope
-} from "vscode";
+import { ConfigurationTarget, workspace } from "vscode";
+import type { ConfigurationScope } from "vscode";
 
-export interface Config {
-  enable: boolean;
-  debug: boolean;
-  decorator: "both" | "minfied" | "compressed";
-  colors: ColorsConfig;
-  sizes: SizesConfig;
-  extensions: ExtensionsConfig;
-}
-
-export interface ColorsConfig {
-  small: ColorsObject;
-  medium: ColorsObject;
-  large: ColorsObject;
-  extreme: ColorsObject;
-}
-
-export interface ColorsObject {
-  dark: string;
-  light: string;
-}
-
-export interface SizesConfig {
-  small: number;
-  medium: number;
-  large: number;
-}
-
-export interface ExtensionsConfig {
-  typescript: string[];
-  javascript: string[];
-  vue: string[];
-  svelte: string[];
-  astro: string[];
-}
+import type { Config } from "./types";
 
 export const config = {
   get<T extends Path<Config>>(
     key: T,
-    scope?: ConfigurationScope,
-    defaultValue?: PathValue<Config, T>
+    options?: {
+      scope?: ConfigurationScope;
+      defaultValue?: PathValue<Config, T>;
+      section: string;
+    }
   ): PathValue<Config, T> {
+    const section = options?.section ?? "import-cost";
+    const defaultValue = options?.defaultValue;
+    const scope = options?.scope;
+
     const value = !defaultValue ?
       workspace
-        .getConfiguration("import-cost", scope)
+        .getConfiguration(section, scope)
         .get<PathValue<Config, T>>(key)! :
       workspace
-        .getConfiguration("import-cost", scope)
+        .getConfiguration(section, scope)
         .get<PathValue<Config, T>>(key, defaultValue)!;
 
     return value;
   },
+
   set<T extends Path<Config>>(
     key: T,
     value: PathValue<Config, T>,
@@ -66,16 +36,16 @@ export const config = {
   }
 };
 
-type SubPath<T, Key extends keyof T> = Key extends string
+type ChildPath<T, Key extends keyof T> = Key extends string
   ? T[Key] extends Record<string, any>
     ?
-      | `${Key}.${SubPath<T[Key], Exclude<keyof T[Key], keyof any[]>> &
+      | `${Key}.${ChildPath<T[Key], Exclude<keyof T[Key], keyof any[]>> &
       string}`
       | `${Key}.${Exclude<keyof T[Key], keyof any[]> & string}`
     : never
   : never;
 
-type Path<T> = SubPath<T, keyof T> | keyof T;
+type Path<T> = ChildPath<T, keyof T> | keyof T;
 
 type PathValue<T, P extends Path<T>> = P extends `${infer Key}.${infer Rest}`
   ? Key extends keyof T
