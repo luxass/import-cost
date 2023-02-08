@@ -94,7 +94,10 @@ async function resolveExternals(cwd: Uri) {
     const { peerDependencies } = JSON.parse(
       new TextDecoder().decode(await workspace.fs.readFile(Uri.file(pkg)))
     );
-    return builtins.concat(Object.keys(peerDependencies || {}));
+    return builtins.concat(Object.keys(peerDependencies || {})).concat([
+      "react",
+      "react-dom"
+    ]);
   }
 
   return builtins;

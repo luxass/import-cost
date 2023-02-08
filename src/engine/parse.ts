@@ -94,12 +94,14 @@ function getDirectives(
 function getImportString(node: ImportDeclaration): string {
   const importString =
     node.specifiers.length > 0 ? parseSpecifiers(node) : "* as tmp";
+
   return `import ${importString} from '${
     node.source.value
   }'\nconsole.log(${importString.replace("* as ", "")});`;
 }
 
 function parseSpecifiers(node: ImportDeclaration): string {
+  let importSpecifier: string | undefined;
   const importSpecifiers = node.specifiers
     .sort((s1, s2) => {
       if (isImportSpecifier(s1) && isImportSpecifier(s2)) {
@@ -107,25 +109,33 @@ function parseSpecifiers(node: ImportDeclaration): string {
       }
       return 0;
     })
-    .filter((specifier) => {
-      if (isImportSpecifier(specifier)) {
-        return specifier.importKind !== "type";
-      }
-      return true;
-    })
+    // .filter((specifier) => {
+    //   if (isImportSpecifier(specifier)) {
+    //     return specifier.importKind !== "type";
+    //   }
+    //   return true;
+    // })
     .map((specifier, i) => {
       if (isImportNamespaceSpecifier(specifier)) {
         return `* as ${specifier.local.name}`;
       } else if (isImportDefaultSpecifier(specifier)) {
         return specifier.local.name;
       } else if (isImportSpecifier(specifier)) {
+        if (!importSpecifier) {
+          importSpecifier = "{";
+        }
+
+        importSpecifier += `${getName(specifier.imported)}`;
         if (
           node.specifiers[i + 1] &&
           isImportSpecifier(node.specifiers[i + 1])
         ) {
-          return `${getName(specifier.imported)}`;
+          importSpecifier += ", ";
+          return undefined;
         } else {
-          return `${getName(specifier.imported)}`;
+          const result = (importSpecifier += "}");
+          importSpecifier = undefined;
+          return result;
         }
       } else {
         return undefined;
@@ -133,7 +143,7 @@ function parseSpecifiers(node: ImportDeclaration): string {
     })
     .filter(Boolean)
     .join(", ");
-  return `{${importSpecifiers}}`;
+  return importSpecifiers;
 }
 
 function getImportName(node: CallExpression): string {
