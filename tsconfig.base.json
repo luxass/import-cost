@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "lib": ["ESNext"],
+    // We need DOM here because ESBuild uses WebAssembly which is only available in lib.dom.d.ts
+    // https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/826
+    "lib": ["ESNext", "DOM"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,

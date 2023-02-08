@@ -1,5 +1,6 @@
 import { dirname, join } from "env:path";
 import type { Message } from "esbuild";
+import { config } from "src/configuration";
 import { Uri, workspace } from "vscode";
 
 import { log } from "../logger";
@@ -34,6 +35,7 @@ export async function calculateCost({
       return !pkg.fileName.startsWith(".") && !pkg.directives.skip;
     });
 
+    // TODO: This could probably be done in another way.
     await Promise.allSettled(
       parsedImports.map(
         async (_import) => (_import.version = await getVersion(_import))
@@ -54,12 +56,13 @@ export async function calculateCost({
     const warnings: Message[] = [];
     const errors: Message[] = [];
     const imports: ImportSize[] = [];
+
+    log.info(`Resolving externals for ${path}`);
     externals = await resolveExternals(
       Uri.file(dirname(cwd.fsPath)),
-      externals
+      externals.concat(config.get("externals"))
     );
 
-    log.info(`Resolving ${externals.length} externals for ${path}`);
     for await (const result of parsedImports.map((_import) =>
       calculateSize(_import, {
         externals,
@@ -71,7 +74,6 @@ export async function calculateCost({
       result.warnings = result.warnings.concat(result.warnings);
       imports.push({
         name: result.pkg.name,
-        version: result.pkg.version,
         line: result.pkg.line,
         path: result.pkg.fileName,
         size: {
