@@ -18,7 +18,7 @@ export async function calculateSize(
     log.info(`Calculating size for ${cacheKey}...`);
     log.info(JSON.stringify(parsedImport));
 
-    const { build } = await import(options?.esbuild ?? "esbuild");
+    const { build }: typeof import("esbuild") = await import(options?.esbuild ?? "esbuild");
 
     const directives = parsedImport.directives;
 
@@ -26,7 +26,7 @@ export async function calculateSize(
     log.info(`Building ${parsedImport.name} for ${platform}...`);
     // log.info("Directives: ", directives);
 
-    const { errors, warnings, outputFiles, metafile } = await build({
+    const { errors, warnings, outputFiles } = await build({
       stdin: {
         contents: parsedImport.code,
         resolveDir: dirname(parsedImport.fileName),
@@ -41,15 +41,11 @@ export async function calculateSize(
       minify: true
     } satisfies BuildOptions);
 
-    log.info("Build result: ", {
-      metafile
-    });
-
     let size = 0;
     let gzipSize = 0;
     if (outputFiles.length > 0) {
-      size = outputFiles[0].contents.length;
-      gzipSize = await gzip(outputFiles[0].contents, {
+      size = outputFiles[0].contents.byteLength;
+      gzipSize = await gzip(outputFiles[0].text, {
         level: 9
       }).then(({ length }) => length);
     }
