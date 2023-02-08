@@ -82,7 +82,6 @@
             "compressed"
           ],
           "default": "minified"
-
         },
         "import-cost.colors": {
           "type": "object",
@@ -298,14 +297,51 @@
             }
           ]
         },
-        "import-cost.browser": {
-          "type": "array",
-          "description": "Dependencies to mark as browser platform, so esbuild bundles them for the browser",
-          "oneOf": [
-            {
-              "type": "string"
+        "import-cost.defaultPlatform": {
+          "type": "string",
+          "description": "Default platform to use for bundling (globally)",
+          "enum": [
+            "node",
+            "browser"
+          ],
+          "default": "node"
+        },
+        "import-cost.platform": {
+          "type": "object",
+          "description": "Bundles the specific dependency for the given platform",
+          "patternProperties": {
+            ".*": {
+              "type": "string",
+              "enum": [
+                "node",
+                "browser"
+              ],
+              "default": "node"
             }
-          ]
+          }
+        },
+        "import-cost.defaultFormat": {
+          "type": "string",
+          "description": "Default format to use for bundling (globally)",
+          "enum": [
+            "cjs",
+            "esm"
+          ],
+          "default": "cjs"
+        },
+        "import-cost.format": {
+          "type": "object",
+          "description": "Bundles the specific dependency for the given format",
+          "patternProperties": {
+            ".*": {
+              "type": "string",
+              "enum": [
+                "cjs",
+                "esm"
+              ],
+              "default": "cjs"
+            }
+          }
         },
         "import-cost.skip": {
           "type": "array",

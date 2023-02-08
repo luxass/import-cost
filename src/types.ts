@@ -12,8 +12,11 @@ export interface Config {
 
   // Just like the directives - but if you want to add multiple very easily.
   externals: string[];
-  browser: string[];
   skip: string[];
+  defaultPlatform: "browser" | "node";
+  platform: Record<string, "browser" | "node">;
+  defaultFormat: "cjs" | "esm";
+  format: "cjs" | "esm";
 
   fallback: PackageManager;
 

@@ -18,9 +18,6 @@ export async function calculateCost({
   esbuild
 }: Options): Promise<CostResult | null> {
   try {
-    externals = await resolveExternals(Uri.file(dirname(cwd.fsPath)));
-
-    log.info(`Resolving ${externals.length} externals for ${path}`);
     if (language === "astro" || language === "vue" || language === "svelte") {
       const extracted = extractCode(code, language);
       if (extracted) {
@@ -50,10 +47,16 @@ export async function calculateCost({
       return !!_import.version;
     });
 
+    if (parsedImports.length === 0) {
+      return null;
+    }
+
     const warnings: Message[] = [];
     const errors: Message[] = [];
     const imports: ImportSize[] = [];
+    externals = await resolveExternals(Uri.file(dirname(cwd.fsPath)));
 
+    log.info(`Resolving ${externals.length} externals for ${path}`);
     for await (const result of parsedImports.map((_import) =>
       calculateSize(_import, {
         externals,
@@ -94,10 +97,7 @@ async function resolveExternals(cwd: Uri) {
     const { peerDependencies } = JSON.parse(
       new TextDecoder().decode(await workspace.fs.readFile(Uri.file(pkg)))
     );
-    return builtins.concat(Object.keys(peerDependencies || {})).concat([
-      "react",
-      "react-dom"
-    ]);
+    return builtins.concat(Object.keys(peerDependencies || {}));
   }
 
   return builtins;

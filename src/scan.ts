@@ -1,10 +1,10 @@
 import type { TextDocument } from "vscode";
 
 import { config } from "./configuration";
+import { decorate } from "./decoration";
 import { calculateCost } from "./engine";
 import type { Language } from "./engine";
 import { log } from "./logger";
-import { decorate } from "./decoration";
 
 function isAllowedLanguage(language: string, fileName: string): boolean {
   return (
@@ -40,9 +40,13 @@ export async function scan(document: TextDocument, esbuildPath: string) {
         esbuild: esbuildPath
       });
 
+      if (!result) {
+        log.info(`No imports found - ${fileName}`);
+        return;
+      }
+
       log.info(`RESULT - ${fileName}`, result?.imports.join(", "));
       // TODO: Add decorator to the line.
-
       decorate(document, result?.imports ?? []);
     }
   }

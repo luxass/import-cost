@@ -18,7 +18,9 @@ export async function calculateSize(
     log.info(`Calculating size for ${cacheKey}...`);
     log.info(JSON.stringify(parsedImport));
 
-    const { build }: typeof import("esbuild") = await import(options?.esbuild ?? "esbuild");
+    const { build }: typeof import("esbuild") = await import(
+      options?.esbuild ?? "esbuild"
+    );
 
     const directives = parsedImport.directives;
 
@@ -32,7 +34,6 @@ export async function calculateSize(
         resolveDir: dirname(parsedImport.fileName),
         sourcefile: parsedImport.fileName
       },
-      platform,
       bundle: true,
       format: options?.format || "esm",
       write: false,
@@ -44,6 +45,10 @@ export async function calculateSize(
     let size = 0;
     let gzipSize = 0;
     if (outputFiles.length > 0) {
+      if (parsedImport.name === "react") {
+        log.info("Writing react.json");
+        log.info(JSON.stringify(outputFiles));
+      }
       size = outputFiles[0].contents.byteLength;
       gzipSize = await gzip(outputFiles[0].text, {
         level: 9

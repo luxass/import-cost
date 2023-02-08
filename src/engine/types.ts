@@ -1,4 +1,4 @@
-import type { Message } from "esbuild";
+import type { BuildOptions, Message } from "esbuild";
 import type { Uri } from "vscode";
 
 export type Language =
@@ -67,10 +67,14 @@ export interface CostResult {
   errors: Message[];
 }
 
+/**
+ * The directives that can be used on a import statement.
+ */
 export interface ImportDirectives {
   external?: boolean;
   platform?: "browser" | "node";
   skip?: boolean;
+  format?: BuildOptions["format"];
 }
 
 export interface ParsedImport {
