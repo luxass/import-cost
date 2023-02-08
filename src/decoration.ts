@@ -4,7 +4,7 @@ import type {
   DecorationRenderOptions,
   TextDocument
 } from "vscode";
-import { Position, Range, window } from "vscode";
+import { window } from "vscode";
 
 import { config } from "./configuration";
 import type { ImportSize } from "./engine/types";
@@ -12,8 +12,6 @@ import { log } from "./logger";
 
 const MARGIN = 1;
 const FONT_STYLE = "normal";
-
-
 
 export function flush() {
   log.info("flush");
@@ -53,9 +51,9 @@ function getDecorationColor(importSize: ImportSize): DecorationRenderOptions {
   const colors = config.get("colors");
 
   const size =
-    (config.get("sizeColor") === "minified"
-      ? importSize.size.bytes
-      : importSize.size.gzip) / 1024;
+    (config.get("sizeColor") === "minified" ?
+      importSize.size.bytes :
+      importSize.size.gzip) / 1024;
 
   if (size < sizes.small) {
     return getColors(colors.small.dark, colors.small.light);
@@ -96,7 +94,7 @@ function getDecorationMessage(importSize: ImportSize): DecorationRenderOptions {
 
   const decorator = config.get("decorator");
 
-  if (decorator === "minfied") {
+  if (decorator === "minified") {
     return {
       after: {
         contentText: ` ${size}`,

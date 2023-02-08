@@ -6,9 +6,24 @@ export interface Config {
   decorator: "both" | "minified" | "compressed";
   sizeColor: "minified" | "compressed";
 
-  colors: ColorsConfig;
-  sizes: SizesConfig;
-  extensions: ExtensionsConfig;
+  colors: {
+    small: ColorsObject;
+    medium: ColorsObject;
+    large: ColorsObject;
+    extreme: ColorsObject;
+  };
+  sizes: {
+    small: number;
+    medium: number;
+    large: number;
+  };
+  extensions: {
+    typescript: string[];
+    javascript: string[];
+    vue: string[];
+    svelte: string[];
+    astro: string[];
+  };
 
   // Just like the directives - but if you want to add multiple very easily.
   externals: string[];
@@ -20,31 +35,11 @@ export interface Config {
 
   fallback: PackageManager;
 
+  // From npm extensions (vscode builtin)
   packageManager: "npm" | "yarn" | "pnpm" | "auto";
-}
-
-export interface ColorsConfig {
-  small: ColorsObject;
-  medium: ColorsObject;
-  large: ColorsObject;
-  extreme: ColorsObject;
 }
 
 export interface ColorsObject {
   dark: string;
   light: string;
-}
-
-export interface SizesConfig {
-  small: number;
-  medium: number;
-  large: number;
-}
-
-export interface ExtensionsConfig {
-  typescript: string[];
-  javascript: string[];
-  vue: string[];
-  svelte: string[];
-  astro: string[];
 }

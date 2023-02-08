@@ -54,7 +54,10 @@ export async function calculateCost({
     const warnings: Message[] = [];
     const errors: Message[] = [];
     const imports: ImportSize[] = [];
-    externals = await resolveExternals(Uri.file(dirname(cwd.fsPath)));
+    externals = await resolveExternals(
+      Uri.file(dirname(cwd.fsPath)),
+      externals
+    );
 
     log.info(`Resolving ${externals.length} externals for ${path}`);
     for await (const result of parsedImports.map((_import) =>
@@ -88,19 +91,21 @@ export async function calculateCost({
   }
 }
 
-async function resolveExternals(cwd: Uri) {
+async function resolveExternals(cwd: Uri, externals: string[]) {
   const pkg = await find("package.json", {
     cwd
   });
+
+  let extraExternals: string[] = [];
 
   if (pkg) {
     const { peerDependencies } = JSON.parse(
       new TextDecoder().decode(await workspace.fs.readFile(Uri.file(pkg)))
     );
-    return builtins.concat(Object.keys(peerDependencies || {}));
+    extraExternals = Object.keys(peerDependencies || {});
   }
 
-  return builtins;
+  return builtins.concat(externals, extraExternals);
 }
 
 function extractCode(
