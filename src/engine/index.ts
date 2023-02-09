@@ -1,6 +1,5 @@
 import { dirname, join } from "env:path";
 import type { Message } from "esbuild";
-import { config } from "src/configuration";
 import { Uri, workspace } from "vscode";
 
 import { log } from "../logger";
@@ -8,7 +7,7 @@ import { calculateSize } from "./build";
 import { builtins } from "./builtins";
 import { find } from "./find";
 import { parseImports } from "./parse";
-import type { CostResult, ImportSize, Options, ParsedImport } from "./types";
+import type { CostResult, ImportSize, Language, Options, ParsedImport } from "./types";
 
 export async function calculateCost({
   path,
@@ -60,7 +59,7 @@ export async function calculateCost({
     log.info(`Resolving externals for ${path}`);
     externals = await resolveExternals(
       Uri.file(dirname(cwd.fsPath)),
-      externals.concat(config.get("externals"))
+      externals
     );
 
     for await (const result of parsedImports.map((_import) =>
@@ -113,7 +112,7 @@ async function resolveExternals(cwd: Uri, externals: string[]) {
 function extractCode(
   code: string,
   language: string
-): { code: string; language: "js" | "ts" } | null {
+): { code: string; language: Language } | null {
   if (language === "astro") {
     const match = code.match(/(?<=---\n)(?:(?:.|\n)*?)(?=\n---)/);
     if (match) {
@@ -130,7 +129,7 @@ function extractCode(
     if (match) {
       return {
         code: match[2],
-        language: match[1] as "js" | "ts"
+        language: `${language}-${match[1]}` as Language
       };
     }
   }

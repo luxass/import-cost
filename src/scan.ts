@@ -7,7 +7,6 @@ import type { Language } from "./engine";
 import { log } from "./logger";
 
 function isAllowedLanguage(language: string, fileName: string): boolean {
-  // TODO: Incorporate the extensions settings into this.
   return (
     language === "javascriptreact" ||
     fileName.endsWith(".jsx") ||
@@ -35,7 +34,7 @@ export async function scan(document: TextDocument, esbuildPath: string) {
       const result = await calculateCost({
         path: fileName,
         language: languageId as Language,
-        externals: [],
+        externals: config.get("externals"),
         code,
         cwd: uri,
         esbuild: esbuildPath
@@ -47,7 +46,7 @@ export async function scan(document: TextDocument, esbuildPath: string) {
       }
 
       log.info(`RESULT - ${fileName}`, result?.imports.join(", "));
-      // TODO: Add decorator to the line.
+      // TODO: Remove the decorator/flush
       decorate(document, result?.imports ?? []);
     }
   }

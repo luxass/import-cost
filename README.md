@@ -1,5 +1,29 @@
 # Import Cost
 
+## Whats missing?
+
+- [ ] Support for Browser (Buffer is breaking it)
+- [ ] Caching
+- [ ] Tests
+- [ ] Skip configuration should be used globally. (using the `import-cost.skip` configuration)
+- [ ] Remove type imports from the calculation
+- [ ] Use format and defaultFormat from the configuration
+- [ ] Use platform and defaultPlatform from the configuration
+
+### Allow custom extensions to be used
+
+```jsonc
+// .vscode/settings.json
+{
+  "files.associations": {
+    "*.mycustomext": "typescript",
+    "*.mycustomext2": "vue",
+  }
+}
+```
+> The languages we allow are, `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `astro`, `svelte` and `vue` 
+
+
 ### Directives
 
 Import Cost supports the following directives:

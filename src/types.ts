@@ -17,14 +17,6 @@ export interface Config {
     medium: number;
     large: number;
   };
-  extensions: {
-    typescript: string[];
-    javascript: string[];
-    vue: string[];
-    svelte: string[];
-    astro: string[];
-  };
-
   // Just like the directives - but if you want to add multiple very easily.
   externals: string[];
   skip: string[];
