@@ -220,8 +220,7 @@
             {
               "type": "string",
               "examples": [
-                "react",
-                "react@18"
+                "react"
               ]
             }
           ]
@@ -275,15 +274,12 @@
         "import-cost.skip": {
           "type": "array",
           "description": "Dependencies to skip",
-          "oneOf": [
-            {
-              "type": "string",
-              "examples": [
-                "react",
-                "react@18"
-              ]
-            }
-          ]
+          "items": {
+            "type": "string",
+            "examples": [
+              "react"
+            ]
+          }
         },
         "import-cost.fallback": {
           "type": "string",

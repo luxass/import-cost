@@ -1,6 +1,7 @@
 import { dirname, join } from "env:path";
 import type { Message } from "esbuild";
 import { Uri, workspace } from "vscode";
+import { config } from "../configuration";
 
 import { log } from "../logger";
 import { calculateSize } from "./build";
@@ -26,12 +27,15 @@ export async function calculateCost({
       }
     }
 
+    const globalSkips = config.get("skip");
+
     let parsedImports = parseImports(path, code, language).filter((pkg) => {
-      if (pkg.directives.skip) {
-        log.info(`Skipping ${pkg.name} because of skip directive`);
+      const skip = pkg.directives.skip || globalSkips.includes(pkg.name);
+      if (skip) {
+        log.info(`Skipping ${pkg.name} because of skip directive or global skip`);
       }
 
-      return !pkg.fileName.startsWith(".") && !pkg.directives.skip;
+      return !pkg.fileName.startsWith(".") && !skip;
     });
 
     // TODO: This could probably be done in another way.
