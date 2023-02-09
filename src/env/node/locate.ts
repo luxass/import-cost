@@ -40,11 +40,11 @@ export async function locateESBuild() {
       await commands.executeCommand("import-cost.install-esbuild");
       // TODO: Check if its installed. If not, show error.
       esbuildPath = getGlobalDirectory(pm);
-      log.info("ESBuild path 23", esbuildPath)
+      log.info("ESBuild path 23", esbuildPath);
       try {
         await workspace.fs.stat(Uri.file(esbuildPath));
       } catch (e) {
-        window.showErrorMessage("Couldn't install ESBuild. Please try again.")
+        window.showErrorMessage("Couldn't install ESBuild. Please try again.");
       }
     }
   }

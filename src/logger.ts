@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { window } from "vscode";
 
 const _log = window.createOutputChannel("Import Cost");

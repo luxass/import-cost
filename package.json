@@ -221,7 +221,7 @@
               "items": {
                 "type": "string",
                 "default": [
-                  "js"
+                  ".jsx?$"
                 ]
               }
             },
@@ -231,7 +231,7 @@
               "items": {
                 "type": "string",
                 "default": [
-                  "ts"
+                  ".tsx?$"
                 ]
               }
             },
@@ -241,7 +241,7 @@
               "items": {
                 "type": "string",
                 "default": [
-                  "vue"
+                  ".vue$"
                 ]
               }
             },
@@ -251,7 +251,7 @@
               "items": {
                 "type": "string",
                 "default": [
-                  "svelte"
+                  ".svelte$"
                 ]
               }
             },
@@ -261,26 +261,26 @@
               "items": {
                 "type": "string",
                 "default": [
-                  "astro"
+                  ".astro$"
                 ]
               }
             }
           },
           "default": {
             "javascript": [
-              "js"
+              ".jsx?$"
             ],
             "typescript": [
-              "ts"
+              ".tsx?$"
             ],
             "vue": [
-              "vue"
+              ".vue$"
             ],
             "svelte": [
-              "svelte"
+              ".svelte$"
             ],
             "astro": [
-              "astro"
+              ".astro$"
             ]
           }
         },

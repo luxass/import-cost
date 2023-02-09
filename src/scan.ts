@@ -7,6 +7,7 @@ import type { Language } from "./engine";
 import { log } from "./logger";
 
 function isAllowedLanguage(language: string, fileName: string): boolean {
+  // TODO: Incorporate the extensions settings into this.
   return (
     language === "javascriptreact" ||
     fileName.endsWith(".jsx") ||
