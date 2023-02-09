@@ -73,7 +73,7 @@ function getDirectives(
     node.leadingComments.forEach((comment) => {
       if (comment.value.includes("import-cost: ")) {
         const directive = comment.value.trim().replace("import-cost: ", "");
-        
+
         if (directive === "mark-external") {
           directives.external = true;
           return;
@@ -111,12 +111,12 @@ function getImportString(node: ImportDeclaration): string {
 function parseSpecifiers(node: ImportDeclaration): string {
   let importSpecifier: string | undefined;
   const importSpecifiers = node.specifiers
-    .sort((s1, s2) => {
-      if (isImportSpecifier(s1) && isImportSpecifier(s2)) {
-        return getName(s1.imported).localeCompare(getName(s2.imported));
-      }
-      return 0;
-    })
+    // .sort((s1, s2) => {
+    //   if (isImportSpecifier(s1) && isImportSpecifier(s2)) {
+    //     return getName(s1.imported).localeCompare(getName(s2.imported));
+    //   }
+    //   return 0;
+    // })
     // TODO: We will need some kind of magic here, to figure out if the import is a type or not.
     // .filter((specifier) => {
     //   if (isImportSpecifier(specifier)) {
@@ -131,19 +131,33 @@ function parseSpecifiers(node: ImportDeclaration): string {
         return specifier.local.name;
       } else if (isImportSpecifier(specifier)) {
         if (!importSpecifier) {
+          console.log("Starting new import specifier");
+          
           importSpecifier = "{";
         }
-
-        importSpecifier += `${getName(specifier.imported)}`;
-        if (
-          node.specifiers[i + 1] &&
-          isImportSpecifier(node.specifiers[i + 1])
-        ) {
-          importSpecifier += ", ";
+        console.log("checkpoint 1", importSpecifier);
+        
+        if (specifier.importKind !== "type") {
+          importSpecifier += `${getName(specifier.imported)}`;
+        }
+        console.log("checkpoint 2", importSpecifier);
+        
+        const next = node.specifiers[i + 1] as any;
+        console.log("next", next, node.specifiers.length, i, i + 1);
+        
+        if (next && isImportSpecifier(next)) {
+          if (next.importKind !== "type") {
+            console.log("adding to import specifier");
+            
+            importSpecifier += ", ";
+          }
           return undefined;
         } else {
+          console.log("closing import specifier");
+          
           const result = (importSpecifier += "}");
           importSpecifier = undefined;
+          console.log("result", result);
           return result;
         }
       } else {
@@ -152,6 +166,8 @@ function parseSpecifiers(node: ImportDeclaration): string {
     })
     .filter(Boolean)
     .join(", ");
+  console.log("importSpecifiers", importSpecifiers);
+
   return importSpecifiers;
 }
 

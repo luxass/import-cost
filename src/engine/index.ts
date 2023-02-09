@@ -38,6 +38,8 @@ export async function calculateCost({
       return !pkg.fileName.startsWith(".") && !skip;
     });
 
+    log.info(JSON.stringify(parsedImports, null, 2));
+
     // TODO: This could probably be done in another way.
     await Promise.allSettled(
       parsedImports.map(
@@ -96,6 +98,7 @@ export async function calculateCost({
   }
 }
 
+// This is probably pretty slow, will look into this.
 async function resolveExternals(cwd: Uri, externals: string[]) {
   const pkg = await find("package.json", {
     cwd
