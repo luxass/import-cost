@@ -35,7 +35,7 @@ export async function calculateCost({
         log.info(`Skipping ${pkg.name} because of skip directive or global skip`);
       }
 
-      return !pkg.fileName.startsWith(".") && !skip;
+      return !pkg.name.startsWith(".") && !skip;
     });
 
     log.info(JSON.stringify(parsedImports, null, 2));
