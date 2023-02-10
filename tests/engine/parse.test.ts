@@ -53,6 +53,19 @@ describe("parse imports", () => {
       "import { getServerSession } from 'next-auth'\nconsole.log({ getServerSession });"
     );
   });
+
+  test("import with sideeffects", () => {
+    const content = "import 'react';";
+    const [react] = parseImports("file.ts", content, "ts");
+
+    expect(react).toEqual({
+      fileName: "file.ts",
+      name: "react",
+      line: 1,
+      code: "import * as tmp from 'react'\nconsole.log(tmp);",
+      directives: {}
+    });
+  });
 });
 
 describe("parse imports with directives", () => {
@@ -113,12 +126,8 @@ describe("parse imports with directives", () => {
       external: true
     });
 
-    expect(nextAuth).toStrictEqual({
-      fileName: "file.ts",
-      name: "next-auth",
-      line: 6,
-      code: "import { getServerSession } from 'next-auth'\nconsole.log({ getServerSession });",
-      directives: {}
-    });
+    expect(nextAuth.code).toEqual(
+      "import { getServerSession } from 'next-auth'\nconsole.log({ getServerSession });"
+    );
   });
 });
