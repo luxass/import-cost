@@ -131,31 +131,29 @@ function parseSpecifiers(node: ImportDeclaration): string {
         return specifier.local.name;
       } else if (isImportSpecifier(specifier)) {
         if (!importSpecifier) {
-          console.log("Starting new import specifier");
-          
-          importSpecifier = "{";
+          importSpecifier = "{ ";
         }
         console.log("checkpoint 1", importSpecifier);
-        
+
         if (specifier.importKind !== "type") {
           importSpecifier += `${getName(specifier.imported)}`;
         }
         console.log("checkpoint 2", importSpecifier);
-        
+
         const next = node.specifiers[i + 1] as any;
         console.log("next", next, node.specifiers.length, i, i + 1);
-        
+
         if (next && isImportSpecifier(next)) {
           if (next.importKind !== "type") {
             console.log("adding to import specifier");
-            
+
             importSpecifier += ", ";
           }
           return undefined;
         } else {
           console.log("closing import specifier");
-          
-          const result = (importSpecifier += "}");
+
+          const result = (importSpecifier += " }");
           importSpecifier = undefined;
           console.log("result", result);
           return result;
