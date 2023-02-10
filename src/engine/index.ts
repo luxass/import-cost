@@ -116,7 +116,7 @@ async function resolveExternals(cwd: Uri, externals: string[]) {
   return builtins.concat(externals, extraExternals);
 }
 
-function extractCode(
+export function extractCode(
   code: string,
   language: string
 ): { code: string; language: Language } | null {
@@ -172,4 +172,3 @@ function getPackageName(pkg: ParsedImport): string {
 }
 
 export type { CostResult, Options, Language } from "./types";
-export { parseImports } from "./parse";

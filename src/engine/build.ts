@@ -3,6 +3,7 @@ import { dirname } from "env:path";
 import type { BuildOptions } from "esbuild";
 
 import { log } from "../logger";
+import { cache } from "./caching";
 import type {
   CalculateSizeOptions,
   CalculateSizeResult,
@@ -15,8 +16,10 @@ export async function calculateSize(
 ): Promise<CalculateSizeResult> {
   try {
     const cacheKey = `${parsedImport.fileName}:${parsedImport.version}`;
+    if (cache.has(cacheKey)) {
+      return cache.get(cacheKey);
+    }
     log.info(`Calculating size for ${cacheKey}...`);
-    // log.info(JSON.stringify(parsedImport));
 
     const { build }: typeof import("esbuild") = await import(
       options?.esbuild ?? "esbuild"
@@ -25,8 +28,10 @@ export async function calculateSize(
     const directives = parsedImport.directives;
 
     const platform = directives?.platform || "node";
-    log.info(`Building ${parsedImport.name} for ${platform}...`);
-    // log.info("Directives: ", directives);
+    const format = directives?.format || "esm";
+    log.info(
+      `Building ${parsedImport.name} for platform-${platform} and format-${format}...`
+    );
 
     const { errors, warnings, outputFiles } = await build({
       stdin: {
@@ -35,7 +40,8 @@ export async function calculateSize(
         sourcefile: parsedImport.fileName
       },
       bundle: true,
-      format: options?.format || "esm",
+      format,
+      platform,
       write: false,
       external: options?.externals || [],
       outdir: "dist",
