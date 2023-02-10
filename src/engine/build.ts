@@ -45,10 +45,6 @@ export async function calculateSize(
     let size = 0;
     let gzipSize = 0;
     if (outputFiles.length > 0) {
-      if (parsedImport.name === "react") {
-        log.info("Writing react.json");
-        log.info(JSON.stringify(outputFiles));
-      }
       size = outputFiles[0].contents.byteLength;
       gzipSize = await gzip(outputFiles[0].text, {
         level: 9
