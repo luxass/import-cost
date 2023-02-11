@@ -14,8 +14,6 @@ import { log } from "./logger";
 const MARGIN = 1;
 const FONT_STYLE = "normal";
 
-const DECORATIONS = new Map<any, any>();
-
 export function flush(editor?: TextEditor) {
   log.info("Flushing decorations");
   if (!editor) {
@@ -50,38 +48,6 @@ export function decorate(document: TextDocument, imports: ImportSize[]) {
 
   editor.setDecorations(window.createTextEditorDecorationType({}), decorations);
 }
-
-// let timer: NodeJS.Timeout;
-// function debounceFlushDecorations(fileName: string) {
-//   clearTimeout(timer);
-//   timer = setTimeout(flushDecorations.bind(null, fileName), 20);
-// }
-
-// function flushDecorations(fileName: string) {
-//   const arr: DecorationOptions[] = [];
-//   const map = DECORATIONS.get(fileName);
-//   if (map) {
-//     for (const line of map.keys()) {
-//       const data = map.get(line)!;
-//       if (data.size === 0) continue;
-//       arr.push({
-//         range: new Range(
-//           new Position(line - 1, 1024),
-//           new Position(line - 1, 1024)
-//         ),
-//         renderOptions: {
-//           ...getDecorationColor(data),
-//           ...getDecorationMessage(data)
-//         }
-//       });
-//     }
-//   }
-//   for (const editor of window.visibleTextEditors) {
-//     if (editor.document.fileName === fileName) {
-//       editor.setDecorations(decorationType, arr);
-//     }
-//   }
-// }
 
 function getDecorationColor(importSize: ImportSize): DecorationRenderOptions {
   const sizes = config.get("sizes");

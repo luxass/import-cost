@@ -30,7 +30,6 @@ export async function activate(ctx: ExtensionContext) {
     return;
   }
 
-
   if (!IS_WEB) {
     ctx.subscriptions.push(
       commands.registerCommand("import-cost.install-esbuild", async () => {

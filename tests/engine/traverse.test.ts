@@ -7,32 +7,36 @@ import { traverse } from "../../src/engine/traverse";
 
 describe("traverse", () => {
   test("expect ImportDeclarations", async () => {
-    const { program } = JSON.parse(
+    const ast = JSON.parse(
       await readFile(
         resolve(__dirname, "asts/import-declaration.json"),
         "utf-8"
       )
     );
+    const imports: string[] = [];
+    traverse(ast, (node) => {
+      if (node.type === "ImportDeclaration") {
+        imports.push(node.source.value);
+      }
+    });
 
-    const imports = traverse(program);
-    console.log(imports);
+    expect(imports.length).toBe(11);
 
-    expect(true).toBe(true);
   });
 
-  test("expect CallExpressions", () => {
-    expect(true).toBe(true);
-  });
+  // test("expect CallExpressions", () => {
+  //   expect(true).toBe(true);
+  // });
 
-  test("require calls inside a function", async () => {
-    const { program } = JSON.parse(
-      await readFile(
-        resolve(__dirname, "asts/require-inside-function.json"),
-        "utf-8"
-      )
-    );
+  // test("require calls inside a function", async () => {
+  //   const { program } = JSON.parse(
+  //     await readFile(
+  //       resolve(__dirname, "asts/require-inside-function.json"),
+  //       "utf-8"
+  //     )
+  //   );
 
-    const imports = traverse(program);
-    expect(true).toBe(true);
-  });
+  //   const imports = traverse(program);
+  //   expect(true).toBe(true);
+  // });
 });

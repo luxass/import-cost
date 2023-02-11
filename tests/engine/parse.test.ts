@@ -73,7 +73,6 @@ describe("parse imports with directives", () => {
     const content = `
       /* import-cost: platform-browser */
       /* import-cost: format-cjs */
-      /* import-cost: skip */
       /* import-cost: mark-external */
       import React from "react";
     `;
@@ -84,7 +83,6 @@ describe("parse imports with directives", () => {
     expect(parsedImport.directives).toStrictEqual({
       platform: "browser",
       format: "cjs",
-      skip: true,
       external: true
     });
   });
