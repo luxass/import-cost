@@ -15,9 +15,11 @@ export async function calculateSize(
   options?: CalculateSizeOptions
 ): Promise<CalculateSizeResult> {
   try {
-    const cacheKey = `${parsedImport.fileName}:${parsedImport.version}`;
+    const cacheKey = `${parsedImport.name}:${parsedImport.version}`;
     if (cache.has(cacheKey)) {
-      // return cache.get(cacheKey);
+      log.info(`Using cached size for ${cacheKey}...`);
+      // This can't be undefined, because we check if it's in the cache.
+      return cache.get(cacheKey) as CalculateSizeResult;
     }
     log.info(`Calculating size for ${cacheKey}...`);
 
@@ -57,7 +59,7 @@ export async function calculateSize(
       }).then(({ length }) => length);
     }
 
-    return {
+    const result = {
       errors,
       warnings,
       pkg: {
@@ -66,6 +68,10 @@ export async function calculateSize(
         gzip: gzipSize
       }
     };
+
+    cache.set(cacheKey, result);
+
+    return result;
   } catch (e) {
     log.error(e);
     return {

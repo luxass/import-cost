@@ -1,3 +1,3 @@
-type CacheEntry = number;
+import type { CalculateSizeResult } from "./types";
 
-export const cache = new Map<string, CacheEntry>();
+export const cache = new Map<string, CalculateSizeResult>();

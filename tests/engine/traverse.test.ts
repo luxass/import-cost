@@ -13,15 +13,26 @@ describe("traverse", () => {
         "utf-8"
       )
     );
-    const imports: string[] = [];
+    const imports: {
+      type?: string;
+      name: string;
+    }[] = [];
     traverse(ast, (node) => {
       if (node.type === "ImportDeclaration") {
-        imports.push(node.source.value);
+        const type = node.specifiers[0]?.type;
+        imports.push({
+          type,
+          name: node.source.value
+        });
       }
     });
 
     expect(imports.length).toBe(11);
 
+    expect(imports[0]).toEqual({
+      type: "ImportDefaultSpecifier",
+      name: "module-name"
+    });
   });
 
   // test("expect CallExpressions", () => {

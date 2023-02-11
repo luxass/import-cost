@@ -27,7 +27,7 @@ export async function activate(ctx: ExtensionContext) {
   const wixImportCost = extensions.getExtension("wix.vscode-import-cost");
   if (wixImportCost) {
     window.showWarningMessage("You have both Wix Import Cost and Import Cost installed. Please uninstall Wix Import Cost to avoid conflicts.");
-    return;
+    // return;
   }
 
   if (!IS_WEB) {

@@ -36,7 +36,7 @@ export async function calculateCost({
     const globalSkips = config.get("skip");
 
     let parsedImports = parseImports(path, code, language).filter((pkg) => {
-      const skip = pkg.directives.skip || globalSkips.includes(pkg.name);
+      const skip = globalSkips.includes(pkg.name);
       if (skip) {
         log.info(
           `Skipping ${pkg.name} because of skip directive or global skip`
@@ -46,12 +46,15 @@ export async function calculateCost({
       return !pkg.name.startsWith(".") && !skip;
     });
 
-    log.info(JSON.stringify(parsedImports, null, 2));
+    // They are all the same using the same file.
+    // So no need to check for node_modules in the folder each time.
+    const node_modules = await find("node_modules", {
+      cwd: Uri.file(dirname(path))
+    });
 
-    // TODO: This could probably be done in another way.
     await Promise.allSettled(
       parsedImports.map(
-        async (_import) => (_import.version = await getVersion(_import))
+        async (pkg) => (pkg.version = await getVersion(pkg, node_modules))
       )
     );
 
@@ -62,7 +65,7 @@ export async function calculateCost({
       return !!_import.version;
     });
 
-    if (parsedImports.length === 0) {
+    if (!parsedImports.length) {
       return null;
     }
 
@@ -151,11 +154,14 @@ export function extractCode(
   return null;
 }
 
-async function getVersion(pkg: ParsedImport): Promise<string | undefined> {
+async function getVersion(
+  pkg: ParsedImport,
+  node_modules?: string
+): Promise<string | undefined> {
   try {
-    const node_modules = await find("node_modules", {
-      cwd: Uri.file(dirname(pkg.fileName))
-    });
+    // const node_modules = await find("node_modules", {
+    //   cwd: Uri.file(dirname(pkg.fileName))
+    // });
 
     if (node_modules) {
       const name = getPackageName(pkg);
@@ -180,3 +186,6 @@ function getPackageName(pkg: ParsedImport): string {
 }
 
 export type { CostResult, Options, Language } from "./types";
+export {
+  cache
+} from "./caching"
