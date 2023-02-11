@@ -12,7 +12,7 @@ export const config = {
       section: string;
     }
   ): PathValue<Config, T> {
-    const section = options?.section ?? "import-cost";
+    const section = options?.section ?? "importCost";
     const defaultValue = options?.defaultValue;
     const scope = options?.scope;
 
@@ -32,7 +32,7 @@ export const config = {
     value: PathValue<Config, T>,
     target: ConfigurationTarget = ConfigurationTarget.Global
   ): Thenable<void> {
-    return workspace.getConfiguration("import-cost").update(key, value, target);
+    return workspace.getConfiguration("importCost").update(key, value, target);
   }
 };
 

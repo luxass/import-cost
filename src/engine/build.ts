@@ -17,7 +17,7 @@ export async function calculateSize(
   try {
     const cacheKey = `${parsedImport.fileName}:${parsedImport.version}`;
     if (cache.has(cacheKey)) {
-      return cache.get(cacheKey);
+      // return cache.get(cacheKey);
     }
     log.info(`Calculating size for ${cacheKey}...`);
 

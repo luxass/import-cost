@@ -62,7 +62,7 @@ export interface ImportSize {
 }
 
 export interface CostResult {
-  imports: ImportSize[];
+  packages: ImportSize[];
   warnings: Message[];
   errors: Message[];
 }

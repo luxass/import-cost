@@ -2,7 +2,8 @@ import { filesize } from "filesize";
 import type {
   DecorationOptions,
   DecorationRenderOptions,
-  TextDocument
+  TextDocument,
+  TextEditor
 } from "vscode";
 import { window } from "vscode";
 
@@ -13,18 +14,20 @@ import { log } from "./logger";
 const MARGIN = 1;
 const FONT_STYLE = "normal";
 
-export function flush() {
-  log.info("flush");
-  
+export function flush(editor?: TextEditor) {
+  log.info("Flushing decorations");
+  if (!editor) {
+    return;
+  }
+
+  editor.setDecorations(window.createTextEditorDecorationType({}), []);
 }
 
 export function decorate(document: TextDocument, imports: ImportSize[]) {
   // TODO: Improve performance of this.
 
   const decorations: DecorationOptions[] = [];
-  const editor = window.visibleTextEditors.find(
-    (editor) => editor.document.uri.toString() === document.uri.toString()
-  );
+  const editor = window.activeTextEditor;
   if (!editor) {
     return;
   }
