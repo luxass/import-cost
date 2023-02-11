@@ -5,6 +5,7 @@ import {
   Task,
   TaskScope,
   commands,
+  extensions,
   tasks,
   window,
   workspace
@@ -23,6 +24,13 @@ declare global {
 }
 
 export async function activate(ctx: ExtensionContext) {
+  const wixImportCost = extensions.getExtension("wix.vscode-import-cost");
+  if (wixImportCost) {
+    window.showWarningMessage("You have both Wix Import Cost and Import Cost installed. Please uninstall Wix Import Cost to avoid conflicts.");
+    return;
+  }
+
+
   if (!IS_WEB) {
     ctx.subscriptions.push(
       commands.registerCommand("import-cost.install-esbuild", async () => {
@@ -64,13 +72,31 @@ export async function activate(ctx: ExtensionContext) {
       scan(event.document, esbuildPath);
     })
   );
-
   ctx.subscriptions.push(
-    commands.registerCommand("import-cost.toggle-declaration", () => {
-      const enable = config.get("enable");
-      config.set("enable", !enable);
-      flush();
-      window.showInformationMessage(`Import Cost is now turned ${enable}`);
+    workspace.onDidChangeConfiguration((event) => {
+      if (!event.affectsConfiguration("import-cost")) return;
+
+      log.info("Configuration changed", JSON.stringify(event, null, 2));
+    })
+  );
+  ctx.subscriptions.push(
+    commands.registerCommand("import-cost.toggle-import-cost", () => {
+      window.showInformationMessage("Import Cost: toggle-declaration");
+      const enable = !config.get("enable");
+      if (enable) {
+        console.log(window.activeTextEditor, esbuildPath);
+        if (window.activeTextEditor?.document && esbuildPath) {
+          scan(window.activeTextEditor.document, esbuildPath);
+          console.log("scan");
+        }
+      } else {
+        flush(window.activeTextEditor);
+      }
+
+      config.set("enable", enable);
+      window.showInformationMessage(
+        `Import Cost is now turned ${enable ? "on" : "off"}`
+      );
     })
   );
 
@@ -78,7 +104,7 @@ export async function activate(ctx: ExtensionContext) {
     commands.registerCommand("import-cost.clear-import-cache", (event) => {
       log.info("Clearing cache", event);
       cache.clear();
-      flush();
+      flush(window.activeTextEditor);
       window.showInformationMessage("Import Cost cache cleared");
     })
   );

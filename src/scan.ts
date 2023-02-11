@@ -26,6 +26,7 @@ function isAllowedLanguage(language: string, fileName: string): boolean {
 }
 
 export async function scan(document: TextDocument, esbuildPath: string) {
+  // TODO: Remove this config.get
   if (config.get("enable")) {
     const { languageId, fileName, getText, uri } = document;
     if (isAllowedLanguage(languageId, fileName)) {
@@ -45,9 +46,9 @@ export async function scan(document: TextDocument, esbuildPath: string) {
         return;
       }
 
-      log.info(`RESULT - ${fileName}`, result?.imports.join(", "));
+      log.info(`RESULT - ${fileName}`, result?.packages.join(", "));
       // TODO: Remove the decorator/flush
-      decorate(document, result?.imports ?? []);
+      decorate(document, result?.packages ?? []);
     }
   }
 }

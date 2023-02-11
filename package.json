@@ -40,7 +40,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "import-cost.toggle-declaration",
+        "command": "import-cost.toggle-import-cost",
         "title": "Toggle Import Cost",
         "category": "Import Cost"
       },
@@ -57,14 +57,15 @@
       }
     ],
     "configuration": {
+      "type": "object",
       "title": "Import Cost",
       "properties": {
-        "import-cost.enable": {
+        "importCost.enable": {
           "type": "boolean",
           "description": "Enable or disable the import cost",
           "default": true
         },
-        "import-cost.decorator": {
+        "importCost.decorator": {
           "type": "string",
           "description": "Which decorator to use for the import cost",
           "enum": [
@@ -74,7 +75,7 @@
           ],
           "default": "both"
         },
-        "import-cost.sizeColor": {
+        "importCost.sizeColor": {
           "type": "string",
           "description": "Which size to use for selecting the color",
           "enum": [
@@ -83,7 +84,7 @@
           ],
           "default": "minified"
         },
-        "import-cost.colors": {
+        "importCost.colors": {
           "type": "object",
           "description": "Colors for the import cost",
           "properties": {
@@ -187,7 +188,7 @@
             }
           }
         },
-        "import-cost.sizes": {
+        "importCost.sizes": {
           "type": "object",
           "description": "Sizes for the import cost",
           "properties": {
@@ -213,7 +214,7 @@
             "large": 500
           }
         },
-        "import-cost.externals": {
+        "importCost.externals": {
           "type": "array",
           "description": "Dependencies to mark as external, so they are not included in the bundle size",
           "oneOf": [
@@ -225,7 +226,7 @@
             }
           ]
         },
-        "import-cost.defaultPlatform": {
+        "importCost.defaultPlatform": {
           "type": "string",
           "description": "Default platform to use for bundling (globally)",
           "enum": [
@@ -234,7 +235,7 @@
           ],
           "default": "node"
         },
-        "import-cost.platform": {
+        "importCost.platform": {
           "type": "object",
           "description": "Bundles the specific dependency for the given platform",
           "patternProperties": {
@@ -248,7 +249,7 @@
             }
           }
         },
-        "import-cost.defaultFormat": {
+        "importCost.defaultFormat": {
           "type": "string",
           "description": "Default format to use for bundling (globally)",
           "enum": [
@@ -257,7 +258,7 @@
           ],
           "default": "cjs"
         },
-        "import-cost.format": {
+        "importCost.format": {
           "type": "object",
           "description": "Bundles the specific dependency for the given format",
           "patternProperties": {
@@ -271,7 +272,7 @@
             }
           }
         },
-        "import-cost.skip": {
+        "importCost.skip": {
           "type": "array",
           "description": "Dependencies to skip",
           "items": {
@@ -281,7 +282,7 @@
             ]
           }
         },
-        "import-cost.fallback": {
+        "importCost.fallback": {
           "type": "string",
           "description": "Fallback package manager to use for global install",
           "enum": [
@@ -314,7 +315,6 @@
   },
   "dependencies": {
     "@babel/parser": "^7.20.13",
-    "@babel/traverse": "^7.20.13",
     "@babel/types": "^7.20.7",
     "esbuild-wasm": "^0.16.17",
     "filesize": "^10.0.6",

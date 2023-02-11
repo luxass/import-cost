@@ -1,14 +1,20 @@
 import { dirname, join } from "env:path";
 import type { Message } from "esbuild";
 import { Uri, workspace } from "vscode";
-import { config } from "../configuration";
 
+import { config } from "../configuration";
 import { log } from "../logger";
 import { calculateSize } from "./build";
 import { builtins } from "./builtins";
 import { find } from "./find";
 import { parseImports } from "./parse";
-import type { CostResult, ImportSize, Language, Options, ParsedImport } from "./types";
+import type {
+  CostResult,
+  ImportSize,
+  Language,
+  Options,
+  ParsedImport
+} from "./types";
 
 export async function calculateCost({
   path,
@@ -32,7 +38,9 @@ export async function calculateCost({
     let parsedImports = parseImports(path, code, language).filter((pkg) => {
       const skip = pkg.directives.skip || globalSkips.includes(pkg.name);
       if (skip) {
-        log.info(`Skipping ${pkg.name} because of skip directive or global skip`);
+        log.info(
+          `Skipping ${pkg.name} because of skip directive or global skip`
+        );
       }
 
       return !pkg.name.startsWith(".") && !skip;
@@ -60,7 +68,7 @@ export async function calculateCost({
 
     const warnings: Message[] = [];
     const errors: Message[] = [];
-    const imports: ImportSize[] = [];
+    const packages: ImportSize[] = [];
 
     log.info(`Resolving externals for ${path}`);
     externals = await resolveExternals(
@@ -77,7 +85,7 @@ export async function calculateCost({
     )) {
       result.errors = result.errors.concat(result.errors);
       result.warnings = result.warnings.concat(result.warnings);
-      imports.push({
+      packages.push({
         name: result.pkg.name,
         line: result.pkg.line,
         path: result.pkg.fileName,
@@ -88,7 +96,7 @@ export async function calculateCost({
       });
     }
     return {
-      imports,
+      packages,
       errors,
       warnings
     };

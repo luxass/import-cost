@@ -2,17 +2,9 @@ import type { BuildOptions } from "esbuild";
 
 import type { ParserPlugin } from "@babel/parser";
 import { parse } from "@babel/parser";
-import type { CallExpression, ImportDeclaration, Node } from "@babel/types";
-import {
-  isIdentifier,
-  isImportDefaultSpecifier,
-  isImportNamespaceSpecifier,
-  isImportSpecifier,
-  isStringLiteral,
-  isTemplateLiteral
-} from "@babel/types";
+import * as t from "@babel/types";
 
-import { getParserPlugins, traverse } from "./babel";
+import { traverse } from "./traverse";
 import type { ImportDirectives, Language, ParsedImport } from "./types";
 
 export function parseImports(
@@ -27,21 +19,21 @@ export function parseImports(
     plugins: getParserPlugins(language) as ParserPlugin[]
   });
 
-  traverse(ast, {
-    ImportDeclaration({ node }) {
-      if (node.importKind !== "type") {
-        imports.push({
-          fileName,
-          name: node.source.value,
-          line: node.loc?.end.line || 0,
-          code: getImportString(node),
-          directives: getDirectives(node)
-        });
-      }
-    },
-    CallExpression({ node }) {
+  traverse(ast, (node) => {
+    if (node.type === "ImportDeclaration" && node.importKind !== "type") {
       const directives = getDirectives(node);
+      if (directives.skip) return;
+      imports.push({
+        fileName,
+        name: node.source.value,
+        line: node.loc?.end.line || 0,
+        code: getImportString(node),
+        directives
+      });
+    } else if (node.type === "CallExpression") {
       if (node.callee.type === "Import") {
+        const directives = getDirectives(node);
+        if (directives.skip) return;
         imports.push({
           fileName,
           name: getImportName(node),
@@ -49,7 +41,12 @@ export function parseImports(
           code: `import("${getImportName(node)}")`,
           directives
         });
-      } else if ("name" in node.callee && node.callee.name === "require") {
+      } else if (
+        t.isIdentifier(node.callee) &&
+        node.callee.name === "require"
+      ) {
+        const directives = getDirectives(node);
+        if (directives.skip) return;
         imports.push({
           fileName,
           name: getImportName(node),
@@ -65,7 +62,7 @@ export function parseImports(
 }
 
 function getDirectives(
-  node: CallExpression | ImportDeclaration
+  node: t.CallExpression | t.ImportDeclaration
 ): ImportDirectives {
   const directives: ImportDirectives = {};
 
@@ -99,7 +96,7 @@ function getDirectives(
   return directives;
 }
 
-function getImportString(node: ImportDeclaration): string {
+function getImportString(node: t.ImportDeclaration): string {
   const importString =
     node.specifiers.length > 0 ? parseSpecifiers(node) : "* as tmp";
 
@@ -108,23 +105,23 @@ function getImportString(node: ImportDeclaration): string {
   }'\nconsole.log(${importString.replace("* as ", "")});`;
 }
 
-function parseSpecifiers(node: ImportDeclaration): string {
+function parseSpecifiers(node: t.ImportDeclaration): string {
   let importSpecifier: string | undefined;
   const importSpecifiers = node.specifiers
     // We want to sort type imports to the end
     .sort((s1, s2) => {
-      if (isImportSpecifier(s1) && isImportSpecifier(s2)) {
+      if (t.isImportSpecifier(s1) && t.isImportSpecifier(s2)) {
         return s1.importKind === "type" ? 1 : -1;
       }
 
       return 0;
     })
     .map((specifier, i) => {
-      if (isImportNamespaceSpecifier(specifier)) {
+      if (t.isImportNamespaceSpecifier(specifier)) {
         return `* as ${specifier.local.name}`;
-      } else if (isImportDefaultSpecifier(specifier)) {
+      } else if (t.isImportDefaultSpecifier(specifier)) {
         return specifier.local.name;
-      } else if (isImportSpecifier(specifier)) {
+      } else if (t.isImportSpecifier(specifier)) {
         if (!importSpecifier) {
           importSpecifier = "{ ";
         }
@@ -135,7 +132,7 @@ function parseSpecifiers(node: ImportDeclaration): string {
 
         const next = node.specifiers[i + 1] as any;
 
-        if (next && isImportSpecifier(next)) {
+        if (next && t.isImportSpecifier(next)) {
           if (next.importKind !== "type") {
             importSpecifier += ", ";
           }
@@ -154,18 +151,59 @@ function parseSpecifiers(node: ImportDeclaration): string {
   return importSpecifiers;
 }
 
-function getImportName(node: CallExpression): string {
+function getImportName(node: t.CallExpression): string {
   const argument = node.arguments[0];
-  if (isTemplateLiteral(argument)) {
+  if (t.isTemplateLiteral(argument)) {
     return argument.quasis[0].value.raw;
   }
   return getName(argument);
 }
 
-function getName(node: Node): string {
+function getName(node: t.Node): string {
   return (
-    (isStringLiteral(node) && node.value) ||
-    (isIdentifier(node) && node.name) ||
+    (t.isStringLiteral(node) && node.value) ||
+    (t.isIdentifier(node) && node.name) ||
     ""
   );
+}
+
+const SHARED_PLUGINS: ParserPlugin[] = [
+  "doExpressions",
+  "objectRestSpread",
+  ["decorators", { decoratorsBeforeExport: true }],
+  "classProperties",
+  "asyncGenerators",
+  "functionBind",
+  "functionSent",
+  "dynamicImport"
+];
+
+const JS_PLUGINS: ParserPlugin[] = [...SHARED_PLUGINS, "jsx"];
+const TS_PLUGINS: ParserPlugin[] = [...SHARED_PLUGINS, "typescript"];
+const TSX_PLUGINS: ParserPlugin[] = [...TS_PLUGINS, "jsx"];
+
+export function getParserPlugins(language: Language): ParserPlugin[] {
+  switch (language) {
+    case "javascript":
+    case "js":
+    case "javascriptreact":
+    case "jsx":
+    case "vue":
+    case "svelte":
+      return JS_PLUGINS;
+
+    case "typescript":
+    case "ts":
+      return TS_PLUGINS;
+
+    case "typescriptreact":
+    case "tsx":
+    case "vue-ts":
+    case "svelte-ts":
+    case "astro":
+      return TSX_PLUGINS;
+
+    default:
+      return JS_PLUGINS;
+  }
 }
