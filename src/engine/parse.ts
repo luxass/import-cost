@@ -4,15 +4,27 @@ import type { ParserPlugin } from "@babel/parser";
 import { parse } from "@babel/parser";
 import * as t from "@babel/types";
 
+import type { Config } from "../types";
+import type { ImportDirectives, Language, ParsedImport } from "./engine-types";
 import { traverse } from "./traverse";
-import type { ImportDirectives, Language, ParsedImport } from "./types";
 
-export function parseImports(
-  fileName: string,
-  content: string,
-  language: Language,
-  globalSkips: string[]
-): ParsedImport[] {
+interface ParseImportsOptions {
+  fileName: string;
+  content: string;
+  language: Language;
+  skips: string[];
+  format: Config["format"];
+  platform: Config["platform"];
+}
+
+export function parseImports({
+  fileName,
+  content,
+  language,
+  skips,
+  format,
+  platform
+}: ParseImportsOptions): ParsedImport[] {
   const imports: ParsedImport[] = [];
 
   const ast = parse(content, {
@@ -24,13 +36,18 @@ export function parseImports(
     if (node.type === "ImportDeclaration" && node.importKind !== "type") {
       const directives = getDirectives(node);
       const name = node.source.value;
-      if (
-        directives.skip ||
-        globalSkips.includes(name) ||
-        name.startsWith(".")
-      ) {
+      if (directives.skip || skips.includes(name) || name.startsWith(".")) {
         return;
       }
+
+      if (!directives.platform && platform[name]) {
+        directives.platform = platform[name];
+      }
+
+      if (!directives.format && format[name]) {
+        directives.format = format[name];
+      }
+
       imports.push({
         fileName,
         name,
@@ -42,13 +59,18 @@ export function parseImports(
       const name = getImportName(node);
       if (node.callee.type === "Import") {
         const directives = getDirectives(node);
-        if (
-          directives.skip ||
-          globalSkips.includes(name) ||
-          name.startsWith(".")
-        ) {
+        if (directives.skip || skips.includes(name) || name.startsWith(".")) {
           return;
         }
+
+        if (!directives.platform && platform[name]) {
+          directives.platform = platform[name];
+        }
+
+        if (!directives.format && format[name]) {
+          directives.format = format[name];
+        }
+
         imports.push({
           fileName,
           name,
@@ -61,12 +83,16 @@ export function parseImports(
         node.callee.name === "require"
       ) {
         const directives = getDirectives(node);
-        if (
-          directives.skip ||
-          globalSkips.includes(name) ||
-          name.startsWith(".")
-        ) {
+        if (directives.skip || skips.includes(name) || name.startsWith(".")) {
           return;
+        }
+
+        if (!directives.platform && platform[name]) {
+          directives.platform = platform[name];
+        }
+
+        if (!directives.format && format[name]) {
+          directives.format = format[name];
         }
 
         imports.push({

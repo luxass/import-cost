@@ -8,11 +8,11 @@ import type {
   CalculateSizeOptions,
   CalculateSizeResult,
   ParsedImport
-} from "./types";
+} from "./engine-types";
 
 export async function calculateSize(
   parsedImport: ParsedImport,
-  options?: CalculateSizeOptions
+  options: CalculateSizeOptions
 ): Promise<CalculateSizeResult> {
   try {
     const cacheKey = `${parsedImport.name}:${parsedImport.version}`;
@@ -23,14 +23,14 @@ export async function calculateSize(
     }
     log.info(`Calculating size for ${cacheKey}...`);
 
-    const { build }: typeof import("esbuild") = await import(
-      options?.esbuild ?? "esbuild"
+    const { build }: typeof import("esbuild-wasm") = await import(
+      options?.esbuild ?? "esbuild-wasm"
     );
 
     const directives = parsedImport.directives;
 
-    const platform = directives?.platform || "node";
-    const format = directives?.format || "esm";
+    const platform = directives.platform || options.platform || "node";
+    const format = directives.format || options.format || "esm";
     log.info(
       `Building ${parsedImport.name} for platform-${platform} and format-${format}...`
     );
@@ -47,7 +47,12 @@ export async function calculateSize(
       write: false,
       external: options?.externals || [],
       outdir: "dist",
-      minify: true
+      minify: true,
+      mainFields:
+        platform === "browser"
+          ? ["browser", "module", "main"]
+          : ["module", "main"],
+      legalComments: "none"
     } satisfies BuildOptions);
 
     let size = 0;

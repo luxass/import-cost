@@ -256,7 +256,7 @@
             "cjs",
             "esm"
           ],
-          "default": "cjs"
+          "default": "esm"
         },
         "importCost.format": {
           "type": "object",

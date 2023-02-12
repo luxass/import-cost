@@ -8,7 +8,7 @@ import type {
 import { window } from "vscode";
 
 import { config } from "./configuration";
-import type { ImportSize } from "./engine/types";
+import type { ImportSize } from "./engine/engine-types";
 import { log } from "./logger";
 
 const MARGIN = 1;
@@ -55,9 +55,9 @@ function getDecorationColor(importSize: ImportSize): DecorationRenderOptions {
   const colors = config.get("colors");
 
   const size =
-    (config.get("sizeColor") === "minified" ?
-      importSize.size.bytes :
-      importSize.size.gzip) / 1024;
+    (config.get("sizeColor") === "minified"
+      ? importSize.size.bytes
+      : importSize.size.gzip) / 1024;
 
   if (size < sizes.small) {
     return getColors(colors.small.dark, colors.small.light);

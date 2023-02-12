@@ -93,6 +93,11 @@ export interface CalculateSizeOptions {
   format: "cjs" | "esm";
 
   /**
+   * The platform to bundle the code for.
+   */
+  platform: "browser" | "node";
+
+  /**
    * An array of dependencies to exclude from the calculation.
    */
   externals: string[];

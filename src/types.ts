@@ -23,7 +23,7 @@ export interface Config {
   defaultPlatform: "browser" | "node";
   platform: Record<string, "browser" | "node">;
   defaultFormat: "cjs" | "esm";
-  format: "cjs" | "esm";
+  format: Record<string, "cjs" | "esm">;
 
   fallback: PackageManager;
 

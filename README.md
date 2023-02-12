@@ -8,8 +8,8 @@
 - [ ] Tests
 - [x] Skip configuration should be used globally. (using the `import-cost.skip` configuration)
 - [ ] Remove type imports from the calculation
-- [ ] Use format and defaultFormat from the configuration
-- [ ] Use platform and defaultPlatform from the configuration
+- [x] Use format and defaultFormat from the configuration
+- [x] Use platform and defaultPlatform from the configuration
 - [ ] Add support for showing size of export calculations
 
 #### Export Calculation

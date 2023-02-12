@@ -6,15 +6,15 @@ import { config } from "../configuration";
 import { log } from "../logger";
 import { calculateSize } from "./build";
 import { builtins } from "./builtins";
-import { find } from "./find";
-import { parseImports } from "./parse";
 import type {
   CostResult,
   ImportSize,
   Language,
   Options,
   ParsedImport
-} from "./types";
+} from "./engine-types";
+import { find } from "./find";
+import { parseImports } from "./parse";
 
 export async function calculateCost({
   path,
@@ -32,10 +32,22 @@ export async function calculateCost({
         language = extracted.language;
       }
     }
+    const defaultFormat = config.get("defaultFormat");
+    const defaultPlatform = config.get("defaultPlatform");
+    const skips = config.get("skip");
 
-    const globalSkips = config.get("skip");
+    const format = config.get("format");
 
-    let parsedImports = parseImports(path, code, language, globalSkips);
+    const platform = config.get("platform");
+
+    let parsedImports = parseImports({
+      fileName: path,
+      content: code,
+      language,
+      skips,
+      format,
+      platform
+    });
 
     // They are all using the same file.
     // So no need to check for node_modules in the folder each time.
@@ -73,7 +85,8 @@ export async function calculateCost({
     for await (const result of parsedImports.map((_import) =>
       calculateSize(_import, {
         externals,
-        format: language === "ts" ? "esm" : "cjs",
+        format: defaultFormat,
+        platform: defaultPlatform,
         esbuild
       })
     )) {
@@ -154,7 +167,11 @@ async function getVersion(
     //   cwd: Uri.file(dirname(pkg.fileName))
     // });
 
+    // TODO: Fix this to work with node_modules, like the original import-cost does.
+    // EDIT: Do we want that?
+
     if (node_modules) {
+      log.info(`Found node_modules for ${pkg.name}`);
       const pkgPath = join(
         node_modules,
         getPackageName(pkg.name),
@@ -163,9 +180,11 @@ async function getVersion(
       const { version } = JSON.parse(
         new TextDecoder().decode(await workspace.fs.readFile(Uri.file(pkgPath)))
       );
+      log.info(`Found version ${version} for ${pkg.name}`);
       return version;
     }
   } catch (e) {
+    console.error(e);
     return undefined;
   }
 }
@@ -179,5 +198,5 @@ function getPackageName(pkg: string): string {
   return pkgName;
 }
 
-export type { CostResult, Options, Language } from "./types";
+export type { CostResult, Options, Language } from "./engine-types";
 export { cache } from "./caching";
