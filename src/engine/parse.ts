@@ -10,7 +10,8 @@ import type { ImportDirectives, Language, ParsedImport } from "./types";
 export function parseImports(
   fileName: string,
   content: string,
-  language: Language
+  language: Language,
+  globalSkips: string[]
 ): ParsedImport[] {
   const imports: ParsedImport[] = [];
 
@@ -22,21 +23,35 @@ export function parseImports(
   traverse(ast, (node) => {
     if (node.type === "ImportDeclaration" && node.importKind !== "type") {
       const directives = getDirectives(node);
-      if (directives.skip) return;
+      const name = node.source.value;
+      if (
+        directives.skip ||
+        globalSkips.includes(name) ||
+        name.startsWith(".")
+      ) {
+        return;
+      }
       imports.push({
         fileName,
-        name: node.source.value,
+        name,
         line: node.loc?.end.line || 0,
         code: getImportString(node),
         directives
       });
     } else if (node.type === "CallExpression") {
+      const name = getImportName(node);
       if (node.callee.type === "Import") {
         const directives = getDirectives(node);
-        if (directives.skip) return;
+        if (
+          directives.skip ||
+          globalSkips.includes(name) ||
+          name.startsWith(".")
+        ) {
+          return;
+        }
         imports.push({
           fileName,
-          name: getImportName(node),
+          name,
           line: node.loc?.end.line || 0,
           code: `import("${getImportName(node)}")`,
           directives
@@ -46,10 +61,17 @@ export function parseImports(
         node.callee.name === "require"
       ) {
         const directives = getDirectives(node);
-        if (directives.skip) return;
+        if (
+          directives.skip ||
+          globalSkips.includes(name) ||
+          name.startsWith(".")
+        ) {
+          return;
+        }
+
         imports.push({
           fileName,
-          name: getImportName(node),
+          name,
           line: node.loc?.end.line || 0,
           code: `require("${getImportName(node)}")`,
           directives

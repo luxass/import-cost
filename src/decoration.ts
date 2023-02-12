@@ -28,6 +28,7 @@ export function decorate(document: TextDocument, imports: ImportSize[]) {
 
   const decorations: DecorationOptions[] = [];
   const editor = window.activeTextEditor;
+  log.info("Decorating", editor, document);
   if (!editor) {
     return;
   }

@@ -12,7 +12,6 @@
 - [ ] Use platform and defaultPlatform from the configuration
 - [ ] Add support for showing size of export calculations
 
-
 #### Export Calculation
 
 This will probably be used in a different file, but because the extension excludes every file that is coming from the project. This dependency will not be calculated.
