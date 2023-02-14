@@ -1,8 +1,7 @@
 {
-  "name": "vscode-import-cost",
+  "name": "import-cost-monorepo",
   "publisher": "luxass",
-  "displayName": "Import Cost",
-  "version": "0.0.1",
+  "private": true,
   "description": "Calculate cost of imports, powered by esbuild",
   "author": {
     "name": "Luxass",
@@ -17,324 +16,30 @@
   "bugs": {
     "url": "https://github.com/luxass/import-cost/issues"
   },
-  "categories": [
-    "Other"
-  ],
-  "main": "./dist/extension.js",
-  "browser": "./dist/web/extension.js",
-  "icon": "media/icon.png",
   "engines": {
-    "vscode": "^1.72.0"
+    "node": ">=16"
   },
   "packageManager": "pnpm@7.18.0",
-  "activationEvents": [
-    "onStartupFinished",
-    "onLanguage:javascript",
-    "onLanguage:javascriptreact",
-    "onLanguage:typescript",
-    "onLanguage:typescriptreact",
-    "onLanguage:vue",
-    "onLanguage:svelte",
-    "onLanguage:astro"
-  ],
-  "contributes": {
-    "commands": [
-      {
-        "command": "import-cost.toggle-import-cost",
-        "title": "Toggle Import Cost",
-        "category": "Import Cost"
-      },
-      {
-        "command": "import-cost.clear-import-cache",
-        "title": "Clear Cache",
-        "category": "Import Cost"
-      },
-      {
-        "command": "import-cost.install-esbuild",
-        "title": "Install ESBuild Globally",
-        "category": "Import Cost",
-        "enablement": "!isWeb"
-      }
-    ],
-    "configuration": {
-      "type": "object",
-      "title": "Import Cost",
-      "properties": {
-        "importCost.enable": {
-          "type": "boolean",
-          "description": "Enable or disable the import cost",
-          "default": true
-        },
-        "importCost.decorator": {
-          "type": "string",
-          "description": "Which decorator to use for the import cost",
-          "enum": [
-            "both",
-            "minified",
-            "compressed"
-          ],
-          "default": "both"
-        },
-        "importCost.sizeColor": {
-          "type": "string",
-          "description": "Which size to use for selecting the color",
-          "enum": [
-            "minified",
-            "compressed"
-          ],
-          "default": "minified"
-        },
-        "importCost.colors": {
-          "type": "object",
-          "description": "Colors for the import cost",
-          "properties": {
-            "small": {
-              "type": "object",
-              "description": "Colors for the import cost",
-              "properties": {
-                "dark": {
-                  "type": "string",
-                  "description": "Small size color for dark theme",
-                  "default": "#7cc36e"
-                },
-                "light": {
-                  "type": "string",
-                  "description": "Small size color for light theme",
-                  "default": "#7cc36e"
-                }
-              },
-              "default": {
-                "dark": "#7cc36e",
-                "light": "#7cc36e"
-              }
-            },
-            "medium": {
-              "type": "object",
-              "description": "Colors for the import cost",
-              "properties": {
-                "dark": {
-                  "type": "string",
-                  "description": "Medium size color for dark theme",
-                  "default": "#7cc36e"
-                },
-                "light": {
-                  "type": "string",
-                  "description": "Medium size color for light theme",
-                  "default": "#7cc36e"
-                }
-              },
-              "default": {
-                "dark": "#7cc36e",
-                "light": "#7cc36e"
-              }
-            },
-            "large": {
-              "type": "object",
-              "description": "Colors for the import cost",
-              "properties": {
-                "dark": {
-                  "type": "string",
-                  "description": "Large size color for dark theme",
-                  "default": "#d44e40"
-                },
-                "light": {
-                  "type": "string",
-                  "description": "Large size color for light theme",
-                  "default": "#d44e40"
-                }
-              },
-              "default": {
-                "dark": "#d44e40",
-                "light": "#d44e40"
-              }
-            },
-            "extreme": {
-              "type": "object",
-              "description": "Colors for the import cost",
-              "properties": {
-                "dark": {
-                  "type": "string",
-                  "description": "Large size color for dark theme",
-                  "default": "#d44e40"
-                },
-                "light": {
-                  "type": "string",
-                  "description": "Large size color for light theme",
-                  "default": "#d44e40"
-                }
-              },
-              "default": {
-                "dark": "#d44e40",
-                "light": "#d44e40"
-              }
-            }
-          },
-          "default": {
-            "small": {
-              "dark": "#7cc36e",
-              "light": "#7cc36e"
-            },
-            "medium": {
-              "dark": "#7cc36e",
-              "light": "#7cc36e"
-            },
-            "large": {
-              "dark": "#d44e40",
-              "light": "#d44e40"
-            },
-            "extreme": {
-              "dark": "#d44e40",
-              "light": "#d44e40"
-            }
-          }
-        },
-        "importCost.sizes": {
-          "type": "object",
-          "description": "Sizes for the import cost",
-          "properties": {
-            "small": {
-              "type": "number",
-              "description": "Small size in kilo bytes",
-              "default": 50
-            },
-            "medium": {
-              "type": "number",
-              "description": "Medium size in kilo bytes",
-              "default": 100
-            },
-            "large": {
-              "type": "number",
-              "description": "Large size in kilo bytes",
-              "default": 500
-            }
-          },
-          "default": {
-            "small": 50,
-            "medium": 100,
-            "large": 500
-          }
-        },
-        "importCost.externals": {
-          "type": "array",
-          "description": "Dependencies to mark as external, so they are not included in the bundle size",
-          "oneOf": [
-            {
-              "type": "string",
-              "examples": [
-                "react"
-              ]
-            }
-          ]
-        },
-        "importCost.defaultPlatform": {
-          "type": "string",
-          "description": "Default platform to use for bundling (globally)",
-          "enum": [
-            "node",
-            "browser"
-          ],
-          "default": "node"
-        },
-        "importCost.platform": {
-          "type": "object",
-          "description": "Bundles the specific dependency for the given platform",
-          "patternProperties": {
-            ".*": {
-              "type": "string",
-              "enum": [
-                "node",
-                "browser"
-              ],
-              "default": "node"
-            }
-          }
-        },
-        "importCost.defaultFormat": {
-          "type": "string",
-          "description": "Default format to use for bundling (globally)",
-          "enum": [
-            "cjs",
-            "esm"
-          ],
-          "default": "esm"
-        },
-        "importCost.format": {
-          "type": "object",
-          "description": "Bundles the specific dependency for the given format",
-          "patternProperties": {
-            ".*": {
-              "type": "string",
-              "enum": [
-                "cjs",
-                "esm"
-              ],
-              "default": "cjs"
-            }
-          }
-        },
-        "importCost.skip": {
-          "type": "array",
-          "description": "Dependencies to skip",
-          "items": {
-            "type": "string",
-            "examples": [
-              "react"
-            ]
-          }
-        },
-        "importCost.fallback": {
-          "type": "string",
-          "description": "Fallback package manager to use for global install",
-          "enum": [
-            "npm",
-            "pnpm",
-            "yarn"
-          ],
-          "default": "npm"
-        }
-      }
-    }
-  },
   "scripts": {
-    "vscode:prepublish": "concurrently \"pnpm run build:web --minify\" \"pnpm run build:ext --minify\"",
-    "build": "concurrently \"pnpm run build:web\" \"pnpm run build:ext\"",
-    "build:web": "node ./scripts/build.mjs --target web --mode production",
-    "build:ext": "node ./scripts/build.mjs --target ext --mode production",
-    "dev": "concurrently \"pnpm run dev:web\" \"pnpm run dev:ext\"",
-    "dev:web": "node ./scripts/build.mjs --target web --watch",
-    "dev:ext": "node ./scripts/build.mjs --target ext --watch",
-    "package": "pnpm vsce package --no-dependencies",
-    "release": "pnpm vsce publish --no-dependencies",
-    "test": "vitest --run",
-    "lint": "eslint --cache {src,tests}/**/*.ts",
-    "browser": "vscode-test-web --extensionDevelopmentPath=.",
-    "web:serve": "npx serve --cors -l 5000",
-    "web:tunnel": "npx localtunnel -p 5000",
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
     "update:builtins": "node scripts/generate-builtins.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "turbo run typecheck"
   },
-  "dependencies": {
-    "@babel/parser": "^7.20.13",
-    "@babel/types": "^7.20.7",
-    "esbuild-wasm": "^0.16.17",
-    "filesize": "^10.0.6",
-    "pako": "^2.1.0",
-    "path-browserify": "^1.0.1"
-  },
+  "workspaces": [
+    "packages/**/*",
+    "apps/**/*"
+  ],
   "devDependencies": {
     "@luxass/eslint-config": "^2.2.6",
     "@luxass/prettier-config": "^1.1.9",
-    "@types/babel__traverse": "^7.18.3",
     "@types/node": "^18.11.17",
-    "@types/pako": "^2.0.0",
-    "@types/path-browserify": "^1.0.0",
-    "@types/vscode": "^1.72.0",
-    "@vscode/test-web": "^0.0.34",
-    "@vscode/vsce": "^2.17.0",
-    "concurrently": "^7.6.0",
-    "esbuild": "^0.16.17",
     "eslint": "^8.30.0",
     "prettier": "^2.8.2",
+    "tsup": "^6.6.0",
+    "turbo": "^1.7.4",
     "typescript": "^4.9.5",
     "vitest": "^0.28.4"
   }

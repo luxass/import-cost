@@ -1,0 +1,324 @@
+{
+  "name": "vscode-import-cost",
+  "publisher": "luxass",
+  "displayName": "Import Cost",
+  "version": "0.0.1",
+  "description": "Calculate cost of imports, powered by esbuild",
+  "author": {
+    "name": "Luxass",
+    "email": "lucasnrgaard@gmail.com",
+    "url": "https://luxass.dev"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luxass/import-cost",
+    "directory": "apps/vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/luxass/import-cost/issues"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "browser": "./dist/web/extension.js",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.72.0"
+  },
+  "packageManager": "pnpm@7.18.0",
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:vue",
+    "onLanguage:svelte",
+    "onLanguage:astro"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "import-cost.toggle-import-cost",
+        "title": "Toggle Import Cost",
+        "category": "Import Cost"
+      },
+      {
+        "command": "import-cost.clear-import-cache",
+        "title": "Clear Cache",
+        "category": "Import Cost"
+      },
+      {
+        "command": "import-cost.install-esbuild",
+        "title": "Install ESBuild Globally",
+        "category": "Import Cost",
+        "enablement": "!isWeb"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Import Cost",
+      "properties": {
+        "importCost.enable": {
+          "type": "boolean",
+          "description": "Enable or disable the import cost",
+          "default": true
+        },
+        "importCost.decorator": {
+          "type": "string",
+          "description": "Which decorator to use for the import cost",
+          "enum": [
+            "both",
+            "minified",
+            "compressed"
+          ],
+          "default": "both"
+        },
+        "importCost.sizeColor": {
+          "type": "string",
+          "description": "Which size to use for selecting the color",
+          "enum": [
+            "minified",
+            "compressed"
+          ],
+          "default": "minified"
+        },
+        "importCost.colors": {
+          "type": "object",
+          "description": "Colors for the import cost",
+          "properties": {
+            "small": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Small size color for dark theme",
+                  "default": "#7cc36e"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Small size color for light theme",
+                  "default": "#7cc36e"
+                }
+              },
+              "default": {
+                "dark": "#7cc36e",
+                "light": "#7cc36e"
+              }
+            },
+            "medium": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Medium size color for dark theme",
+                  "default": "#7cc36e"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Medium size color for light theme",
+                  "default": "#7cc36e"
+                }
+              },
+              "default": {
+                "dark": "#7cc36e",
+                "light": "#7cc36e"
+              }
+            },
+            "large": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Large size color for dark theme",
+                  "default": "#d44e40"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Large size color for light theme",
+                  "default": "#d44e40"
+                }
+              },
+              "default": {
+                "dark": "#d44e40",
+                "light": "#d44e40"
+              }
+            },
+            "extreme": {
+              "type": "object",
+              "description": "Colors for the import cost",
+              "properties": {
+                "dark": {
+                  "type": "string",
+                  "description": "Large size color for dark theme",
+                  "default": "#d44e40"
+                },
+                "light": {
+                  "type": "string",
+                  "description": "Large size color for light theme",
+                  "default": "#d44e40"
+                }
+              },
+              "default": {
+                "dark": "#d44e40",
+                "light": "#d44e40"
+              }
+            }
+          },
+          "default": {
+            "small": {
+              "dark": "#7cc36e",
+              "light": "#7cc36e"
+            },
+            "medium": {
+              "dark": "#7cc36e",
+              "light": "#7cc36e"
+            },
+            "large": {
+              "dark": "#d44e40",
+              "light": "#d44e40"
+            },
+            "extreme": {
+              "dark": "#d44e40",
+              "light": "#d44e40"
+            }
+          }
+        },
+        "importCost.sizes": {
+          "type": "object",
+          "description": "Sizes for the import cost",
+          "properties": {
+            "small": {
+              "type": "number",
+              "description": "Small size in kilo bytes",
+              "default": 50
+            },
+            "medium": {
+              "type": "number",
+              "description": "Medium size in kilo bytes",
+              "default": 100
+            },
+            "large": {
+              "type": "number",
+              "description": "Large size in kilo bytes",
+              "default": 500
+            }
+          },
+          "default": {
+            "small": 50,
+            "medium": 100,
+            "large": 500
+          }
+        },
+        "importCost.externals": {
+          "type": "array",
+          "description": "Dependencies to mark as external, so they are not included in the bundle size",
+          "oneOf": [
+            {
+              "type": "string",
+              "examples": [
+                "react"
+              ]
+            }
+          ]
+        },
+        "importCost.defaultPlatform": {
+          "type": "string",
+          "description": "Default platform to use for bundling (globally)",
+          "enum": [
+            "node",
+            "browser"
+          ],
+          "default": "node"
+        },
+        "importCost.platform": {
+          "type": "object",
+          "description": "Bundles the specific dependency for the given platform",
+          "patternProperties": {
+            ".*": {
+              "type": "string",
+              "enum": [
+                "node",
+                "browser"
+              ],
+              "default": "node"
+            }
+          }
+        },
+        "importCost.defaultFormat": {
+          "type": "string",
+          "description": "Default format to use for bundling (globally)",
+          "enum": [
+            "cjs",
+            "esm"
+          ],
+          "default": "esm"
+        },
+        "importCost.format": {
+          "type": "object",
+          "description": "Bundles the specific dependency for the given format",
+          "patternProperties": {
+            ".*": {
+              "type": "string",
+              "enum": [
+                "cjs",
+                "esm"
+              ],
+              "default": "cjs"
+            }
+          }
+        },
+        "importCost.skip": {
+          "type": "array",
+          "description": "Dependencies to skip",
+          "items": {
+            "type": "string",
+            "examples": [
+              "react"
+            ]
+          }
+        },
+        "importCost.fallback": {
+          "type": "string",
+          "description": "Fallback package manager to use for global install",
+          "enum": [
+            "npm",
+            "pnpm",
+            "yarn"
+          ],
+          "default": "npm"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "concurrently \"pnpm run build:web --minify\" \"pnpm run build:ext --minify\"",
+    "build": "tsup",
+    "dev": "tsup --watch --sourcemap",
+    "package": "pnpm vsce package --no-dependencies",
+    "release": "pnpm vsce publish --no-dependencies",
+    "test": "vitest --run",
+    "lint": "eslint --cache {src,tests}/**/*.ts",
+    "browser": "vscode-test-web --extensionDevelopmentPath=.",
+    "web:serve": "npx serve --cors -l 5000",
+    "web:tunnel": "npx localtunnel -p 5000",
+    "update:builtins": "node scripts/generate-builtins.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "esbuild-wasm": "^0.16.17",
+    "import-cost-engine": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.72.0",
+    "@vscode/test-web": "^0.0.34",
+    "@vscode/vsce": "^2.17.0",
+    "concurrently": "^7.6.0",
+    "esbuild": "^0.16.17"
+  }
+}

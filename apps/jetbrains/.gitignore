@@ -1,17 +1,3 @@
-node_modules
-.out
-out/
-dist/
-.output
-dist/
-.DS_Store
-.eslintcache
-.pnpm-debug.log*
-.vscode-test-web
-*.vsix
-
-
-# From JetBrains Plugin
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -48,3 +34,9 @@ bin/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store

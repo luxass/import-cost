@@ -5,7 +5,13 @@
       "type": "npm",
       "script": "dev",
       "group": "build",
-      "problemMatcher": "$esbuild-watch",
+      "problemMatcher": {
+        "base": "$tsup-watch",
+        "background": {
+          "beginsPattern": "^vscode-import-cost:(.*): (ESM|CJS) Build start$",
+          "endsPattern": "^vscode-import-cost:(.*): (ESM|CJS) .* Build success|^vscode-import-cost:(.*): (ESM|CJS) Build failed"
+        }
+      },
       "isBackground": true,
       "label": "npm: watch",
       "presentation": {
@@ -16,7 +22,14 @@
       "type": "npm",
       "script": "build",
       "group": "build",
-      "problemMatcher": "$esbuild",
+      "problemMatcher": {
+        "base": "$tsup",
+        "background": {
+          "beginsPattern": "^vscode-import-cost:(.*): (ESM|CJS) Build start$",
+          "endsPattern": "^vscode-import-cost:(.*): (ESM|CJS) .* Build success|^vscode-import-cost:(.*): (ESM|CJS) Build failed"
+        }
+      },
+      "isBackground": true,
       "label": "npm: build",
       "presentation": {
         "reveal": "silent"
