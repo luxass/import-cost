@@ -1,4 +1,4 @@
-import { filesize } from "filesize";
+import { filesize } from "import-cost-engine";
 import type { ImportSize } from "import-cost-engine";
 import type {
   DecorationOptions,

@@ -1,4 +1,4 @@
-import { find } from "import-cost-engine";
+import { find } from "import-cost-engine/vscode";
 import { Uri, workspace } from "vscode";
 
 import { config } from "./configuration";
@@ -15,7 +15,7 @@ export async function findPackageManager(workspaceUri: Uri) {
     const file = await find(
       ["package-lock.json", "yarn.lock", "pnpm-lock.yaml"],
       {
-        cwd: workspaceUri
+        cwd: new URL(workspaceUri.fsPath)
       }
     );
 

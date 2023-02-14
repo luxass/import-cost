@@ -3,10 +3,14 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
+    "baseUrl": ".",
     "paths": {
       "env:*": ["src/env/node/*"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["src/env/web/*"]
+  "exclude": ["src/env/web/*"],
+  "references": [
+    { "path": "../../packages/engine" }
+  ]
 }

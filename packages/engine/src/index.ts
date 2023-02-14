@@ -1,5 +1,5 @@
-import { readFile } from "env:fs";
 import { find } from "env:find";
+import { readFile } from "env:fs";
 import { dirname, join } from "env:path";
 import type { Message } from "esbuild";
 
@@ -14,6 +14,9 @@ import type {
   Options,
   ParsedImport
 } from "./types";
+
+export { filesize } from "filesize";
+export { find } from "env:find"
 
 export async function calculateCost({
   path,
@@ -194,5 +197,5 @@ function getPackageName(pkg: string): string {
   return pkgName;
 }
 
-export type { CostResult, Options, Language, Logger } from "./types";
+export type { CostResult, Options, Language, Logger, ImportSize } from "./types";
 export { cache } from "./caching";

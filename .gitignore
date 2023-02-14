@@ -9,7 +9,7 @@ dist/
 .pnpm-debug.log*
 .vscode-test-web
 *.vsix
-
+.turbo
 
 # From JetBrains Plugin
 .gradle
