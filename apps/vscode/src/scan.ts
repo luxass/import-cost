@@ -37,12 +37,21 @@ export async function scan(document: TextDocument, esbuildPath: string) {
         language: languageId as Language,
         externals: config.get("externals"),
         code,
-        cwd: uri,
-        esbuild: esbuildPath
-      });
+        cwd: new URL(uri.fsPath, "file://"),
+        esbuild: esbuildPath,
+        // We should not do this here....
+        skips: config.get("skip"),
+        format: config.get("defaultFormat"),
+        platform: config.get("defaultPlatform"),
+        formats: config.get("format"),
+        platforms: config.get("platform")
+      }).catch((err) => {
+        log.error(`Error - ${fileName}`, err);
+      })
 
       if (!result) {
         log.info(`No imports found - ${fileName}`);
+        console.log(JSON.stringify(result, null, 2))
         return;
       }
 

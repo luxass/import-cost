@@ -15,7 +15,7 @@ export async function findPackageManager(workspaceUri: Uri) {
     const file = await find(
       ["package-lock.json", "yarn.lock", "pnpm-lock.yaml"],
       {
-        cwd: new URL(workspaceUri.fsPath)
+        cwd: new URL(workspaceUri.fsPath, "file://")
       }
     );
 
@@ -38,10 +38,10 @@ export async function getPackageManager() {
 
   let pm: PackageManager = config.get("fallback") || "npm";
   if (workspaceFolders?.length) {
-    const work = workspace.getWorkspaceFolder(
-      Uri.file("/home/luxas/Desktop/my-t3-app/src/pages/index.tsx")
-    );
-    log.info("Workspace", work);
+    // const work = workspace.getWorkspaceFolder(
+    //   Uri.file("/home/luxas/Desktop/my-t3-app/src/pages/index.tsx")
+    // );
+    // log.info("Workspace", work);
     // TODO: Support multiple workspaces
     pm = await findPackageManager(workspaceFolders[0].uri);
   }

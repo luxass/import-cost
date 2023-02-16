@@ -67,6 +67,7 @@ export async function calculateCost({
       return !!_import.version;
     });
 
+
     if (!parsedImports.length) {
       return null;
     }
@@ -107,7 +108,7 @@ export async function calculateCost({
       warnings
     };
   } catch (e) {
-    // console.error(e);
+    console.error(e);
     return null;
   }
 }
