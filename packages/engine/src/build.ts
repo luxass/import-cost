@@ -3,16 +3,17 @@ import { dirname } from "env:path";
 import type { BuildOptions } from "esbuild";
 
 import { cache } from "./caching";
-import { log } from "./logger";
-import type {
-  CalculateSizeOptions,
-  CalculateSizeResult,
-  ParsedImport
-} from "./types";
+import type { CalculateSizeOptions, CalculateSizeResult, Import } from "./types";
 
 export async function calculateSize(
-  parsedImport: ParsedImport,
-  options: CalculateSizeOptions
+  parsedImport: Import,
+  {
+    log,
+    externals,
+    esbuild,
+    format,
+    platform
+  }: CalculateSizeOptions
 ): Promise<CalculateSizeResult> {
   try {
     const cacheKey = `${parsedImport.name}:${parsedImport.version}`;
@@ -24,13 +25,13 @@ export async function calculateSize(
     log.info(`Calculating size for ${cacheKey}...`);
 
     const { build }: typeof import("esbuild-wasm") = await import(
-      options?.esbuild ?? "esbuild-wasm"
+      esbuild ?? "esbuild-wasm"
     );
 
     const directives = parsedImport.directives;
 
-    const platform = directives.platform || options.platform || "node";
-    const format = directives.format || options.format || "esm";
+    platform = directives.platform || platform || "node";
+    format = directives.format || format || "esm";
     log.info(
       `Building ${parsedImport.name} for platform-${platform} and format-${format}...`
     );
@@ -45,13 +46,13 @@ export async function calculateSize(
       format,
       platform,
       write: false,
-      external: options?.externals || [],
+      external: externals || [],
       outdir: "dist",
       minify: true,
       mainFields:
-        platform === "browser"
-          ? ["browser", "module", "main"]
-          : ["module", "main"],
+        platform === "browser" ?
+            ["browser", "module", "main"] :
+            ["module", "main"],
       legalComments: "none"
     } satisfies BuildOptions);
 

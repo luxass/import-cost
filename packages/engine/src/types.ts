@@ -1,19 +1,4 @@
-import type { BuildOptions, Format, Message, Platform } from "esbuild";
-
-export type Language =
-  | "javascript"
-  | "js"
-  | "javascriptreact"
-  | "jsx"
-  | "typescript"
-  | "ts"
-  | "typescriptreact"
-  | "tsx"
-  | "vue"
-  | "vue-ts"
-  | "svelte"
-  | "svelte-ts"
-  | "astro";
+import type { Format, Message, Platform } from "esbuild";
 
 export interface Options {
   /**
@@ -83,39 +68,14 @@ export interface Options {
   esbuild?: string;
 }
 
-export interface ImportSize {
-  size: {
-    bytes: number;
+export interface CalculateSizeResult {
+  errors: Message[];
+  warnings: Message[];
+  // TODO: This type should probably be changed
+  pkg: Import & {
+    size: number;
     gzip: number;
   };
-  line: number;
-  path: string;
-  name: string;
-}
-
-export interface CostResult {
-  packages: ImportSize[];
-  warnings: Message[];
-  errors: Message[];
-}
-
-/**
- * The directives that can be used on a import statement.
- */
-export interface ImportDirectives {
-  external?: boolean;
-  platform?: NonNullable<BuildOptions["platform"]>;
-  skip?: boolean;
-  format?: NonNullable<BuildOptions["format"]>;
-}
-
-export interface ParsedImport {
-  fileName: string;
-  name: string;
-  line: number;
-  code: string;
-  version?: string;
-  directives: ImportDirectives;
 }
 
 export interface CalculateSizeOptions {
@@ -138,20 +98,130 @@ export interface CalculateSizeOptions {
    * The path to the esbuild binary.
    */
   esbuild?: string;
-}
 
-export interface CalculateSizeResult {
-  errors: Message[];
-  warnings: Message[];
-  // TODO: This type should probably be changed
-  pkg: ParsedImport & {
-    size: number;
-    gzip: number;
-  };
+  /**
+   * Logger
+   */
+  log: Logger;
 }
 
 export interface Logger {
   info: (...args: any[]) => void;
   error: (...args: any[]) => void;
   warn: (...args: any[]) => void;
+}
+
+export interface CalculateOptions {
+  /**
+   * Parsed Imports
+   */
+  imports: Import[];
+
+  /**
+   * Logger
+   *
+   * Used by the VSCode extension to log to the output channel.
+   */
+  log: Logger;
+
+  /**
+   * Custom find function, to find specific files in the file system.
+   *
+   * Used for allowing environment specific file system access.
+   */
+  find?: FindFn;
+
+  /**
+   * Current working directory
+   */
+  cwd: URL;
+
+  /**
+   * The path to the esbuild binary.
+   */
+  esbuildBinary?: string;
+
+  /**
+   * List of dependencies to mark as external.
+   */
+  externals?: string[];
+
+  /**
+   * Default format for the build.
+   * @default "esm"
+   * @see https://esbuild.github.io/api/#format
+   */
+  format?: Format;
+
+  /**
+   * Default platform for the build.
+   * @default "node"
+   * @see https://esbuild.github.io/api/#platform
+   */
+  platform?: Platform;
+}
+
+export interface CalculatedImport {
+  size: {
+    bytes: number;
+    gzip: number;
+  };
+  line: number;
+  path: string;
+  name: string;
+}
+
+export interface CalculateResult {
+  packages: CalculatedImport[];
+  warnings: Message[];
+  errors: Message[];
+}
+
+export interface FindOptions {
+  cwd: URL;
+}
+
+export type FindFn = (
+  name: string | string[],
+  options: FindOptions
+) => Promise<string | undefined>;
+
+export type Language =
+  | "javascript"
+  | "js"
+  | "javascriptreact"
+  | "jsx"
+  | "typescript"
+  | "ts"
+  | "typescriptreact"
+  | "tsx"
+  | "vue"
+  | "vue-ts"
+  | "svelte"
+  | "svelte-ts"
+  | "astro";
+
+export interface ParseImportsOptions {
+  fileName: string;
+  content: string;
+  language: Language;
+  skips?: string[];
+  formats?: Record<string, Format>;
+  platforms?: Record<string, Platform>;
+}
+
+export interface Import {
+  fileName: string;
+  name: string;
+  line: number;
+  code: string;
+  version?: string;
+  directives: ImportDirectives;
+}
+
+export interface ImportDirectives {
+  external?: boolean;
+  platform?: Platform;
+  skip?: boolean;
+  format?: Format;
 }

@@ -227,7 +227,7 @@
             }
           ]
         },
-        "importCost.defaultPlatform": {
+        "importCost.platform": {
           "type": "string",
           "description": "Default platform to use for bundling (globally)",
           "enum": [
@@ -236,7 +236,7 @@
           ],
           "default": "node"
         },
-        "importCost.platform": {
+        "importCost.platforms": {
           "type": "object",
           "description": "Bundles the specific dependency for the given platform",
           "patternProperties": {
@@ -250,7 +250,7 @@
             }
           }
         },
-        "importCost.defaultFormat": {
+        "importCost.format": {
           "type": "string",
           "description": "Default format to use for bundling (globally)",
           "enum": [
@@ -259,7 +259,7 @@
           ],
           "default": "esm"
         },
-        "importCost.format": {
+        "importCost.formats": {
           "type": "object",
           "description": "Bundles the specific dependency for the given format",
           "patternProperties": {
@@ -302,7 +302,6 @@
     "dev": "tsup --watch --sourcemap",
     "package": "pnpm vsce package --no-dependencies",
     "release": "pnpm vsce publish --no-dependencies",
-    "test": "vitest --run",
     "lint": "eslint --cache {src,tests}/**/*.ts",
     "browser": "vscode-test-web --extensionDevelopmentPath=.",
     "web:serve": "npx serve --cors -l 5000",
@@ -312,9 +311,11 @@
   },
   "dependencies": {
     "esbuild-wasm": "^0.16.17",
-    "import-cost-engine": "workspace:*"
+    "import-cost-engine": "workspace:*",
+    "path-browserify": "^1.0.1"
   },
   "devDependencies": {
+    "@types/path-browserify": "^1.0.0",
     "@types/vscode": "^1.72.0",
     "@vscode/test-web": "^0.0.34",
     "@vscode/vsce": "^2.17.0",

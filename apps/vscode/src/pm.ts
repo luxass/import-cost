@@ -1,7 +1,8 @@
-import { find } from "import-cost-engine/vscode";
-import { Uri, workspace } from "vscode";
+import type { Uri } from "vscode";
+import { workspace } from "vscode";
 
 import { config } from "./configuration";
+import { find } from "./find";
 import { log } from "./logger";
 import type { PackageManager } from "./types";
 

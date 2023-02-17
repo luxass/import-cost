@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
+
 import type { Logger } from "./types";
 
-export const log: Logger = {
+export const defaultLog: Logger = {
   info: (...args: any[]) => {
     const time = new Date().toLocaleTimeString();
     console.log(`[INFO ${time}] ${args.join(" ")}`);
@@ -20,4 +21,4 @@ export const log: Logger = {
     const time = new Date().toLocaleTimeString();
     console.log(`[WARN ${time}] ${args.join(" ")}`);
   }
-}
+};

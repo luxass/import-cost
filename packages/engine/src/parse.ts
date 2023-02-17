@@ -1,33 +1,31 @@
 import type { ParserPlugin } from "@babel/parser";
 import { parse } from "@babel/parser";
 import * as t from "@babel/types";
-import type { Format, Platform } from "esbuild";
 
 import { traverse } from "./traverse";
-import type { ImportDirectives, Language, ParsedImport } from "./types";
-
-interface ParseImportsOptions {
-  fileName: string;
-  content: string;
-  language: Language;
-  skips: string[];
-  formats: Record<string, Format>;
-  platforms: Record<string, Platform>;
-}
+import type { Import, ImportDirectives, Language, ParseImportsOptions } from "./types";
 
 export function parseImports({
   fileName,
   content,
   language,
-  skips,
-  formats,
-  platforms
-}: ParseImportsOptions): ParsedImport[] {
-  const imports: ParsedImport[] = [];
+  skips = [],
+  formats = {},
+  platforms = {}
+}: ParseImportsOptions): Import[] {
+  const imports: Import[] = [];
+
+  if (language === "astro" || language === "vue" || language === "svelte") {
+    const extracted = extractCode(content, language);
+    if (extracted) {
+      content = extracted.code;
+      language = extracted.language;
+    }
+  }
 
   const ast = parse(content, {
     sourceType: "module",
-    plugins: getParserPlugins(language) as ParserPlugin[]
+    plugins: getParserPlugins(language)
   });
 
   traverse(ast, (node) => {
@@ -262,4 +260,31 @@ export function getParserPlugins(language: Language): ParserPlugin[] {
     default:
       return JS_PLUGINS;
   }
+}
+
+export function extractCode(
+  code: string,
+  language: Exclude<Language, "svelte-ts" | "vue-ts">
+): { code: string; language: Language } | null {
+  if (language === "astro") {
+    const match = code.match(/(?<=---\n)(?:(?:.|\n)*?)(?=\n---)/);
+    if (match) {
+      return {
+        code: match[0].trim(),
+        language: "ts"
+      };
+    }
+  } else if (language === "vue" || language === "svelte") {
+    const match = code.match(
+      /<script(?:.*?lang="(js|ts)")?[^>]*>([\s\S]*?)<\/script>/
+    );
+
+    if (match) {
+      return {
+        code: match[2].trim(),
+        language: match[1] === "ts" ? `${language}-${match[1]}` : language
+      };
+    }
+  }
+  return null;
 }

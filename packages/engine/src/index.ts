@@ -1,93 +1,98 @@
 import { find } from "env:find";
 import { readFile } from "env:fs";
-import { dirname, join } from "env:path";
+import { join } from "env:path";
 import type { Message } from "esbuild";
 
 import { calculateSize } from "./build";
 import { builtins } from "./builtins";
-import { log } from "./logger";
+import { defaultLog } from "./logger";
 import { parseImports } from "./parse";
 import type {
-  CostResult,
-  ImportSize,
+  CalculateOptions,
+  CalculateResult,
+  CalculatedImport,
+  FindFn,
+  FindOptions,
+  Import,
   Language,
-  Options,
-  ParsedImport
+  Logger
 } from "./types";
 
 export { filesize } from "filesize";
-export { find } from "env:find"
+export { cache } from "./caching";
+export { parseImports };
+export type { FindFn, FindOptions, Logger, Import, Language };
 
-export async function calculateCost({
-  path,
-  language,
-  externals,
-  code,
+export async function calculate({
+  imports,
+  log = defaultLog,
+  find,
   cwd,
-  esbuild,
-  skips,
-  format,
+  esbuildBinary,
+  externals,
   platform,
-  formats,
-  platforms
-}: Options): Promise<CostResult | null> {
+  format
+}: CalculateOptions): Promise<CalculateResult | undefined> {
+  log.info("Calculating cost of imports...");
+
   try {
-    if (language === "astro" || language === "vue" || language === "svelte") {
-      const extracted = extractCode(code, language);
-      if (extracted) {
-        code = extracted.code;
-        language = extracted.language;
-      }
+    if (!find) {
+      find = (await import("./find")).default;
     }
-    let parsedImports = parseImports({
-      fileName: path,
-      content: code,
-      language,
-      skips,
-      formats: formats || {},
-      platforms: platforms || {}
+
+    const node_modules = await find("node_modules", {
+      cwd
     });
 
-    // They are all using the same file.
-    // So no need to check for node_modules in the folder each time.
-    const node_modules = await find("node_modules", {
-      cwd: new URL(dirname(path))
-    });
+    if (!node_modules) {
+      log.error("Could not find node_modules");
+      return undefined;
+    }
 
     await Promise.allSettled(
-      parsedImports.map(
-        async (pkg) => (pkg.version = await getVersion(pkg, node_modules))
-      )
+      imports.map(async (pkg) => {
+        try {
+          const pkgPath = join(
+            node_modules,
+            getPackageName(pkg.name),
+            "package.json"
+          );
+          const { version } = JSON.parse(
+            new TextDecoder().decode(await readFile(pkgPath))
+          );
+          log.info(`Found version ${version} for ${pkg.name}`);
+
+          pkg.version = version;
+          return pkg;
+        } catch (e) {
+          return undefined;
+        }
+      })
     );
 
-    log.info(`Found ${parsedImports.length} imports for ${path}`);
+    log.info(`Found ${imports.length} imports for ${cwd}`);
 
-    parsedImports = parsedImports.filter((_import) => {
+    imports = imports.filter((_import) => {
+      log.info(`Checking import: ${_import.name}`, _import.version);
       log.info(`${_import.version ? "✅" : "❌"} ${_import.name}`);
       return !!_import.version;
     });
 
-
-    if (!parsedImports.length) {
-      return null;
+    if (!imports.length) {
+      return;
     }
 
     const warnings: Message[] = [];
     const errors: Message[] = [];
-    const packages: ImportSize[] = [];
+    const packages: CalculatedImport[] = [];
 
-    log.info(`Resolving externals for ${path}`);
-    externals = await resolveExternals(
-      new URL(dirname(cwd.pathname)),
-      externals
-    );
-
-    for await (const result of parsedImports.map((_import) =>
-      calculateSize(_import, {
-        externals,
+    for await (const result of imports.map((pkg) =>
+      calculateSize(pkg, {
+        log,
+        externals: externals || [],
+        esbuild: esbuildBinary,
         format,
-        platform,
-        esbuild
+        platform
       })
     )) {
       result.errors = result.errors.concat(result.errors);
@@ -102,14 +107,15 @@ export async function calculateCost({
         }
       });
     }
+
     return {
       packages,
       errors,
       warnings
     };
   } catch (e) {
-    console.error(e);
-    return null;
+    log.error(e);
+    return undefined;
   }
 }
 
@@ -131,64 +137,6 @@ async function resolveExternals(cwd: URL, externals: string[]) {
   return builtins.concat(externals, extraExternals);
 }
 
-export function extractCode(
-  code: string,
-  language: string
-): { code: string; language: Language } | null {
-  if (language === "astro") {
-    const match = code.match(/(?<=---\n)(?:(?:.|\n)*?)(?=\n---)/);
-    if (match) {
-      return {
-        code: match[0],
-        language: "ts"
-      };
-    }
-  } else if (language === "vue" || language === "svelte") {
-    const match = code.match(
-      /<script(?:.*?lang="(js|ts)")?[^>]*>([\s\S]*?)<\/script>/
-    );
-
-    if (match) {
-      return {
-        code: match[2],
-        language: `${language}-${match[1]}` as Language
-      };
-    }
-  }
-  return null;
-}
-
-async function getVersion(
-  pkg: ParsedImport,
-  node_modules?: string
-): Promise<string | undefined> {
-  try {
-    // const node_modules = await find("node_modules", {
-    //   cwd: Uri.file(dirname(pkg.fileName))
-    // });
-
-    // TODO: Fix this to work with node_modules, like the original import-cost does.
-    // EDIT: Do we want that?
-
-    if (node_modules) {
-      log.info(`Found node_modules for ${pkg.name}`);
-      const pkgPath = join(
-        node_modules,
-        getPackageName(pkg.name),
-        "package.json"
-      );
-      const { version } = JSON.parse(
-        new TextDecoder().decode(await readFile(pkgPath))
-      );
-      log.info(`Found version ${version} for ${pkg.name}`);
-      return version;
-    }
-  } catch (e) {
-    console.error(e);
-    return undefined;
-  }
-}
-
 function getPackageName(pkg: string): string {
   const pkgParts = pkg.split("/");
   let pkgName = pkgParts.shift() || pkg;
@@ -197,6 +145,3 @@ function getPackageName(pkg: string): string {
   }
   return pkgName;
 }
-
-export type { CostResult, Options, Language, Logger, ImportSize } from "./types";
-export { cache } from "./caching";
