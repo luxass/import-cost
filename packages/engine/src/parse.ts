@@ -3,12 +3,7 @@ import { parse } from "@babel/parser";
 import * as t from "@babel/types";
 
 import { traverse } from "./traverse";
-import type {
-  ImportDirectives,
-  Language,
-  ParseImportsOptions,
-  ParsedImport
-} from "./types";
+import type { Import, ImportDirectives, Language, ParseImportsOptions } from "./types";
 
 export function parseImports({
   fileName,
@@ -17,8 +12,8 @@ export function parseImports({
   skips = [],
   formats = {},
   platforms = {}
-}: ParseImportsOptions): ParsedImport[] {
-  const imports: ParsedImport[] = [];
+}: ParseImportsOptions): Import[] {
+  const imports: Import[] = [];
 
   if (language === "astro" || language === "vue" || language === "svelte") {
     const extracted = extractCode(content, language);
@@ -30,7 +25,7 @@ export function parseImports({
 
   const ast = parse(content, {
     sourceType: "module",
-    plugins: getParserPlugins(language) as ParserPlugin[]
+    plugins: getParserPlugins(language)
   });
 
   traverse(ast, (node) => {
@@ -266,7 +261,6 @@ export function getParserPlugins(language: Language): ParserPlugin[] {
       return JS_PLUGINS;
   }
 }
-
 
 export function extractCode(
   code: string,
