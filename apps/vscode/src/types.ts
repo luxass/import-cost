@@ -21,10 +21,10 @@ export interface Config {
   // Just like the directives - but if you want to add multiple very easily.
   externals: string[];
   skip: string[];
-  defaultPlatform: Platform;
-  platform: Record<string, Platform>;
-  defaultFormat: Format;
-  format: Record<string, Format>;
+  platform: Platform;
+  platforms: Record<string, Platform>;
+  format: Format;
+  formats: Record<string, Format>;
 
   fallback: PackageManager;
 

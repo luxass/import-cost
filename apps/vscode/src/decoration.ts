@@ -28,10 +28,10 @@ export function decorate(document: TextDocument, imports: ImportSize[]) {
 
   const decorations: DecorationOptions[] = [];
   const editor = window.activeTextEditor;
-  log.info("Decorating", editor, document);
   if (!editor) {
     return;
   }
+  log.info("Decorating", editor, document);
   imports.forEach((importSize) => {
     const range = document.lineAt(importSize.line - 1).range;
 

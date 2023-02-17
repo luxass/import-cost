@@ -135,6 +135,30 @@ export interface CalculateOptions {
    * Current working directory
    */
   cwd: URL;
+
+  /**
+   * The path to the esbuild binary.
+   */
+  esbuildBinary?: string;
+
+  /**
+   * List of dependencies to mark as external.
+   */
+  externals?: string[];
+
+  /**
+   * Default format for the build.
+   * @default "esm"
+   * @see https://esbuild.github.io/api/#format
+   */
+  format?: Format;
+
+  /**
+   * Default platform for the build.
+   * @default "node"
+   * @see https://esbuild.github.io/api/#platform
+   */
+  platform?: Platform;
 }
 
 export interface CalculatedImport {
@@ -152,7 +176,6 @@ export interface CalculateResult {
   warnings: Message[];
   errors: Message[];
 }
-
 
 export interface FindOptions {
   cwd: URL;
