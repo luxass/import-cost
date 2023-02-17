@@ -302,7 +302,6 @@
     "dev": "tsup --watch --sourcemap",
     "package": "pnpm vsce package --no-dependencies",
     "release": "pnpm vsce publish --no-dependencies",
-    "test": "vitest --run",
     "lint": "eslint --cache {src,tests}/**/*.ts",
     "browser": "vscode-test-web --extensionDevelopmentPath=.",
     "web:serve": "npx serve --cors -l 5000",

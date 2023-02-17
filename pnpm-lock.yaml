@@ -68,6 +68,9 @@ importers:
       '@types/vscode': 1.74.0
       esbuild: 0.16.17
 
+  packages/engine/tests/fixtures:
+    specifiers: {}
+
 packages:
 
   /@ampproject/remapping/2.2.0:

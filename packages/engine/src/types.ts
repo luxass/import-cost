@@ -155,3 +155,36 @@ export interface Logger {
   error: (...args: any[]) => void;
   warn: (...args: any[]) => void;
 }
+
+export interface Import {
+  fileName: string;
+  name: string;
+  line: number;
+  code: string;
+  version?: string;
+  directives: ImportDirectives;
+}
+
+
+export interface CalculateOptions {
+  /**
+   * Parsed Imports
+   */
+  imports: Import[];
+
+  /**
+   * Logger
+   *
+   * Used by the VSCode extension to log to the output channel.
+   */
+  log: Logger;
+}
+
+export interface ParseImportsOptions {
+  fileName: string;
+  content: string;
+  language: Language;
+  skips?: string[];
+  formats?: Record<string, Format>;
+  platforms?: Record<string, Platform>;
+}

@@ -5,18 +5,22 @@ import type { Message } from "esbuild";
 
 import { calculateSize } from "./build";
 import { builtins } from "./builtins";
-import { log } from "./logger";
+import { log as defaultLog, log } from "./logger";
 import { parseImports } from "./parse";
 import type {
+  CalculateOptions,
   CostResult,
   ImportSize,
-  Language,
   Options,
   ParsedImport
 } from "./types";
 
 export { filesize } from "filesize";
-export { find } from "env:find"
+export { find } from "env:find";
+
+export async function calculate({ imports, log = defaultLog }: CalculateOptions) {
+  log.info("Calculating cost of imports...");
+}
 
 export async function calculateCost({
   path,
@@ -32,13 +36,13 @@ export async function calculateCost({
   platforms
 }: Options): Promise<CostResult | null> {
   try {
-    if (language === "astro" || language === "vue" || language === "svelte") {
-      const extracted = extractCode(code, language);
-      if (extracted) {
-        code = extracted.code;
-        language = extracted.language;
-      }
-    }
+    // if (language === "astro" || language === "vue" || language === "svelte") {
+    //   const extracted = extractCode(code, language);
+    //   if (extracted) {
+    //     code = extracted.code;
+    //     language = extracted.language;
+    //   }
+    // }
     let parsedImports = parseImports({
       fileName: path,
       content: code,
@@ -66,7 +70,6 @@ export async function calculateCost({
       log.info(`${_import.version ? "✅" : "❌"} ${_import.name}`);
       return !!_import.version;
     });
-
 
     if (!parsedImports.length) {
       return null;
@@ -131,33 +134,6 @@ async function resolveExternals(cwd: URL, externals: string[]) {
   return builtins.concat(externals, extraExternals);
 }
 
-export function extractCode(
-  code: string,
-  language: string
-): { code: string; language: Language } | null {
-  if (language === "astro") {
-    const match = code.match(/(?<=---\n)(?:(?:.|\n)*?)(?=\n---)/);
-    if (match) {
-      return {
-        code: match[0],
-        language: "ts"
-      };
-    }
-  } else if (language === "vue" || language === "svelte") {
-    const match = code.match(
-      /<script(?:.*?lang="(js|ts)")?[^>]*>([\s\S]*?)<\/script>/
-    );
-
-    if (match) {
-      return {
-        code: match[2],
-        language: `${language}-${match[1]}` as Language
-      };
-    }
-  }
-  return null;
-}
-
 async function getVersion(
   pkg: ParsedImport,
   node_modules?: string
@@ -198,5 +174,12 @@ function getPackageName(pkg: string): string {
   return pkgName;
 }
 
-export type { CostResult, Options, Language, Logger, ImportSize } from "./types";
+export type {
+  CostResult,
+  Options,
+  Language,
+  Logger,
+  ImportSize
+} from "./types";
 export { cache } from "./caching";
+export { parseImports };
