@@ -20,7 +20,9 @@
     <depends>JavaScript</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="dev.luxass.importCost.ICSettings" />
-        <projectConfigurable displayName="Import Cost" instance="dev.luxass.importCost.ICConfigurable" />
+        <applicationService serviceImplementation="dev.luxass.importCost.ICSettings" />
+        <editor.linePainter implementation="dev.luxass.importCost.ICPainter" />
+        <applicationConfigurable displayName="Import Cost" instance="dev.luxass.importCost.ICConfigurable" />
+        <projectService serviceImplementation="dev.luxass.importCost.ICLanguageService"/>
     </extensions>
 </idea-plugin>

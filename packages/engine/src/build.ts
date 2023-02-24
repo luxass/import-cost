@@ -23,10 +23,11 @@ export async function calculateSize(
       return cache.get(cacheKey) as CalculateSizeResult;
     }
     log.info(`Calculating size for ${cacheKey}...`);
-
+    console.time("calculateSize" + cacheKey);
     const { build }: typeof import("esbuild-wasm") = await import(
       esbuild ?? "esbuild-wasm"
     );
+    console.timeEnd("calculateSize" + cacheKey);
 
     const directives = parsedImport.directives;
 

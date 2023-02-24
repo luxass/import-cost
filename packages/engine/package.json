@@ -23,11 +23,6 @@
       "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     },
-    "./vscode": {
-      "types": "./dist/vscode/index.d.ts",
-      "require": "./dist/vscode/index.cjs",
-      "import": "./dist/vscode/index.js"
-    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",

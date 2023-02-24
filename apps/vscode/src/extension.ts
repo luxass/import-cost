@@ -38,9 +38,9 @@ export async function activate(ctx: ExtensionContext) {
         const pm: PackageManager = await getPackageManager();
 
         const args =
-          pm === "yarn"
-            ? ["global", "add", "esbuild"]
-            : ["install", "-g", "esbuild"];
+          pm === "yarn" ?
+              ["global", "add", "esbuild"] :
+              ["install", "-g", "esbuild"];
 
         await tasks.executeTask(
           new Task(

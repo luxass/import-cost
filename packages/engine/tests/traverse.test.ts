@@ -5,13 +5,14 @@ import { describe, expect, test } from "vitest";
 import * as t from "@babel/types";
 
 import { traverse } from "../src/traverse";
-import { fixture } from "./shared";
+import { createFixture } from "./shared";
 
 describe("traverse", () => {
+  const fixture = createFixture("traverse");
   test("expect ImportDeclarations", async () => {
     const ast = JSON.parse(
       await readFile(
-        fixture("traverse-asts", "import-declaration.json"),
+        fixture("import-declaration.json"),
         "utf-8"
       )
     );
@@ -40,7 +41,7 @@ describe("traverse", () => {
   test("require call inside a function", async () => {
     const ast = JSON.parse(
       await readFile(
-        fixture("traverse-asts", "require-inside-function.json"),
+        fixture("require-inside-function.json"),
         "utf-8"
       )
     );

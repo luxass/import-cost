@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 import { extractCode, parseImports } from "../src/parse";
 import type { Language } from "../src/types";
-import { fixture } from "./shared";
+import { createFixture } from "./shared";
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#syntax
 
@@ -163,6 +163,8 @@ describe("parse imports with directives", () => {
 });
 
 describe("extract code", () => {
+  const fixture = createFixture("parser");
+
   describe("astro", () => {
     test("extract code in astro file", async () => {
       const fixturePath = fixture("astro", "app.astro");

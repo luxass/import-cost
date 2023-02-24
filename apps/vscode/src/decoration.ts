@@ -6,7 +6,11 @@ import type {
   TextDocument,
   TextEditor
 } from "vscode";
-import { window } from "vscode";
+import {
+  Position,
+  Range,
+  window
+} from "vscode";
 
 import { config } from "./configuration";
 import { log } from "./logger";
@@ -14,32 +18,44 @@ import { log } from "./logger";
 const MARGIN = 1;
 const FONT_STYLE = "normal";
 
+const decorationType = window.createTextEditorDecorationType({});
+
 export function flush(editor?: TextEditor) {
   log.info("Flushing decorations");
   if (!editor) {
     return;
   }
 
-  editor.setDecorations(window.createTextEditorDecorationType({}), []);
+  editor.setDecorations(decorationType, []);
+}
+
+let debounced: NodeJS.Timeout | undefined;
+
+function flushDebounced(editor: TextEditor) {
+  clearTimeout(debounced);
+  debounced = setTimeout(() => {
+    flush(editor);
+  }, 10);
 }
 
 export function decorate(document: TextDocument, imports: ImportSize[]) {
-  // TODO: Improve performance of this.
-
   const decorations: DecorationOptions[] = [];
   const editor = window.activeTextEditor;
   if (!editor) {
     return;
   }
+  // flushDebounced(editor);
   log.info("Decorating", editor, document);
   imports.forEach((importSize) => {
-    const range = document.lineAt(importSize.line - 1).range;
 
     const color = getDecorationColor(importSize);
     const message = getDecorationMessage(importSize);
 
     decorations.push({
-      range,
+      range: new Range(
+        new Position(importSize.line - 1, 1024),
+        new Position(importSize.line - 1, 1024)
+      ),
       renderOptions: {
         ...color,
         ...message
@@ -47,7 +63,7 @@ export function decorate(document: TextDocument, imports: ImportSize[]) {
     });
   });
 
-  editor.setDecorations(window.createTextEditorDecorationType({}), decorations);
+  editor.setDecorations(decorationType, decorations);
 }
 
 function getDecorationColor(importSize: ImportSize): DecorationRenderOptions {
@@ -55,9 +71,9 @@ function getDecorationColor(importSize: ImportSize): DecorationRenderOptions {
   const colors = config.get("colors");
 
   const size =
-    (config.get("sizeColor") === "minified"
-      ? importSize.size.bytes
-      : importSize.size.gzip) / 1024;
+    (config.get("sizeColor") === "minified" ?
+      importSize.size.bytes :
+      importSize.size.gzip) / 1024;
 
   if (size < sizes.small) {
     return getColors(colors.small.dark, colors.small.light);

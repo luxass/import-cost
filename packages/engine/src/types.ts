@@ -118,28 +118,14 @@ export interface CalculateOptions {
   imports: Import[];
 
   /**
-   * Logger
-   *
-   * Used by the VSCode extension to log to the output channel.
+   * Context
    */
-  log: Logger;
-
-  /**
-   * Custom find function, to find specific files in the file system.
-   *
-   * Used for allowing environment specific file system access.
-   */
-  find?: FindFn;
+  ctx: Context;
 
   /**
    * Current working directory
    */
   cwd: URL;
-
-  /**
-   * The path to the esbuild binary.
-   */
-  esbuildBinary?: string;
 
   /**
    * List of dependencies to mark as external.
@@ -160,6 +146,35 @@ export interface CalculateOptions {
    */
   platform?: Platform;
 }
+
+export interface Context {
+  /**
+   * The path to the esbuild binary.
+   */
+  esbuildBinary?: string;
+
+  /**
+   * Logger
+   *
+   * Used by the VSCode extension to log to the output channel.
+   */
+  log: Logger;
+
+  /**
+   * Custom find function, to find specific files in the file system.
+   *
+   * Used for allowing environment specific file system access.
+   */
+  find?: FindFn;
+
+  /**
+   * Custom readFile function, to read specific files in the file system.
+   * Used for allowing environment specific file system access.
+   */
+  readFile?: ReadFileFn;
+}
+
+type ReadFileFn = (path: string) => Promise<string>;
 
 export interface CalculatedImport {
   size: {

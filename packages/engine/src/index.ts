@@ -1,5 +1,3 @@
-import { find } from "env:find";
-import { readFile } from "env:fs";
 import { join } from "env:path";
 import type { Message } from "esbuild";
 
@@ -11,6 +9,7 @@ import type {
   CalculateOptions,
   CalculateResult,
   CalculatedImport,
+  Context,
   FindFn,
   FindOptions,
   Import,
@@ -21,23 +20,24 @@ import type {
 export { filesize } from "filesize";
 export { cache } from "./caching";
 export { parseImports };
-export type { FindFn, FindOptions, Logger, Import, Language };
+export type { FindFn, FindOptions, Logger, Import, Language, Context };
 
 export async function calculate({
   imports,
-  log = defaultLog,
-  find,
   cwd,
-  esbuildBinary,
   externals,
   platform,
-  format
+  format,
+  ctx: { log = defaultLog, esbuildBinary, find, readFile }
 }: CalculateOptions): Promise<CalculateResult | undefined> {
   log.info("Calculating cost of imports...");
-
   try {
     if (!find) {
       find = (await import("./find")).default;
+    }
+
+    if (!readFile) {
+      readFile = (await import("./readFile")).default;
     }
 
     const node_modules = await find("node_modules", {
@@ -57,9 +57,10 @@ export async function calculate({
             getPackageName(pkg.name),
             "package.json"
           );
-          const { version } = JSON.parse(
-            new TextDecoder().decode(await readFile(pkgPath))
-          );
+          // const { version } = JSON.parse(
+          //   new TextDecoder().decode(await readFile(pkgPath))
+          // );
+          const { version } = JSON.parse(await readFile!(pkgPath));
           log.info(`Found version ${version} for ${pkg.name}`);
 
           pkg.version = version;
@@ -81,6 +82,19 @@ export async function calculate({
     if (!imports.length) {
       return;
     }
+
+    log.info("Resolving externals");
+    const pkg = await find("package.json", {
+      cwd
+    });
+
+    let extraExternals: string[] = [];
+    if (pkg) {
+      const { peerDependencies } = JSON.parse(await readFile(pkg));
+      extraExternals = Object.keys(peerDependencies || {});
+    }
+
+    externals = builtins.concat(externals || [], extraExternals, ["react", "react-dom"]);
 
     const warnings: Message[] = [];
     const errors: Message[] = [];
@@ -117,24 +131,6 @@ export async function calculate({
     log.error(e);
     return undefined;
   }
-}
-
-// This is probably pretty slow, will look into this.
-async function resolveExternals(cwd: URL, externals: string[]) {
-  const pkg = await find("package.json", {
-    cwd
-  });
-
-  let extraExternals: string[] = [];
-  // This should be a workspace.fs.readFile, in the exported vscode package.
-  if (pkg) {
-    const { peerDependencies } = JSON.parse(
-      new TextDecoder().decode(await readFile(pkg))
-    );
-    extraExternals = Object.keys(peerDependencies || {});
-  }
-
-  return builtins.concat(externals, extraExternals);
 }
 
 function getPackageName(pkg: string): string {

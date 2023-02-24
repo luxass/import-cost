@@ -24,6 +24,18 @@ importers:
       typescript: 4.9.5
       vitest: 0.28.4
 
+  apps/jetbrains/build/idea-sandbox/system/javascript/typings/node/18.14.0:
+    specifiers:
+      '@types/node': 18.14.0
+    dependencies:
+      '@types/node': 18.14.0
+
+  apps/jetbrains/import-cost:
+    specifiers:
+      import-cost-engine: workspace:*
+    dependencies:
+      import-cost-engine: link:../../../packages/engine
+
   apps/vscode:
     specifiers:
       '@types/path-browserify': ^1.0.0
@@ -890,6 +902,10 @@ packages:
   /@types/node/18.11.18:
     resolution: {integrity: sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==}
     dev: true
+
+  /@types/node/18.14.0:
+    resolution: {integrity: sha512-5EWrvLmglK+imbCJY0+INViFWUHg1AHel1sq4ZVSfdcNqGy9Edv3UB9IIzzg+xPaUcAgZYcfVs2fBcwDeZzU0A==}
+    dev: false
 
   /@types/normalize-package-data/2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}

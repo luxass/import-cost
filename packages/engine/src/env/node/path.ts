@@ -1,1 +1,1 @@
-export { dirname, resolve, parse, join } from "node:path";
+export { dirname, join } from "node:path";
