@@ -1,4 +1,4 @@
-const {} = require("import-cost-helpers")
+const {} = require("import-cost-engine")
 
 class ImportCostPlugin {
   onMessage(project, messageWriter) {

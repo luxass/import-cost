@@ -2,15 +2,15 @@ import { readFile } from "node:fs/promises";
 
 import { describe, expect, test } from "vitest";
 
-import { extractCode, parseImports } from "../src/parse";
-import type { Language } from "../src/types";
+import { extractCode, parseImports } from "../src/parser";
+import type { Language } from "../src/parser";
 import { createFixture } from "./shared";
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#syntax
 
 describe("parse imports", () => {
   test("import default", () => {
-    const content = "import React from 'react';";
+    const content = "import React from \"react\";";
     const imports = parseImports({
       fileName: "file.ts",
       content,
@@ -22,14 +22,14 @@ describe("parse imports", () => {
         fileName: "file.ts",
         name: "react",
         line: 1,
-        code: "import React from 'react'\nconsole.log(React);",
+        code: "import React from \"react\"\nconsole.log(React);",
         directives: {}
       }
     ]);
   });
 
   test("import default type", () => {
-    const content = "import type React from 'react';";
+    const content = "import type React from \"react\";";
     const imports = parseImports({
       fileName: "file.ts",
       content,
@@ -41,13 +41,13 @@ describe("parse imports", () => {
 
   test("import multiple", () => {
     const content = `
-      import React from 'react';
-      import { type NextAuthOptions, getServerSession, type DefaultSession } from 'next-auth';
+      import React from \"react\";
+      import { type NextAuthOptions, getServerSession, type DefaultSession } from \"next-auth\";
       
       // This import should be skipped.
-      import type { GetServerSidePropsContext } from 'next';
+      import type { GetServerSidePropsContext } from \"next\";
       // This import should be skipped.
-      import { type GetServerSideProps } from 'next';
+      import { type GetServerSideProps } from \"next\";
 
     `;
 
@@ -61,17 +61,17 @@ describe("parse imports", () => {
       fileName: "file.ts",
       name: "react",
       line: 2,
-      code: "import React from 'react'\nconsole.log(React);",
+      code: "import React from \"react\"\nconsole.log(React);",
       directives: {}
     });
 
     expect(nextAuth.code).toEqual(
-      "import { getServerSession } from 'next-auth'\nconsole.log({ getServerSession });"
+      "import { getServerSession } from \"next-auth\"\nconsole.log({ getServerSession });"
     );
   });
 
   test("import with sideeffects", () => {
-    const content = "import 'react';";
+    const content = "import \"react\";";
     const [react] = parseImports({
       fileName: "file.ts",
       content,
@@ -82,7 +82,7 @@ describe("parse imports", () => {
       fileName: "file.ts",
       name: "react",
       line: 1,
-      code: "import * as tmp from 'react'\nconsole.log(tmp);",
+      code: "import * as tmp from \"react\"\nconsole.log(tmp);",
       directives: {}
     });
   });
@@ -157,7 +157,7 @@ describe("parse imports with directives", () => {
     });
 
     expect(nextAuth.code).toEqual(
-      "import { getServerSession } from 'next-auth'\nconsole.log({ getServerSession });"
+      "import { getServerSession } from \"next-auth\"\nconsole.log({ getServerSession });"
     );
   });
 });
@@ -204,7 +204,7 @@ describe("extract code", () => {
 
       const { code, language } = result!;
 
-      expect(language).toEqual<Language>("svelte-ts");
+      expect(language).toEqual<Language>("ts");
       expect(code).toEqual(
         `import { confetti } from "@neoconfetti/svelte";
 
@@ -232,7 +232,7 @@ describe("extract code", () => {
 
       const { code, language } = result!;
 
-      expect(language).toEqual<Language>("svelte");
+      expect(language).toEqual<Language>("js");
       expect(code).toEqual(
         `import { confetti } from "@neoconfetti/svelte";
 
@@ -271,7 +271,7 @@ describe("extract code", () => {
 
       const { code, language } = result!;
 
-      expect(language).toEqual<Language>("vue-ts");
+      expect(language).toEqual<Language>("ts");
 
       expect(code).toEqual(
         "import { map } from \"lodash\";\n\nconst arr = [1, 2, 3];\nconst doubled: number[] = map(arr, (n) => n * 2);"
@@ -288,7 +288,7 @@ describe("extract code", () => {
 
       const { code, language } = result!;
 
-      expect(language).toEqual<Language>("vue");
+      expect(language).toEqual<Language>("js");
       expect(code).toEqual(
         "import { map } from \"lodash\";\n\nconst arr = [1, 2, 3];\nconst doubled = map(arr, (n) => n * 2);"
       );

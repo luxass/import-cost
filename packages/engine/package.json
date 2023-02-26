@@ -23,6 +23,31 @@
       "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     },
+    "./parser": {
+      "types": "./dist/parser.d.ts",
+      "require": "./dist/parser.cjs",
+      "import": "./dist/parser.js"
+    },
+    "./resolve": {
+      "types": "./dist/resolve.d.ts",
+      "require": "./dist/resolve.cjs",
+      "import": "./dist/resolve.js"
+    },
+    "./find": {
+      "types": "./dist/find.d.ts",
+      "require": "./dist/find.cjs",
+      "import": "./dist/find.js"
+    },
+    "./calculate": {
+      "types": "./dist/calculate.d.ts",
+      "require": "./dist/calculate.cjs",
+      "import": "./dist/calculate.js"
+    },
+    "./cache": {
+      "types": "./dist/cache.d.ts",
+      "require": "./dist/cache.cjs",
+      "import": "./dist/cache.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
@@ -46,14 +71,12 @@
     "@babel/parser": "^7.20.13",
     "@babel/types": "^7.20.7",
     "esbuild-wasm": "^0.16.17",
-    "filesize": "^10.0.6",
     "pako": "^2.1.0",
     "path-browserify": "^1.0.1"
   },
   "devDependencies": {
     "@types/pako": "^2.0.0",
     "@types/path-browserify": "^1.0.0",
-    "@types/vscode": "^1.72.0",
     "esbuild": "0.16.17"
   }
 }

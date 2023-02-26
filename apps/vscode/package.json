@@ -305,7 +305,7 @@
   },
   "dependencies": {
     "esbuild-wasm": "^0.16.17",
-    "import-cost-helpers": "workspace:*",
+    "import-cost-engine": "workspace:*",
     "path-browserify": "^1.0.1"
   },
   "devDependencies": {

@@ -32,9 +32,9 @@ importers:
 
   apps/jetbrains/import-cost:
     specifiers:
-      import-cost-helpers: workspace:*
+      import-cost-engine: workspace:*
     dependencies:
-      import-cost-helpers: link:../../../packages/helpers
+      import-cost-engine: link:../../../packages/engine
 
   apps/vscode:
     specifiers:
@@ -46,11 +46,11 @@ importers:
       esbuild: ^0.16.17
       esbuild-wasm: ^0.16.17
       filesize: ^10.0.6
-      import-cost-helpers: workspace:*
+      import-cost-engine: workspace:*
       path-browserify: ^1.0.1
     dependencies:
       esbuild-wasm: 0.16.17
-      import-cost-helpers: link:../../packages/helpers
+      import-cost-engine: link:../../packages/engine
       path-browserify: 1.0.1
     devDependencies:
       '@types/path-browserify': 1.0.0
@@ -67,38 +67,23 @@ importers:
       '@babel/types': ^7.20.7
       '@types/pako': ^2.0.0
       '@types/path-browserify': ^1.0.0
-      '@types/vscode': ^1.72.0
       esbuild: 0.16.17
       esbuild-wasm: ^0.16.17
-      filesize: ^10.0.6
       pako: ^2.1.0
       path-browserify: ^1.0.1
     dependencies:
       '@babel/parser': 7.20.13
       '@babel/types': 7.20.7
       esbuild-wasm: 0.16.17
-      filesize: 10.0.6
       pako: 2.1.0
       path-browserify: 1.0.1
     devDependencies:
       '@types/pako': 2.0.0
       '@types/path-browserify': 1.0.0
-      '@types/vscode': 1.74.0
       esbuild: 0.16.17
 
   packages/engine/tests/fixtures:
     specifiers: {}
-
-  packages/helpers:
-    specifiers:
-      '@babel/parser': ^7.20.13
-      '@babel/types': ^7.20.7
-      esbuild: 0.16.17
-    dependencies:
-      '@babel/parser': 7.20.13
-      '@babel/types': 7.20.7
-    devDependencies:
-      esbuild: 0.16.17
 
 packages:
 
@@ -2545,6 +2530,7 @@ packages:
   /filesize/10.0.6:
     resolution: {integrity: sha512-rzpOZ4C9vMFDqOa6dNpog92CoLYjD79dnjLk2TYDDtImRIyLTOzqojCb05Opd1WuiWjs+fshhCgTd8cl7y5t+g==}
     engines: {node: '>= 10.4.0'}
+    dev: true
 
   /fill-range/7.0.1:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}

@@ -1,10 +1,10 @@
 import { dirname } from "env:path";
 // import { calculate } from "import-cost-engine";
-import type { Language } from "import-cost-helpers";
-import { calculateAll } from "import-cost-helpers";
-import { cache } from "import-cost-helpers/cache";
-import { parseImports } from "import-cost-helpers/parser";
-import { resolve } from "import-cost-helpers/resolve";
+import type { Language } from "import-cost-engine";
+import { cache } from "import-cost-engine/cache";
+import { calculateAll } from "import-cost-engine/calculate";
+import { parseImports } from "import-cost-engine/parser";
+import { resolve } from "import-cost-engine/resolve";
 import type { TextDocument } from "vscode";
 import { Uri, workspace } from "vscode";
 

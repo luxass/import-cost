@@ -1,13 +1,14 @@
 import { stat } from "node:fs/promises";
 import { parse, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { FindOptions } from "./types";
 
-export default async function find(
+export type FindFn = (name: string | string[], cwd: URL) => Promise<string | undefined>
+
+export async function find(
   name: string | string[],
-  options: FindOptions
+  cwd: URL
 ): Promise<string | undefined> {
-  let dir = resolve(fileURLToPath(options.cwd));
+  let dir = resolve(fileURLToPath(cwd));
 
   const root = parse(dir).root;
   const fileNames = Array.isArray(name) ? name : [name];
