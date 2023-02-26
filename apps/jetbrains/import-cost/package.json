@@ -20,6 +20,6 @@
   },
   "packageManager": "pnpm@7.18.0",
   "dependencies": {
-    "import-cost-engine": "workspace:*"
+    "import-cost-helpers": "workspace:*"
   }
 }

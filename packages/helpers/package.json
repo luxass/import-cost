@@ -1,0 +1,77 @@
+{
+  "name": "import-cost-helpers",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Helpers for Import Cost",
+  "author": {
+    "name": "Luxass",
+    "email": "lucasnrgaard@gmail.com",
+    "url": "https://luxass.dev"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luxass/import-cost",
+    "directory": "packages/helpers"
+  },
+  "bugs": {
+    "url": "https://github.com/luxass/import-cost/issues"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    },
+    "./parser": {
+      "types": "./dist/parser.d.ts",
+      "require": "./dist/parser.cjs",
+      "import": "./dist/parser.js"
+    },
+    "./resolve": {
+      "types": "./dist/resolve.d.ts",
+      "require": "./dist/resolve.cjs",
+      "import": "./dist/resolve.js"
+    },
+    "./find": {
+      "types": "./dist/find.d.ts",
+      "require": "./dist/find.cjs",
+      "import": "./dist/find.js"
+    },
+    "./calculate": {
+      "types": "./dist/calculate.d.ts",
+      "require": "./dist/calculate.cjs",
+      "import": "./dist/calculate.js"
+    },
+    "./cache": {
+      "types": "./dist/cache.d.ts",
+      "require": "./dist/cache.cjs",
+      "import": "./dist/cache.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "packageManager": "pnpm@7.18.0",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest --run",
+    "lint": "eslint --cache {src,tests}/**/*.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "esbuild": "0.16.17"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.20.13",
+    "@babel/types": "^7.20.7"
+  },
+  "devDependencies": {
+    "esbuild": "0.16.17"
+  }
+}

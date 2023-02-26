@@ -25,11 +25,7 @@ export interface Config {
   platforms: Record<string, Platform>;
   format: Format;
   formats: Record<string, Format>;
-
-  fallback: PackageManager;
-
-  // From npm extensions (vscode builtin)
-  packageManager: "npm" | "yarn" | "pnpm" | "auto";
+  plugins: string[];
 }
 
 export interface ColorsObject {

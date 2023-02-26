@@ -283,15 +283,9 @@
             ]
           }
         },
-        "importCost.fallback": {
+        "importCost.plugins": {
           "type": "string",
-          "description": "Fallback package manager to use for global install",
-          "enum": [
-            "npm",
-            "pnpm",
-            "yarn"
-          ],
-          "default": "npm"
+          "description": "Extra plugins for babel parser"
         }
       }
     }
@@ -311,7 +305,7 @@
   },
   "dependencies": {
     "esbuild-wasm": "^0.16.17",
-    "import-cost-engine": "workspace:*",
+    "import-cost-helpers": "workspace:*",
     "path-browserify": "^1.0.1"
   },
   "devDependencies": {
@@ -320,6 +314,7 @@
     "@vscode/test-web": "^0.0.34",
     "@vscode/vsce": "^2.17.0",
     "concurrently": "^7.6.0",
-    "esbuild": "^0.16.17"
+    "esbuild": "^0.16.17",
+    "filesize": "^10.0.6"
   }
 }

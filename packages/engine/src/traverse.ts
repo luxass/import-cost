@@ -1,5 +1,5 @@
 import * as t from "@babel/types";
-
+t.traverseFast()
 export type Visitor = (node: t.Node) => void;
 
 export function traverse(

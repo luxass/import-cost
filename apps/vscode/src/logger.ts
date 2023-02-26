@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-import type { Logger } from "import-cost-engine";
+// import type { Logger } from "import-cost-engine";
 import { window } from "vscode";
 
 const _log = window.createOutputChannel("Import Cost");
-
-export const log: Logger = {
+// export const log: Logger = {
+export const log = {
   info: (...args: any[]) => {
     console.log(...args);
     const time = new Date().toLocaleTimeString();
@@ -26,4 +26,4 @@ export const log: Logger = {
     const time = new Date().toLocaleTimeString();
     _log.appendLine(`[WARN ${time}] ${args.join(" ")}`);
   }
-}
+} as const;

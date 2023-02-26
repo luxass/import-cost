@@ -28,7 +28,6 @@ class ICSettings : PersistentStateComponent<ICSettings.State> {
         var platforms: Map<String, Platform> = mapOf(),
         var format: Format = Format.ESM,
         var formats: Map<String, Format> = mapOf(),
-        var fallback: PackageManager = PackageManager.Npm,
         var packageManager: PackageManager = PackageManager.Auto,
     )
 

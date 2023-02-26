@@ -1,6 +1,10 @@
 import { dirname } from "env:path";
-import type { Language } from "import-cost-engine";
-import { calculate, parseImports } from "import-cost-engine";
+// import { calculate } from "import-cost-engine";
+import type { Language } from "import-cost-helpers";
+import { calculateAll } from "import-cost-helpers";
+import { cache } from "import-cost-helpers/cache";
+import { parseImports } from "import-cost-helpers/parser";
+import { resolve } from "import-cost-helpers/resolve";
 import type { TextDocument } from "vscode";
 import { Uri, workspace } from "vscode";
 
@@ -42,29 +46,49 @@ export async function scan(document: TextDocument, esbuildPath: string) {
         // We should not do this here....
         formats: config.get("formats"),
         platforms: config.get("platforms"),
-        skips: config.get("skip")
+        skips: config.get("skip"),
+        plugins: config.get("plugins")
       });
 
-      const fn = debouncePromise(calculate, 1000)
+      log.info(`IMPORTS - ${fileName}`, imports);
 
-      const result = await fn({
+      const resolvedImports = await resolve({
         cwd: new URL(dirname(uri.fsPath), "file://"),
         imports,
-        ctx: {
-          log,
-          find,
-          esbuildBinary: esbuildPath,
-          readFile: async (path) => {
-            return new TextDecoder().decode(
-              await workspace.fs.readFile(Uri.file(path))
-            );
-          }
-        },
-        externals: config.get("externals"),
-        platform: config.get("platform"),
-        format: config.get("format")
+        log: log.info,
+        readFile: async (path) =>
+          new TextDecoder().decode(await workspace.fs.readFile(Uri.file(path))),
+        find
       });
 
+      log.info(`RESOLVED IMPORTS - ${fileName}`, resolvedImports);
+
+      const result = await calculateAll(resolvedImports, {
+        esbuildBinary: esbuildPath,
+        externals: config.get("externals"),
+        cwd: new URL(dirname(uri.fsPath), "file://")
+      });
+
+      log.info(`CALCULATED IMPORTS - ${fileName}`, result);
+      // const fn = debouncePromise(calculate, 1000);
+
+      // const result = await fn({
+      //   cwd: new URL(dirname(uri.fsPath), "file://"),
+      //   imports,
+      //   ctx: {
+      //     log,
+      //     find,
+      //     esbuildBinary: esbuildPath,
+      //     readFile: async (path) => {
+      //       return new TextDecoder().decode(
+      //         await workspace.fs.readFile(Uri.file(path))
+      //       );
+      //     }
+      //   },
+      //   externals: config.get("externals"),
+      //   platform: config.get("platform"),
+      //   format: config.get("format")
+      // });
 
       // const result = await calculate({
       //   cwd: new URL(dirname(uri.fsPath), "file://"),
@@ -84,15 +108,15 @@ export async function scan(document: TextDocument, esbuildPath: string) {
       //   format: config.get("format")
       // });
 
-      if (!result) {
-        log.info(`No imports found - ${fileName}`);
-        console.log(JSON.stringify(result, null, 2));
-        return;
-      }
+      // if (!result) {
+      //   log.info(`No imports found - ${fileName}`);
+      //   console.log(JSON.stringify(result, null, 2));
+      //   return;
+      // }
 
-      log.info(`RESULT - ${fileName}`, result.packages.join(", "));
+      // log.info(`RESULT - ${fileName}`, result.packages.join(", "));
 
-      decorate(document, result?.packages ?? []);
+      // decorate(document, result?.packages ?? []);
     }
   }
 }

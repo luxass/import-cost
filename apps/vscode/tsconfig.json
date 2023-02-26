@@ -11,6 +11,7 @@
   "include": ["src/**/*"],
   "exclude": ["src/env/web/*"],
   "references": [
-    { "path": "../../packages/engine" }
+    { "path": "../../packages/engine" },
+    { "path": "../../packages/helpers" }
   ]
 }

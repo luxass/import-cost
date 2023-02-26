@@ -1,16 +1,13 @@
-import { filesize } from "import-cost-engine";
-import type { ImportSize } from "import-cost-engine";
+// import { filesize } from "import-cost-engine";
+import { filesize } from "filesize";
+// import type { ImportSize } from "import-cost-engine";
 import type {
   DecorationOptions,
   DecorationRenderOptions,
   TextDocument,
   TextEditor
 } from "vscode";
-import {
-  Position,
-  Range,
-  window
-} from "vscode";
+import { Position, Range, window } from "vscode";
 
 import { config } from "./configuration";
 import { log } from "./logger";
@@ -28,17 +25,8 @@ export function flush(editor?: TextEditor) {
 
   editor.setDecorations(decorationType, []);
 }
-
-let debounced: NodeJS.Timeout | undefined;
-
-function flushDebounced(editor: TextEditor) {
-  clearTimeout(debounced);
-  debounced = setTimeout(() => {
-    flush(editor);
-  }, 10);
-}
-
-export function decorate(document: TextDocument, imports: ImportSize[]) {
+// export function decorate(document: TextDocument, imports: ImportSize[]) {
+export function decorate(document: TextDocument, imports: any[]) {
   const decorations: DecorationOptions[] = [];
   const editor = window.activeTextEditor;
   if (!editor) {
@@ -47,7 +35,6 @@ export function decorate(document: TextDocument, imports: ImportSize[]) {
   // flushDebounced(editor);
   log.info("Decorating", editor, document);
   imports.forEach((importSize) => {
-
     const color = getDecorationColor(importSize);
     const message = getDecorationMessage(importSize);
 
@@ -65,8 +52,8 @@ export function decorate(document: TextDocument, imports: ImportSize[]) {
 
   editor.setDecorations(decorationType, decorations);
 }
-
-function getDecorationColor(importSize: ImportSize): DecorationRenderOptions {
+// function getDecorationColor(importSize: ImportSize): DecorationRenderOptions {
+function getDecorationColor(importSize: any): DecorationRenderOptions {
   const sizes = config.get("sizes");
   const colors = config.get("colors");
 
@@ -101,7 +88,8 @@ function getColors(dark: string, light: string) {
   };
 }
 
-function getDecorationMessage(importSize: ImportSize): DecorationRenderOptions {
+// function getDecorationMessage(importSize: ImportSize): DecorationRenderOptions {
+function getDecorationMessage(importSize: any): DecorationRenderOptions {
   const size = filesize(importSize.size.bytes, {
     base: 2,
     standard: "jedec"

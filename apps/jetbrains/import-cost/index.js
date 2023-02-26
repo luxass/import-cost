@@ -1,3 +1,5 @@
+const {} = require("import-cost-helpers")
+
 class ImportCostPlugin {
   onMessage(project, messageWriter) {
     const { seq, arguments: pkg } = JSON.parse(project);

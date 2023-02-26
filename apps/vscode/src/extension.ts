@@ -1,5 +1,5 @@
 import { locateESBuild } from "env:locate";
-import { cache } from "import-cost-engine";
+// import { cache } from "import-cost-engine";
 import type { ExtensionContext } from "vscode";
 import {
   ShellExecution,
@@ -15,9 +15,7 @@ import {
 import { config } from "./configuration";
 import { flush } from "./decoration";
 import { log } from "./logger";
-import { getPackageManager } from "./pm";
 import { scan } from "./scan";
-import type { PackageManager } from "./types";
 
 declare global {
   const IS_WEB: boolean;
@@ -35,13 +33,6 @@ export async function activate(ctx: ExtensionContext) {
   if (!IS_WEB) {
     ctx.subscriptions.push(
       commands.registerCommand("import-cost.install-esbuild", async () => {
-        const pm: PackageManager = await getPackageManager();
-
-        const args =
-          pm === "yarn" ?
-              ["global", "add", "esbuild"] :
-              ["install", "-g", "esbuild"];
-
         await tasks.executeTask(
           new Task(
             {
@@ -50,7 +41,7 @@ export async function activate(ctx: ExtensionContext) {
             TaskScope.Workspace,
             "Installing ESBuild",
             "npm",
-            new ShellExecution(pm, args)
+            new ShellExecution("npm", ["install", "-g", "esbuild"])
           )
         );
       })
@@ -104,7 +95,7 @@ export async function activate(ctx: ExtensionContext) {
   ctx.subscriptions.push(
     commands.registerCommand("import-cost.clear-import-cache", (event) => {
       log.info("Clearing cache", event);
-      cache.clear();
+      // cache.clear();
       flush(window.activeTextEditor);
       window.showInformationMessage("Import Cost cache cleared");
     })
