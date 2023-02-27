@@ -20,16 +20,19 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "browser": "./dist/web/index.js",
       "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     },
     "./parser": {
       "types": "./dist/parser.d.ts",
+      "browser": "./dist/web/parser.js",
       "require": "./dist/parser.cjs",
       "import": "./dist/parser.js"
     },
     "./resolve": {
       "types": "./dist/resolve.d.ts",
+      "browser": "./dist/web/resolve.js",
       "require": "./dist/resolve.cjs",
       "import": "./dist/resolve.js"
     },
@@ -40,11 +43,13 @@
     },
     "./calculate": {
       "types": "./dist/calculate.d.ts",
+      "browser": "./dist/web/calculate.js",
       "require": "./dist/calculate.cjs",
       "import": "./dist/calculate.js"
     },
     "./cache": {
       "types": "./dist/cache.d.ts",
+      "browser": "./dist/web/cache.js",
       "require": "./dist/cache.cjs",
       "import": "./dist/cache.js"
     },
@@ -52,6 +57,7 @@
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
+  "browser": "./dist/web/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"

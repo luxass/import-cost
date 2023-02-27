@@ -36,6 +36,8 @@
     "@luxass/eslint-config": "^2.2.6",
     "@luxass/prettier-config": "^1.1.9",
     "@types/node": "^18.11.17",
+    "esbuild": "0.16.17",
+    "esbuild-plugin-import-transform": "^0.1.4",
     "eslint": "^8.30.0",
     "prettier": "^2.8.2",
     "tsup": "^6.6.3",

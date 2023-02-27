@@ -1,4 +1,4 @@
-import { dirname } from "env:path";
+import { dirname } from "node:path";
 // import { calculate } from "import-cost-engine";
 import type { Language } from "import-cost-engine";
 import { cache } from "import-cost-engine/cache";
@@ -69,7 +69,14 @@ export async function scan(document: TextDocument, esbuildPath: string) {
         cwd: new URL(dirname(uri.fsPath), "file://")
       });
 
+      
+      if (!result) {
+        log.info(`No imports found - ${fileName}`);
+        return;
+      }
+      
       log.info(`CALCULATED IMPORTS - ${fileName}`, result);
+      
       // const fn = debouncePromise(calculate, 1000);
 
       // const result = await fn({

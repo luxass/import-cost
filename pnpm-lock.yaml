@@ -7,6 +7,8 @@ importers:
       '@luxass/eslint-config': ^2.2.6
       '@luxass/prettier-config': ^1.1.9
       '@types/node': ^18.11.17
+      esbuild: 0.16.17
+      esbuild-plugin-import-transform: ^0.1.4
       eslint: ^8.30.0
       prettier: ^2.8.2
       tsup: ^6.6.3
@@ -17,6 +19,8 @@ importers:
       '@luxass/eslint-config': 2.2.6_ifw3q4r6iq3gw7cspzs2siycvu
       '@luxass/prettier-config': 1.1.9_prettier@2.8.2
       '@types/node': 18.11.18
+      esbuild: 0.16.17
+      esbuild-plugin-import-transform: 0.1.4_esbuild@0.16.17
       eslint: 8.31.0
       prettier: 2.8.2
       tsup: 6.6.3_typescript@4.9.5
@@ -1994,6 +1998,15 @@ packages:
       is-callable: 1.2.7
       is-date-object: 1.0.5
       is-symbol: 1.0.4
+    dev: true
+
+  /esbuild-plugin-import-transform/0.1.4_esbuild@0.16.17:
+    resolution: {integrity: sha512-3ozK4sD2hSc65ceLCEv6jLBPBt+jBcAgUi7Tco+NPLLuHZXQnhn3lgeHmQI9jr28HTWNMxSjEzldH0VFVATvyw==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      esbuild: ^0.16.17
+    dependencies:
+      esbuild: 0.16.17
     dev: true
 
   /esbuild-wasm/0.16.17:

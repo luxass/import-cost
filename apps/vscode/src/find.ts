@@ -1,7 +1,7 @@
+import { parse, resolve } from "node:path";
 import { Uri, workspace } from "vscode";
 
-import { parse, resolve } from "env:path";
-import type { FindFn } from "import-cost-helpers/find";
+import type { FindFn } from "import-cost-engine/find";
 
 export const find: FindFn = async (name, cwd) => {
 

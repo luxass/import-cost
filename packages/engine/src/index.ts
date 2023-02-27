@@ -5,7 +5,6 @@ export {
   type CalculateAllOptions,
   type CalculateOptions
 } from "./calculate";
-export { find, type FindFn } from "./find";
 export {
   parseImports,
   type Import,
