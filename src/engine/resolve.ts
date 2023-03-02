@@ -2,8 +2,8 @@ import { join } from "node:path";
 
 import { Uri, workspace } from "vscode";
 
-import { log } from "../log";
 import { find } from "../find";
+import { log } from "../log";
 import type { Import } from "./parser";
 
 export interface ResolveOptions {
@@ -28,20 +28,22 @@ export async function resolve({
     throw new TypeError("Could not find node_modules");
   }
 
+  console.time("Promise.allSettled")
   await Promise.allSettled(
     imports.map(async (pkg) => {
       try {
-        const pkgPath = join(
-          node_modules,
-          getPackageName(pkg.name),
-          "package.json"
-        );
+        const pkgName = getPackageName(pkg.name);
+        log.info(`Resolving ${pkg.name}`);
 
+        const pkgPath = join(node_modules, pkgName, "package.json");
+
+        console.time(pkg.name)
         const { version } = JSON.parse(
           new TextDecoder().decode(
             await workspace.fs.readFile(Uri.file(pkgPath))
           )
         );
+        console.timeEnd(pkg.name)
         log.info(`Found version ${version} for ${pkg.name}`);
 
         pkg.version = version;
@@ -51,6 +53,8 @@ export async function resolve({
       }
     })
   );
+
+  console.timeEnd("Promise.allSettled")
 
   imports = imports.filter((_import) => {
     log.info(`${_import.version ? "✅" : "❌"} ${_import.name}`);

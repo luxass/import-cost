@@ -3,6 +3,7 @@
 ## Whats missing?
 
 - [ ] Debounce!!!! 
+- [ ] Resolve externals
 - [ ] Support for Browser (We broke it again :cry:) Should be a easy fix, because we probably only need to fix the issue between Uri and URL
 - [ ] Add onConfigurationChanged event to remove the need to call `config.get` on every keystroke.
 - [ ] Tests
