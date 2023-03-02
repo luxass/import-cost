@@ -2,11 +2,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist",
-    "paths": {
-      "env:*": ["src/env/node/*"]
-    }
+    "outDir": "./dist"
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/env/web/*"]
+  "include": ["src/**/*"]
 }

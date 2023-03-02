@@ -1,4 +1,3 @@
-import { filesize } from "filesize";
 import type {
   DecorationOptions,
   DecorationRenderOptions,
@@ -8,8 +7,8 @@ import type {
 import { window } from "vscode";
 
 import { config } from "./configuration";
-import type { ImportSize } from "./engine/engine-types";
-import { log } from "./logger";
+import type { CalculateResult, ImportResult } from "./engine/calculate";
+import { log } from "./log";
 
 const MARGIN = 1;
 const FONT_STYLE = "normal";
@@ -23,7 +22,7 @@ export function flush(editor?: TextEditor) {
   editor.setDecorations(window.createTextEditorDecorationType({}), []);
 }
 
-export function decorate(document: TextDocument, imports: ImportSize[]) {
+export function decorate(document: TextDocument, results: CalculateResult[]) {
   // TODO: Improve performance of this.
 
   const decorations: DecorationOptions[] = [];
@@ -32,32 +31,34 @@ export function decorate(document: TextDocument, imports: ImportSize[]) {
   if (!editor) {
     return;
   }
-  imports.forEach((importSize) => {
-    const range = document.lineAt(importSize.line - 1).range;
+  results.forEach((result) => {
+    const range = document.lineAt(result.pkg.line - 1).range;
 
-    const color = getDecorationColor(importSize);
-    const message = getDecorationMessage(importSize);
+    const color = getDecorationColor(result.pkg.size);
+    const message = getDecorationMessage(result.pkg.size);
 
     decorations.push({
       range,
       renderOptions: {
         ...color,
         ...message
-      }
+      },
+      hoverMessage: `Size: ${result.pkg.size.minifiedFormatted} (${result.pkg.size.gzipFormatted} gzipped)`
     });
   });
 
   editor.setDecorations(window.createTextEditorDecorationType({}), decorations);
 }
 
-function getDecorationColor(importSize: ImportSize): DecorationRenderOptions {
+function getDecorationColor(
+  result: ImportResult["size"]
+): DecorationRenderOptions {
   const sizes = config.get("sizes");
   const colors = config.get("colors");
 
   const size =
-    (config.get("sizeColor") === "minified"
-      ? importSize.size.bytes
-      : importSize.size.gzip) / 1024;
+    (config.get("sizeColor") === "minified" ? result.minified : result.gzip) /
+    1024;
 
   if (size < sizes.small) {
     return getColors(colors.small.dark, colors.small.light);
@@ -85,23 +86,16 @@ function getColors(dark: string, light: string) {
   };
 }
 
-function getDecorationMessage(importSize: ImportSize): DecorationRenderOptions {
-  const size = filesize(importSize.size.bytes, {
-    base: 2,
-    standard: "jedec"
-  });
-
-  const gzip = filesize(importSize.size.gzip, {
-    base: 2,
-    standard: "jedec"
-  });
-
+function getDecorationMessage({
+  minifiedFormatted,
+  gzipFormatted
+}: ImportResult["size"]): DecorationRenderOptions {
   const decorator = config.get("decorator");
 
   if (decorator === "minified") {
     return {
       after: {
-        contentText: ` ${size}`,
+        contentText: ` ${minifiedFormatted}`,
         margin: `0 0 0 ${MARGIN}em`,
         fontStyle: FONT_STYLE
       }
@@ -109,7 +103,7 @@ function getDecorationMessage(importSize: ImportSize): DecorationRenderOptions {
   } else if (decorator === "compressed") {
     return {
       after: {
-        contentText: ` ${gzip}`,
+        contentText: ` ${gzipFormatted} gzipped`,
         margin: `0 0 0 ${MARGIN}em`,
         fontStyle: FONT_STYLE
       }
@@ -117,7 +111,7 @@ function getDecorationMessage(importSize: ImportSize): DecorationRenderOptions {
   } else {
     return {
       after: {
-        contentText: ` ${size} (${gzip})`,
+        contentText: ` ${minifiedFormatted} (${gzipFormatted} gzipped)`,
         margin: `0 0 0 ${MARGIN}em`,
         fontStyle: FONT_STYLE
       }

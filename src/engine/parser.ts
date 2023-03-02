@@ -1,38 +1,123 @@
-import type { BuildOptions } from "esbuild";
+import type { Format, Platform } from "esbuild";
 
 import type { ParserPlugin } from "@babel/parser";
 import { parse } from "@babel/parser";
 import * as t from "@babel/types";
 
-import type { Config } from "../types";
-import type { ImportDirectives, Language, ParsedImport } from "./engine-types";
-import { traverse } from "./traverse";
+export type Language =
+  | "javascript"
+  | "js"
+  | "javascriptreact"
+  | "jsx"
+  | "typescript"
+  | "ts"
+  | "typescriptreact"
+  | "tsx"
+  | "vue"
+  | "svelte"
+  | "astro";
 
-interface ParseImportsOptions {
+export interface ParseImportsOptions {
+  /**
+   * Name of the file
+   */
   fileName: string;
+
+  /**
+   * Content of the file
+   *
+   * @example
+   * ```js
+   * import React from "react";
+   * import { render } from "react-dom";
+   * ```
+   */
   content: string;
+
+  /**
+   * Language of the file
+   */
   language: Language;
-  skips: string[];
-  format: Config["format"];
-  platform: Config["platform"];
+
+  /**
+   * List of packages to skip
+   */
+  skips?: string[];
+
+  /**
+   * Format to use for different package
+   *
+   * @example
+   * ```json
+   * {
+   *  "react": "esm",
+   *  "react-dom": "esm"
+   * }
+   * ```
+   */
+  formats?: Record<string, Format>;
+
+  /**
+   * Platform to use for different package
+   *
+   * @example
+   * ```json
+   * {
+   *  "react": "browser",
+   *  "react-dom": "browser"
+   * }
+   */
+  platforms?: Record<string, Platform>;
+
+  /**
+   * Extra babel plugins to use when parsing the file
+   */
+  plugins?: string[];
+}
+
+export interface ImportDirectives {
+  external?: boolean;
+  platform?: Platform;
+  skip?: boolean;
+  format?: Format;
+}
+
+export interface Import {
+  fileName: string;
+  name: string;
+  line: number;
+  code: string;
+  version?: string;
+  directives: ImportDirectives;
 }
 
 export function parseImports({
   fileName,
   content,
   language,
-  skips,
-  format,
-  platform
-}: ParseImportsOptions): ParsedImport[] {
-  const imports: ParsedImport[] = [];
+  skips = [],
+  formats = {},
+  platforms = {},
+  plugins = []
+}: ParseImportsOptions): Import[] {
+  const imports: Import[] = [];
+
+  if (language === "astro" || language === "vue" || language === "svelte") {
+    const extracted = extractCode(content, language);
+
+    if (!extracted) {
+      return imports;
+    }
+    language = extracted.language;
+    content = extracted.code;
+  }
 
   const ast = parse(content, {
     sourceType: "module",
-    plugins: getParserPlugins(language) as ParserPlugin[]
+    plugins: getParserPlugins(language).concat(plugins as ParserPlugin[])
   });
 
-  traverse(ast, (node) => {
+  t.traverseFast(ast, (node) => {
     if (node.type === "ImportDeclaration" && node.importKind !== "type") {
       const directives = getDirectives(node);
       const name = node.source.value;
@@ -40,12 +125,12 @@ export function parseImports({
         return;
       }
 
-      if (!directives.platform && platform[name]) {
-        directives.platform = platform[name];
+      if (!directives.platform && platforms[name]) {
+        directives.platform = platforms[name];
       }
 
-      if (!directives.format && format[name]) {
-        directives.format = format[name];
+      if (!directives.format && formats[name]) {
+        directives.format = formats[name];
       }
 
       imports.push({
@@ -63,12 +148,12 @@ export function parseImports({
           return;
         }
 
-        if (!directives.platform && platform[name]) {
-          directives.platform = platform[name];
+        if (!directives.platform && platforms[name]) {
+          directives.platform = platforms[name];
         }
 
-        if (!directives.format && format[name]) {
-          directives.format = format[name];
+        if (!directives.format && formats[name]) {
+          directives.format = formats[name];
         }
 
         imports.push({
@@ -87,12 +172,12 @@ export function parseImports({
           return;
         }
 
-        if (!directives.platform && platform[name]) {
-          directives.platform = platform[name];
+        if (!directives.platform && platforms[name]) {
+          directives.platform = platforms[name];
         }
 
-        if (!directives.format && format[name]) {
-          directives.format = format[name];
+        if (!directives.format && formats[name]) {
+          directives.format = formats[name];
         }
 
         imports.push({
@@ -119,19 +204,29 @@ function getDirectives(
       if (comment.value.includes("import-cost: ")) {
         const directive = comment.value.trim().replace("import-cost: ", "");
 
-        if (directive === "mark-external") {
+        if (directive === "mark-external" || directive === "external") {
           directives.external = true;
           return;
         }
 
         if (directive.includes("platform-")) {
           const platform = directive.replace("platform-", "");
-          directives.platform = platform as "browser" | "node";
+          if (
+            platform !== "browser" &&
+            platform !== "node" &&
+            platform !== "neutral"
+          ) {
+            return;
+          }
+          directives.platform = platform;
         }
 
         if (directive.includes("format-")) {
           const format = directive.replace("format-", "");
-          directives.format = format as BuildOptions["format"];
+          if (format !== "cjs" && format !== "esm" && format !== "iife") {
+            return;
+          }
+          directives.format = format;
         }
 
         if (directive === "skip") {
@@ -148,9 +243,9 @@ function getImportString(node: t.ImportDeclaration): string {
   const importString =
     node.specifiers.length > 0 ? parseSpecifiers(node) : "* as tmp";
 
-  return `import ${importString} from '${
+  return `import ${importString} from "${
     node.source.value
-  }'\nconsole.log(${importString.replace("* as ", "")});`;
+  }"\nconsole.log(${importString.replace("* as ", "")});`;
 }
 
 function parseSpecifiers(node: t.ImportDeclaration): string {
@@ -241,17 +336,44 @@ export function getParserPlugins(language: Language): ParserPlugin[] {
       return JS_PLUGINS;
 
     case "typescript":
+    case "astro":
     case "ts":
       return TS_PLUGINS;
 
     case "typescriptreact":
     case "tsx":
-    case "vue-ts":
-    case "svelte-ts":
-    case "astro":
       return TSX_PLUGINS;
 
     default:
       return JS_PLUGINS;
   }
+}
+
+export function extractCode(
+  code: string,
+  language: Language
+): { code: string; language: Language } | null {
+  console.log("extractCode", code, language);
+  
+  if (language === "astro") {
+    const match = code.match(/(?<=---\n)(?:(?:.|\n)*?)(?=\n---)/);
+    if (match) {
+      return {
+        code: match[0].trim(),
+        language: "ts"
+      };
+    }
+  } else if (language === "vue" || language === "svelte") {
+    const match = code.match(
+      /<script(?:.*?lang="(js|ts)")?[^>]*>([\s\S]*?)<\/script>/
+    );
+
+    if (match) {
+      return {
+        code: match[2].trim(),
+        language: (match[1] ?? "js") as Language
+      };
+    }
+  }
+  return null;
 }

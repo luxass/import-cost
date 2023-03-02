@@ -1,7 +1,36 @@
 import { ConfigurationTarget, workspace } from "vscode";
 import type { ConfigurationScope } from "vscode";
 
-import type { Config } from "./types";
+export interface Config {
+  enable: boolean;
+  decorator: "both" | "minified" | "compressed";
+  sizeColor: "minified" | "compressed";
+
+  colors: {
+    small: ColorsObject;
+    medium: ColorsObject;
+    large: ColorsObject;
+    extreme: ColorsObject;
+  };
+  sizes: {
+    small: number;
+    medium: number;
+    large: number;
+  };
+  // Just like the directives - but if you want to add multiple very easily.
+  externals: string[];
+  skip: string[];
+  platform: Platform;
+  platforms: Record<string, Platform>;
+  format: Format;
+  formats: Record<string, Format>;
+  plugins: string[];
+}
+
+export interface ColorsObject {
+  dark: string;
+  light: string;
+}
 
 export const config = {
   get<T extends Path<Config>>(
@@ -16,13 +45,13 @@ export const config = {
     const defaultValue = options?.defaultValue;
     const scope = options?.scope;
 
-    const value = !defaultValue ?
-      workspace
-        .getConfiguration(section, scope)
-        .get<PathValue<Config, T>>(key)! :
-      workspace
-        .getConfiguration(section, scope)
-        .get<PathValue<Config, T>>(key, defaultValue)!;
+    const value = !defaultValue
+      ? workspace
+          .getConfiguration(section, scope)
+          .get<PathValue<Config, T>>(key)!
+      : workspace
+          .getConfiguration(section, scope)
+          .get<PathValue<Config, T>>(key, defaultValue)!;
 
     return value;
   },
@@ -39,9 +68,9 @@ export const config = {
 type ChildPath<T, Key extends keyof T> = Key extends string
   ? T[Key] extends Record<string, any>
     ?
-      | `${Key}.${ChildPath<T[Key], Exclude<keyof T[Key], keyof any[]>> &
-      string}`
-      | `${Key}.${Exclude<keyof T[Key], keyof any[]> & string}`
+        | `${Key}.${ChildPath<T[Key], Exclude<keyof T[Key], keyof any[]>> &
+            string}`
+        | `${Key}.${Exclude<keyof T[Key], keyof any[]> & string}`
     : never
   : never;
 
@@ -54,5 +83,5 @@ type PathValue<T, P extends Path<T>> = P extends `${infer Key}.${infer Rest}`
       : never
     : never
   : P extends keyof T
-    ? T[P]
-    : never;
+  ? T[P]
+  : never;

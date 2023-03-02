@@ -1,15 +1,12 @@
-import { parse, resolve } from "env:path";
-import { Uri, workspace } from "vscode";
+import { parse, resolve } from "node:path";
 
-export interface FindOptions {
-  cwd: Uri;
-}
+import { Uri, workspace } from "vscode";
 
 export async function find(
   name: string | string[],
-  options: FindOptions
+  cwd: Uri
 ): Promise<string | undefined> {
-  let dir = resolve(options.cwd.fsPath);
+  let dir = resolve(cwd.fsPath);
 
   const root = parse(dir).root;
   const fileNames = Array.isArray(name) ? name : [name];

@@ -1,4 +1,4 @@
-import { locateESBuild } from "env:locate";
+// import { cache } from "import-cost-engine";
 import type { ExtensionContext } from "vscode";
 import {
   ShellExecution,
@@ -13,11 +13,10 @@ import {
 
 import { config } from "./configuration";
 import { flush } from "./decoration";
-import { cache } from "./engine/caching";
-import { log } from "./logger";
-import { getPackageManager } from "./pm";
+import { cache } from "./engine/cache";
+import { locateESBuild } from "./locate";
+import { log } from "./log";
 import { scan } from "./scan";
-import type { PackageManager } from "./types";
 
 declare global {
   const IS_WEB: boolean;
@@ -26,20 +25,15 @@ declare global {
 export async function activate(ctx: ExtensionContext) {
   const wixImportCost = extensions.getExtension("wix.vscode-import-cost");
   if (wixImportCost) {
-    window.showWarningMessage("You have both Wix Import Cost and Import Cost installed. Please uninstall Wix Import Cost to avoid conflicts.");
+    window.showWarningMessage(
+      "You have both Wix Import Cost and Import Cost installed. Please uninstall Wix Import Cost to avoid conflicts."
+    );
     // return;
   }
 
   if (!IS_WEB) {
     ctx.subscriptions.push(
       commands.registerCommand("import-cost.install-esbuild", async () => {
-        const pm: PackageManager = await getPackageManager();
-
-        const args =
-          pm === "yarn" ?
-              ["global", "add", "esbuild"] :
-              ["install", "-g", "esbuild"];
-
         await tasks.executeTask(
           new Task(
             {
@@ -48,7 +42,7 @@ export async function activate(ctx: ExtensionContext) {
             TaskScope.Workspace,
             "Installing ESBuild",
             "npm",
-            new ShellExecution(pm, args)
+            new ShellExecution("npm", ["install", "-g", "esbuild"])
           )
         );
       })

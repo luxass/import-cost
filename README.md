@@ -2,7 +2,7 @@
 
 ## Whats missing?
 
-- [x] Support for Browser (Buffer is breaking it) **Probably fixed when rewriting the traverser**
+- [ ] Support for Browser (We broke it again :cry:) Should be a easy fix, because we probably only need to fix the issue between Uri and URL
 - [ ] Add onConfigurationChanged event to remove the need to call `config.get` on every keystroke.
 - [x] Caching
 - [ ] Tests
@@ -11,6 +11,7 @@
 - [x] Use format and defaultFormat from the configuration
 - [x] Use platform and defaultPlatform from the configuration
 - [ ] Add support for showing size of export calculations
+- [ ] Add JetBrains Ide Plugin Support
 
 #### Export Calculation
 
@@ -40,7 +41,7 @@ export { dirname, resolve, parse, join } from "path-browserify";
 
 Import Cost supports the following directives:
 
-- `mark-external` - marks the import as external, so it won't be included in the calculation
+- `mark-external` or `external` - marks the import as external, so it won't be included in the calculation
 
 - `skip` - skips the import
 
@@ -48,17 +49,24 @@ Import Cost supports the following directives:
 
 - `platform-node` - marks the import as a node import, so esbuild bundles it for node (default)
 
+- `platform-neutral` - idk what this does, but it's in the esbuild docs (write something here....)
+
 - `format-cjs` - marks the import as a commonjs import, so esbuild bundles it as commonjs
 
 - `format-esm` - marks the import as an esm import, so esbuild bundles it as esm (default)
+
+- `format-iife` - marks the import as an iife import, so esbuild bundles it as iife
 
 ### Example
 
 ```js
 /* import-cost: mark-external */
+/* import-cost: external */
 /* import-cost: skip */
 /* import-cost: platform-browser */
 /* import-cost: platform-node */
+/* import-cost: platform-neutral */
 /* import-cost: format-cjs */
 /* import-cost: format-esm */
+/* import-cost: format-iife */
 ```
