@@ -13,6 +13,7 @@ import {
 
 import { config } from "./configuration";
 import { flush } from "./decoration";
+import { cache } from "./engine/cache";
 import { locateESBuild } from "./locate";
 import { log } from "./log";
 import { scan } from "./scan";
@@ -95,7 +96,7 @@ export async function activate(ctx: ExtensionContext) {
   ctx.subscriptions.push(
     commands.registerCommand("import-cost.clear-import-cache", (event) => {
       log.info("Clearing cache", event);
-      // cache.clear();
+      cache.clear();
       flush(window.activeTextEditor);
       window.showInformationMessage("Import Cost cache cleared");
     })

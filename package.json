@@ -5,7 +5,7 @@
   "version": "0.0.1",
   "description": "Calculate cost of imports, powered by esbuild",
   "author": {
-    "name": "Luxass",
+    "name": "Lucas Nørgård",
     "email": "lucasnrgaard@gmail.com",
     "url": "https://luxass.dev"
   },
@@ -292,7 +292,7 @@
   "scripts": {
     "vscode:prepublish": "tsup --minify",
     "build": "tsup",
-    "dev": "tsup --watch --sourcemap",
+    "dev": "tsup --watch",
     "package": "pnpm vsce package --no-dependencies",
     "release": "pnpm vsce publish --no-dependencies",
     "lint": "eslint --cache {src,tests}/**/*.ts",
@@ -305,6 +305,7 @@
   "dependencies": {
     "@babel/parser": "^7.21.2",
     "@babel/types": "^7.21.2",
+    "esbuild-wasm": "^0.17.10",
     "filesize": "^10.0.6",
     "pako": "^2.1.0",
     "path-browserify": "^1.0.1"
@@ -315,6 +316,7 @@
     "@types/node": "^18.11.17",
     "@types/path-browserify": "^1.0.0",
     "@types/vscode": "^1.72.0",
+    "esbuild": "^0.17.10",
     "esbuild-plugin-import-transform": "^0.2.0",
     "eslint": "^8.30.0",
     "prettier": "^2.8.2",

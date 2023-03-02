@@ -2,15 +2,15 @@ import { join } from "node:path";
 
 import { Uri, workspace } from "vscode";
 
-import { find } from "../find";
 import { log } from "../log";
+import { find } from "./find";
 import type { Import } from "./parser";
 
 export interface ResolveOptions {
   /**
    * The current working directory.
    */
-  cwd: URL;
+  cwd: Uri;
 
   /**
    * The imports to resolve versions.

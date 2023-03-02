@@ -1,14 +1,13 @@
 import { dirname } from "node:path";
 
 import type { TextDocument } from "vscode";
-import { Uri, workspace } from "vscode";
+import { Uri } from "vscode";
 
 import { config } from "./configuration";
 import { decorate } from "./decoration";
-import { cache, calculateAll, parseImports, resolve } from "./engine";
+import { calculateAll, parseImports, resolve } from "./engine";
 // import { calculate } from "import-cost-engine";
 import type { Language } from "./engine/parser";
-import { find } from "./find";
 import { log } from "./log";
 
 function isAllowedLanguage(language: string, fileName: string): boolean {
@@ -51,7 +50,7 @@ export async function scan(document: TextDocument, esbuildPath: string) {
       log.info(`IMPORTS - ${fileName}`, imports);
 
       const resolvedImports = await resolve({
-        cwd: new URL(dirname(uri.fsPath), "file://"),
+        cwd: Uri.file(dirname(uri.fsPath)),
         imports
       });
 
@@ -60,7 +59,7 @@ export async function scan(document: TextDocument, esbuildPath: string) {
       const result = await calculateAll(resolvedImports, {
         esbuildBinary: esbuildPath,
         externals: config.get("externals"),
-        cwd: new URL(dirname(uri.fsPath), "file://")
+        cwd: Uri.file(dirname(uri.fsPath))
       });
 
       if (!result) {
@@ -70,6 +69,8 @@ export async function scan(document: TextDocument, esbuildPath: string) {
 
       log.info(`CALCULATED IMPORTS - ${fileName}`, result);
 
+
+      decorate(document, result);
       // const fn = debouncePromise(calculate, 1000);
 
       // const result = await fn({

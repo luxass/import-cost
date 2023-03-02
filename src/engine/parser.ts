@@ -104,6 +104,7 @@ export function parseImports({
 
   if (language === "astro" || language === "vue" || language === "svelte") {
     const extracted = extractCode(content, language);
+
     if (!extracted) {
       return imports;
     }
@@ -352,6 +353,8 @@ export function extractCode(
   code: string,
   language: Language
 ): { code: string; language: Language } | null {
+  console.log("extractCode", code, language);
+  
   if (language === "astro") {
     const match = code.match(/(?<=---\n)(?:(?:.|\n)*?)(?=\n---)/);
     if (match) {
