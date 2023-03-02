@@ -4,9 +4,9 @@ import { Uri, workspace } from "vscode";
 
 export async function find(
   name: string | string[],
-  cwd: URL
+  cwd: Uri
 ): Promise<string | undefined> {
-  let dir = resolve(Uri.file(cwd.pathname).fsPath);
+  let dir = resolve(cwd.fsPath);
 
   const root = parse(dir).root;
   const fileNames = Array.isArray(name) ? name : [name];

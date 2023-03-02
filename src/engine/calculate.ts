@@ -1,8 +1,11 @@
 import { dirname } from "node:path";
 
 import type { BuildOptions, Message } from "esbuild";
-
+import { filesize } from "filesize";
 import { gzip } from "pako";
+import type { Uri } from "vscode";
+
+import { log } from "../log";
 import { cache } from "./cache";
 import type { Import } from "./parser";
 
@@ -20,58 +23,48 @@ export interface CalculateAllOptions {
   /**
    * The current working directory.
    */
-  cwd: URL;
-}
-
-export interface CalculateAllResult {
-  errors: Message[];
-  warnings: Message[];
-  calculations: CalculateResult[];
+  cwd: Uri;
 }
 
 export async function calculateAll(
   parsedImports: Import[],
   options: CalculateAllOptions
-): Promise<CalculateAllResult> {
-  const warnings: Message[] = [];
-  const errors: Message[] = [];
-  const calculations: any[] = [];
-  for await (const result of parsedImports.map((parsedImport) =>
-    calculate(parsedImport, options)
-  )) {
-    console.log(result);
-    
-    result.errors = result.errors.concat(result.errors);
-    result.warnings = result.warnings.concat(result.warnings);
-    
-    calculations.push({
-      name: result.pkg.name,
-      line: result.pkg.line,
-      path: result.pkg.fileName,
-      size: result.pkg.size
-    });
-  }
+): Promise<CalculateResult[]> {
+  const results = await Promise.all<CalculateResult>(
+    parsedImports.map(async (parsedImport) => {
+      const cacheKey = `${parsedImport.name}:${parsedImport.version}`;
+      const cachedResult = cache.get(cacheKey);
+      if (cachedResult) {
+        log.info("Using cached result for", cacheKey);
+        return cachedResult;
+      }
+      const result = await calculate(parsedImport, options);
+      cache.set(cacheKey, result);
 
-  return {
-    errors,
-    warnings,
-    calculations
-  };
+      return result;
+    })
+  );
+
+  return results;
 }
 
 export interface CalculateOptions {
   esbuildBinary?: string;
 }
 
+export type ImportResult = {
+  size: {
+    minified: number;
+    minifiedFormatted: string;
+    gzip: number;
+    gzipFormatted: string;
+  };
+} & Import;
+
 export interface CalculateResult {
   errors: Message[];
   warnings: Message[];
-  pkg: Import & {
-    size: {
-      bytes: number;
-      gzip: number;
-    };
-  };
+  pkg: ImportResult;
 }
 
 export async function calculate(
@@ -129,11 +122,19 @@ export async function calculate(
       gzipSize = result.byteLength;
     }
 
-    const pkg = {
+    const pkg: CalculateResult["pkg"] = {
       ...parsedImport,
       size: {
-        bytes: size,
-        gzip: gzipSize
+        minified: size,
+        minifiedFormatted: filesize(size, {
+          base: 2,
+          standard: "jedec"
+        }) as string,
+        gzip: gzipSize,
+        gzipFormatted: filesize(gzipSize, {
+          base: 2,
+          standard: "jedec"
+        }) as string
       }
     };
 
@@ -151,8 +152,10 @@ export async function calculate(
       pkg: {
         ...parsedImport,
         size: {
-          bytes: 0,
-          gzip: 0
+          minified: 0,
+          minifiedFormatted: "0 B",
+          gzip: 0,
+          gzipFormatted: "0 B"
         }
       }
     };
