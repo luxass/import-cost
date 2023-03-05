@@ -4,6 +4,8 @@ import type { ParserPlugin } from "@babel/parser";
 import { parse } from "@babel/parser";
 import * as t from "@babel/types";
 
+import { config } from "../configuration";
+
 export type Language =
   | "javascript"
   | "js"
@@ -40,11 +42,6 @@ export interface ParseImportsOptions {
   language: Language;
 
   /**
-   * List of packages to skip
-   */
-  skips?: string[];
-
-  /**
    * Format to use for different package
    *
    * @example
@@ -68,11 +65,6 @@ export interface ParseImportsOptions {
    * }
    */
   platforms?: Record<string, Platform>;
-
-  /**
-   * Extra babel plugins to use when parsing the file
-   */
-  plugins?: string[];
 }
 
 export interface ImportDirectives {
@@ -94,13 +86,13 @@ export interface Import {
 export function parseImports({
   fileName,
   content,
-  language,
-  skips = [],
-  formats = {},
-  platforms = {},
-  plugins = []
+  language
 }: ParseImportsOptions): Import[] {
   const imports: Import[] = [];
+
+  const formats = config.get("formats");
+  const platforms = config.get("platforms");
+  const skips = config.get("skip");
 
   if (language === "astro" || language === "vue" || language === "svelte") {
     const extracted = extractCode(content, language);
@@ -113,7 +105,7 @@ export function parseImports({
 
   const ast = parse(content, {
     sourceType: "module",
-    plugins: getParserPlugins(language).concat(plugins as ParserPlugin[])
+    plugins: getParserPlugins(language).concat(config.get("plugins"))
   });
 
   t.traverseFast(ast, (node) => {
@@ -353,7 +345,7 @@ export function extractCode(
   language: Language
 ): { code: string; language: Language } | null {
   console.log("extractCode", code, language);
-  
+
   if (language === "astro") {
     const match = code.match(/(?<=---\n)(?:(?:.|\n)*?)(?=\n---)/);
     if (match) {

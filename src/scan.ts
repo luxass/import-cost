@@ -5,8 +5,7 @@ import { Uri } from "vscode";
 
 import { config } from "./configuration";
 import { decorate } from "./decoration";
-import { calculateAll, parseImports, resolve } from "./engine";
-// import { calculate } from "import-cost-engine";
+import { calculate, parseImports, resolve } from "./engine";
 import type { Language } from "./engine/parser";
 import { log } from "./log";
 
@@ -39,26 +38,21 @@ export async function scan(document: TextDocument, esbuildPath: string) {
       const imports = parseImports({
         content: code,
         language: languageId as Language,
-        fileName,
-        // We should not do this here....
-        formats: config.get("formats"),
-        platforms: config.get("platforms"),
-        skips: config.get("skip"),
-        plugins: config.get("plugins")
+        fileName
       });
 
       log.info(`IMPORTS - ${fileName}`, imports);
 
-      const resolvedImports = await resolve({
+      const { imports: resolvedImports, externals } = await resolve({
         cwd: Uri.file(dirname(uri.fsPath)),
         imports
       });
 
       log.info(`RESOLVED IMPORTS - ${fileName}`, resolvedImports);
 
-      const result = await calculateAll(resolvedImports, {
+      const result = await calculate(resolvedImports, {
         esbuildBinary: esbuildPath,
-        externals: config.get("externals"),
+        externals,
         cwd: Uri.file(dirname(uri.fsPath))
       });
 
@@ -68,7 +62,6 @@ export async function scan(document: TextDocument, esbuildPath: string) {
       }
 
       log.info(`CALCULATED IMPORTS - ${fileName}`, result);
-
 
       decorate(document, result);
       // const fn = debouncePromise(calculate, 1000);

@@ -238,6 +238,7 @@
         "importCost.platforms": {
           "type": "object",
           "description": "Bundles the specific dependency for the given platform",
+          "markdownDescription": "Bundles the specific dependency for the given platform.\n\n@example\n\n```\n{\n  \"react\": \"browser\",\n  \"react-dom\": \"browser\"\n}\n```",
           "patternProperties": {
             ".*": {
               "type": "string",
@@ -261,6 +262,7 @@
         "importCost.formats": {
           "type": "object",
           "description": "Bundles the specific dependency for the given format",
+          "markdownDescription": "Bundles the specific dependency for the given format.\n\n@example\n\n```\n{\n  \"react\": \"esm\",\n  \"react-dom\": \"esm\"\n}\n```",
           "patternProperties": {
             ".*": {
               "type": "string",
@@ -284,7 +286,8 @@
         },
         "importCost.plugins": {
           "type": "string",
-          "description": "Extra plugins for babel parser"
+          "description": "Extra plugins for babel parser",
+          "markdownDescription": "Extra plugins for babel parser. See [babel-parser](https://babeljs.io/docs/en/babel-parser#plugins) for more information."
         }
       }
     }

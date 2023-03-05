@@ -96,8 +96,15 @@ export async function activate(ctx: ExtensionContext) {
   ctx.subscriptions.push(
     commands.registerCommand("import-cost.clear-import-cache", (event) => {
       log.info("Clearing cache", event);
-      cache.clear();
-      flush(window.activeTextEditor);
+      // cache.clear();
+
+      log.info("Cache cleared", cache.entries());
+      workspace.openTextDocument({
+        content: JSON.stringify(cache.entries(), null, 2),
+        language: "json"
+      });
+
+      // flush(window.activeTextEditor);
       window.showInformationMessage("Import Cost cache cleared");
     })
   );

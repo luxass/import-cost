@@ -1,10 +1,5 @@
 export { builtins } from "./builtins";
-export {
-  calculate,
-  calculateAll,
-  type CalculateAllOptions,
-  type CalculateOptions
-} from "./calculate";
+export { calculate, type CalculateOptions } from "./calculate";
 export {
   parseImports,
   type Import,
