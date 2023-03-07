@@ -9,8 +9,10 @@ importers:
       '@luxass/eslint-config': ^2.2.6
       '@luxass/prettier-config': ^1.1.9
       '@types/node': ^18.11.17
+      '@types/pako': ^2.0.0
       '@types/path-browserify': ^1.0.0
       '@types/vscode': ^1.72.0
+      '@vscode/test-web': ^0.0.35
       esbuild: ^0.17.10
       esbuild-plugin-import-transform: ^0.2.0
       esbuild-wasm: ^0.17.10
@@ -33,8 +35,10 @@ importers:
       '@luxass/eslint-config': 2.2.6_ifw3q4r6iq3gw7cspzs2siycvu
       '@luxass/prettier-config': 1.1.9_prettier@2.8.2
       '@types/node': 18.11.18
+      '@types/pako': 2.0.0
       '@types/path-browserify': 1.0.0
       '@types/vscode': 1.75.1
+      '@vscode/test-web': 0.0.35
       esbuild: 0.17.10
       esbuild-plugin-import-transform: 0.2.0_esbuild@0.17.10
       eslint: 8.31.0
@@ -1148,6 +1152,29 @@ packages:
       koa-static: 5.0.0
       minimist: 1.2.7
       playwright: 1.30.0
+      vscode-uri: 3.0.7
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@vscode/test-web/0.0.35:
+    resolution: {integrity: sha512-rasu6AqJ/+Ot7ySGll6i+hNTe14qObsui1qbHcQHUrRx9KoZLxFIIBAIdCb+AmwiF7KwvIbyb/mgAFCwXPflVQ==}
+    engines: {node: '>=16'}
+    hasBin: true
+    dependencies:
+      '@koa/cors': 4.0.0
+      '@koa/router': 12.0.0
+      decompress: 4.2.1
+      decompress-targz: 4.1.1
+      get-stream: 6.0.1
+      http-proxy-agent: 5.0.0
+      https-proxy-agent: 5.0.1
+      koa: 2.14.1
+      koa-morgan: 1.0.1
+      koa-mount: 4.0.0
+      koa-static: 5.0.0
+      minimist: 1.2.8
+      playwright: 1.31.2
       vscode-uri: 3.0.7
     transitivePeerDependencies:
       - supports-color
@@ -3578,6 +3605,10 @@ packages:
     resolution: {integrity: sha512-bzfL1YUZsP41gmu/qjrEk0Q6i2ix/cVeAhbCbqH9u3zYutS1cLg00qhrD0M2MVdCcx4Sc0UpP2eBWo9rotpq6g==}
     dev: true
 
+  /minimist/1.2.8:
+    resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
+    dev: true
+
   /mkdirp-classic/0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
     dev: true
@@ -3993,6 +4024,12 @@ packages:
     hasBin: true
     dev: true
 
+  /playwright-core/1.31.2:
+    resolution: {integrity: sha512-a1dFgCNQw4vCsG7bnojZjDnPewZcw7tZUNFN0ZkcLYKj+mPmXvg4MpaaKZ5SgqPsOmqIf2YsVRkgqiRDxD+fDQ==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dev: true
+
   /playwright/1.30.0:
     resolution: {integrity: sha512-ENbW5o75HYB3YhnMTKJLTErIBExrSlX2ZZ1C/FzmHjUYIfxj/UnI+DWpQr992m+OQVSg0rCExAOlRwB+x+yyIg==}
     engines: {node: '>=14'}
@@ -4000,6 +4037,15 @@ packages:
     requiresBuild: true
     dependencies:
       playwright-core: 1.30.0
+    dev: true
+
+  /playwright/1.31.2:
+    resolution: {integrity: sha512-jpC47n2PKQNtzB7clmBuWh6ftBRS/Bt5EGLigJ9k2QAKcNeYXZkEaDH5gmvb6+AbcE0DO6GnXdbl9ogG6Eh+og==}
+    engines: {node: '>=14'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      playwright-core: 1.31.2
     dev: true
 
   /pluralize/8.0.0:

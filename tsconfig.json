@@ -1,8 +1,22 @@
 {
-  "extends": "./tsconfig.base.json",
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    // We need DOM here because ESBuild uses WebAssembly which is only available in lib.dom.d.ts
+    // https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/826
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "declaration": true,
+    "noUnusedLocals": false,
+    "useUnknownInCatchVariables": false,
+    "resolveJsonModule": true,
+    "preserveSymlinks": true,
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

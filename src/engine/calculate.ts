@@ -1,14 +1,13 @@
 import { dirname } from "node:path";
 
-import type { BuildOptions, Message } from "esbuild";
+import type { BuildOptions } from "esbuild";
 import { filesize } from "filesize";
-import { gzip } from "pako";
 import type { Uri } from "vscode";
-import { workspace } from "vscode";
 
 import { config } from "../configuration";
 import { log } from "../log";
 import { cache } from "./cache";
+import { gzip } from "./gzip";
 import type { Import } from "./parser";
 
 export interface CalculateOptions {
@@ -37,25 +36,23 @@ export type ImportResult = {
   };
 } & Import;
 
-export interface CalculateResult {
-  errors: Message[];
-  warnings: Message[];
-  pkg: ImportResult;
-}
-
 export async function calculate(
   parsedImports: Import[],
   options: CalculateOptions
-): Promise<CalculateResult[]> {
-  const results = await Promise.all<CalculateResult>(
+): Promise<ImportResult[]> {
+  const results = await Promise.all<ImportResult>(
     parsedImports.map(async (parsedImport) => {
       try {
-        const cacheKey = `${parsedImport.name}:${parsedImport.version}`;
+        const cacheKey = `${parsedImport.code}@${parsedImport.name}:${parsedImport.version}`;
         const cachedResult = cache.get(cacheKey);
         if (cachedResult) {
-          log.info("Using cached result for", cacheKey);
-          log.info("Cached result", cachedResult);
-          return cachedResult;
+          log.info(
+            `Using cached result for ${parsedImport.name}:${parsedImport.version}`
+          );
+          return {
+            ...parsedImport,
+            ...cachedResult
+          };
         }
 
         const { build }: typeof import("esbuild-wasm") = await import(
@@ -103,8 +100,15 @@ export async function calculate(
           gzipSize = result.byteLength;
         }
 
-        const pkg: CalculateResult["pkg"] = {
-          ...parsedImport,
+        if (errors.length > 0) {
+          log.error(errors);
+        }
+
+        if (warnings.length > 0) {
+          log.warn(warnings);
+        }
+
+        const sizes: Pick<ImportResult, "size"> = {
           size: {
             minified: size,
             minifiedFormatted: filesize(size, {
@@ -119,29 +123,20 @@ export async function calculate(
           }
         };
 
-        cache.set(cacheKey, {
-          errors,
-          warnings,
-          pkg
-        });
+        cache.set(cacheKey, sizes);
 
         return {
-          errors,
-          warnings,
-          pkg
+          ...parsedImport,
+          ...sizes
         };
       } catch (e) {
         return {
-          errors: [],
-          warnings: [],
-          pkg: {
-            ...parsedImport,
-            size: {
-              minified: 0,
-              minifiedFormatted: "0 B",
-              gzip: 0,
-              gzipFormatted: "0 B"
-            }
+          ...parsedImport,
+          size: {
+            minified: 0,
+            minifiedFormatted: "0 B",
+            gzip: 0,
+            gzipFormatted: "0 B"
           }
         };
       }

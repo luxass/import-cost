@@ -233,7 +233,6 @@ function getDirectives(
 function getImportString(node: t.ImportDeclaration): string {
   const importString =
     node.specifiers.length > 0 ? parseSpecifiers(node) : "* as tmp";
-
   return `import ${importString} from "${
     node.source.value
   }"\nconsole.log(${importString.replace("* as ", "")});`;

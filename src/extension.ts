@@ -57,26 +57,19 @@ export async function activate(ctx: ExtensionContext) {
 
   ctx.subscriptions.push(
     workspace.onDidChangeTextDocument(async (event) => {
-      if (!event?.document || !esbuildPath) return;
+      if (!event?.document || !esbuildPath || !config.get("enable")) return;
       scan(event.document, esbuildPath);
     }),
     window.onDidChangeActiveTextEditor(async (event) => {
-      if (!event?.document || !esbuildPath) return;
+      if (!event?.document || !esbuildPath || !config.get("enable")) return;
       scan(event.document, esbuildPath);
-    })
-  );
-  ctx.subscriptions.push(
-    workspace.onDidChangeConfiguration((event) => {
-      if (!event.affectsConfiguration("import-cost")) return;
-
-      log.info("Configuration changed", JSON.stringify(event, null, 2));
     })
   );
   ctx.subscriptions.push(
     commands.registerCommand("import-cost.toggle-import-cost", () => {
       window.showInformationMessage("Import Cost: toggle-declaration");
-      const enable = !config.get("enable");
-      if (enable) {
+      const enableValue = config.get("enable");
+      if (!enableValue) {
         console.log(window.activeTextEditor, esbuildPath);
         if (window.activeTextEditor?.document && esbuildPath) {
           scan(window.activeTextEditor.document, esbuildPath);
@@ -86,30 +79,28 @@ export async function activate(ctx: ExtensionContext) {
         flush(window.activeTextEditor);
       }
 
-      config.set("enable", enable);
+      config.set("enable", !enableValue);
       window.showInformationMessage(
-        `Import Cost is now turned ${enable ? "on" : "off"}`
+        `Import Cost is now turned ${!enableValue ? "on" : "off"}`
       );
     })
   );
 
   ctx.subscriptions.push(
-    commands.registerCommand("import-cost.clear-import-cache", (event) => {
-      log.info("Clearing cache", event);
-      // cache.clear();
+    commands.registerCommand("import-cost.clear-import-cache", () => {
+      log.info(`Cache is now cleared, contained ${cache.size} items`);
+      cache.clear();
 
-      log.info("Cache cleared", cache.entries());
-      workspace.openTextDocument({
-        content: JSON.stringify(cache.entries(), null, 2),
-        language: "json"
-      });
-
-      // flush(window.activeTextEditor);
+      flush(window.activeTextEditor);
       window.showInformationMessage("Import Cost cache cleared");
     })
   );
 
-  if (window.activeTextEditor?.document && esbuildPath) {
+  if (
+    window.activeTextEditor?.document &&
+    esbuildPath &&
+    config.get("enable")
+  ) {
     scan(window.activeTextEditor.document, esbuildPath);
   }
 }

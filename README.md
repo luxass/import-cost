@@ -2,24 +2,24 @@
 
 ## Whats missing?
 
-- [ ] Debounce!!!! 
-- [ ] Support for Browser (We broke it again :cry:) Should be a easy fix, because we probably only need to fix the issue between Uri and URL
-- [ ] Add onConfigurationChanged event to remove the need to call `config.get` on every keystroke.
+- [ ] Debounce!!!!
+- [x] fix caching and decorators
+- [ ] Support for Browser
 - [ ] Tests
 
 ### Allow custom extensions to be used
 
-```jsonc
+```json
 // .vscode/settings.json
 {
   "files.associations": {
     "*.mycustomext": "typescript",
-    "*.mycustomext2": "vue",
+    "*.mycustomext2": "vue"
   }
 }
 ```
-> The languages we allow are, `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `astro`, `svelte` and `vue` 
 
+> The languages we allow are, `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `astro`, `svelte` and `vue`
 
 ### Directives
 

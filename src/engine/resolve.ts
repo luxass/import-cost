@@ -30,7 +30,6 @@ export async function resolve({ cwd, imports }: ResolveOptions): Promise<{
     throw new TypeError("Could not find node_modules");
   }
 
-  console.time("Promise.allSettled");
   await Promise.allSettled(
     imports.map(async (pkg) => {
       try {
@@ -39,24 +38,21 @@ export async function resolve({ cwd, imports }: ResolveOptions): Promise<{
 
         const pkgPath = join(node_modules, pkgName, "package.json");
 
-        console.time(pkg.name);
         const { version } = JSON.parse(
           new TextDecoder().decode(
             await workspace.fs.readFile(Uri.file(pkgPath))
           )
         );
-        console.timeEnd(pkg.name);
         log.info(`Found version ${version} for ${pkg.name}`);
 
         pkg.version = version;
         return pkg;
       } catch (e) {
+        log.error("Could not resolve version", e)
         return undefined;
       }
     })
   );
-
-  console.timeEnd("Promise.allSettled");
 
   imports = imports.filter((_import) => {
     log.info(`${_import.version ? "✅" : "❌"} ${_import.name}`);
