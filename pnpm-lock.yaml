@@ -13,9 +13,8 @@ importers:
       '@types/path-browserify': ^1.0.0
       '@types/vscode': ^1.72.0
       '@vscode/test-web': ^0.0.35
-      esbuild: ^0.17.10
-      esbuild-plugin-import-transform: ^0.2.0
-      esbuild-wasm: ^0.17.10
+      esbuild: ^0.16.17
+      esbuild-wasm: ^0.16.17
       eslint: ^8.30.0
       filesize: ^10.0.6
       pako: ^2.1.0
@@ -27,7 +26,7 @@ importers:
     dependencies:
       '@babel/parser': 7.21.2
       '@babel/types': 7.21.2
-      esbuild-wasm: 0.17.10
+      esbuild-wasm: 0.16.17
       filesize: 10.0.6
       pako: 2.1.0
       path-browserify: 1.0.1
@@ -39,8 +38,7 @@ importers:
       '@types/path-browserify': 1.0.0
       '@types/vscode': 1.75.1
       '@vscode/test-web': 0.0.35
-      esbuild: 0.17.10
-      esbuild-plugin-import-transform: 0.2.0_esbuild@0.17.10
+      esbuild: 0.16.17
       eslint: 8.31.0
       prettier: 2.8.2
       tsup: 6.6.3_typescript@4.9.5
@@ -2063,23 +2061,8 @@ packages:
       is-symbol: 1.0.4
     dev: true
 
-  /esbuild-plugin-import-transform/0.2.0_esbuild@0.17.10:
-    resolution: {integrity: sha512-Fih/PsnT5qwqII17mQt0AzXFgR0+OPw9V8OtRXuagrZ4Qpbvbkf19UFDKT94IqFkY8p4jrk9aWRZoqzNG4J3XA==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      esbuild: '>=0.16.17'
-    dependencies:
-      esbuild: 0.17.10
-    dev: true
-
   /esbuild-wasm/0.16.17:
     resolution: {integrity: sha512-Tn7NuMqRcM+T/qCOxbQRq0qrwWl1sUWp6ARfJRakE8Bepew6zata4qrKgH2YqovNC5e/2fcTa7o+VL/FAOZC1Q==}
-    engines: {node: '>=12'}
-    hasBin: true
-    dev: false
-
-  /esbuild-wasm/0.17.10:
-    resolution: {integrity: sha512-iDPIYZXoY6RWXIt3BpnENIdgKvkfYv8YdvrdjK3n8c1reGq3d38h8ETWvrpy1+0r5gR74vEb73TMonh5FbVZxw==}
     engines: {node: '>=12'}
     hasBin: true
     dev: false

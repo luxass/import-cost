@@ -1,0 +1,1 @@
+export { gzip } from "pako";

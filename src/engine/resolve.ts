@@ -1,5 +1,4 @@
-import { join } from "node:path";
-
+import { join } from "env:path";
 import { Uri, workspace } from "vscode";
 
 import { config } from "../configuration";
@@ -30,6 +29,12 @@ export async function resolve({ cwd, imports }: ResolveOptions): Promise<{
     throw new TypeError("Could not find node_modules");
   }
 
+  log.info("node_modules", node_modules);
+  const dirs = await workspace.fs.readDirectory(Uri.file(node_modules));
+  log.info(`Found ${dirs} dirs in ${node_modules}`);
+
+
+
   await Promise.allSettled(
     imports.map(async (pkg) => {
       try {
@@ -37,18 +42,15 @@ export async function resolve({ cwd, imports }: ResolveOptions): Promise<{
         log.info(`Resolving ${pkg.name}`);
 
         const pkgPath = join(node_modules, pkgName, "package.json");
-
-        const { version } = JSON.parse(
-          new TextDecoder().decode(
-            await workspace.fs.readFile(Uri.file(pkgPath))
-          )
-        );
+        const content = await workspace.fs.readFile(Uri.file(pkgPath));
+        log.info(`Found content ${content.length} for ${Uri.file(pkgPath)}`);
+        const { version } = JSON.parse(new TextDecoder().decode(content));
         log.info(`Found version ${version} for ${pkg.name}`);
 
         pkg.version = version;
         return pkg;
       } catch (e) {
-        log.error("Could not resolve version", e)
+        log.error("Could not resolve version", e);
         return undefined;
       }
     })

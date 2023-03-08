@@ -1,4 +1,6 @@
 // import { cache } from "import-cost-engine";
+
+import { locateESBuild } from "env:locate";
 import type { ExtensionContext } from "vscode";
 import {
   ShellExecution,
@@ -14,7 +16,6 @@ import {
 import { config } from "./configuration";
 import { flush } from "./decoration";
 import { cache } from "./engine/cache";
-import { locateESBuild } from "./locate";
 import { log } from "./log";
 import { scan } from "./scan";
 

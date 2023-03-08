@@ -4,9 +4,9 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "paths": {
-      "env:*": ["./src/env/node/*"]
+      "env:*": ["./src/env/web/*"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/env/web/**/*"]
+  "exclude": ["node_modules", "dist", "src/env/node/**/*"]
 }

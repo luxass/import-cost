@@ -308,7 +308,7 @@
   "dependencies": {
     "@babel/parser": "^7.21.2",
     "@babel/types": "^7.21.2",
-    "esbuild-wasm": "^0.17.10",
+    "esbuild-wasm": "^0.16.17",
     "filesize": "^10.0.6",
     "pako": "^2.1.0",
     "path-browserify": "^1.0.1"
@@ -321,8 +321,7 @@
     "@types/path-browserify": "^1.0.0",
     "@types/vscode": "^1.72.0",
     "@vscode/test-web": "^0.0.35",
-    "esbuild": "^0.17.10",
-    "esbuild-plugin-import-transform": "^0.2.0",
+    "esbuild": "^0.16.17",
     "eslint": "^8.30.0",
     "prettier": "^2.8.2",
     "tsup": "^6.6.3",

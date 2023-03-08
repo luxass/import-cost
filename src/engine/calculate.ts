@@ -1,5 +1,5 @@
-import { dirname } from "node:path";
-
+import { gzip } from "env:gzip";
+import { dirname } from "env:path";
 import type { BuildOptions } from "esbuild";
 import { filesize } from "filesize";
 import type { Uri } from "vscode";
@@ -7,7 +7,6 @@ import type { Uri } from "vscode";
 import { config } from "../configuration";
 import { log } from "../log";
 import { cache } from "./cache";
-import { gzip } from "./gzip";
 import type { Import } from "./parser";
 
 export interface CalculateOptions {
