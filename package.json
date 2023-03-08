@@ -22,6 +22,9 @@
   ],
   "main": "./dist/extension.js",
   "browser": "./dist/web/extension.js",
+  "files": [
+    "dist/web/esbuild.wasm"
+  ],
   "icon": "media/icon.png",
   "engines": {
     "vscode": "^1.72.0"

@@ -6,6 +6,7 @@ import {
   ShellExecution,
   Task,
   TaskScope,
+  Uri,
   commands,
   extensions,
   tasks,
@@ -48,6 +49,17 @@ export async function activate(ctx: ExtensionContext) {
         );
       })
     );
+  }
+
+  if (IS_WEB) {
+    // We initialize esbuild-wasm here
+
+    const wasm = await import("esbuild-wasm");
+    const uri = Uri.joinPath(ctx.extensionUri, "dist/web/esbuild.wasm");
+    log.info("ESBuild wasm path", uri.fsPath);
+    await wasm.initialize({
+      wasmURL: uri.toString(true)
+    });
   }
 
   const esbuildPath = await locateESBuild();
