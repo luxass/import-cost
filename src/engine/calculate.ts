@@ -1,5 +1,3 @@
-import { cwd } from "process";
-
 import { gzip } from "env:gzip";
 import { dirname } from "env:path";
 import type { BuildOptions } from "esbuild";
@@ -16,26 +14,26 @@ export interface CalculateOptions {
   /**
    * The path to the esbuild binary.
    */
-  esbuildBinary: string;
+  esbuildBinary: string
 
   /**
    * An array of dependencies to exclude from the calculation.
    */
-  externals: string[];
+  externals: string[]
 
   /**
    * The current working directory.
    */
-  cwd: Uri;
+  cwd: Uri
 }
 
 export type ImportResult = {
   size: {
-    minified: number;
-    minifiedFormatted: string;
-    gzip: number;
-    gzipFormatted: string;
-  };
+    minified: number
+    minifiedFormatted: string
+    gzip: number
+    gzipFormatted: string
+  }
 } & Import;
 
 export async function calculate(
@@ -132,9 +130,9 @@ export async function calculate(
           outdir: "dist",
           minify: true,
           mainFields:
-            platform === "browser"
-              ? ["browser", "module", "main"]
-              : ["module", "main"],
+            platform === "browser" ?
+                ["browser", "module", "main"] :
+                ["module", "main"],
           legalComments: "none",
           metafile: true
         } satisfies BuildOptions);

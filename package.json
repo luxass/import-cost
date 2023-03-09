@@ -317,7 +317,7 @@
     "path-browserify": "^1.0.1"
   },
   "devDependencies": {
-    "@luxass/eslint-config": "^2.2.6",
+    "@luxass/eslint-config": "^3.0.0",
     "@luxass/prettier-config": "^1.1.9",
     "@types/node": "^18.11.17",
     "@types/pako": "^2.0.0",
