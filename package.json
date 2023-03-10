@@ -299,6 +299,7 @@
     "vscode:prepublish": "tsup --minify",
     "build": "tsup",
     "dev": "tsup --watch",
+    "test": "vitest --run",
     "package": "pnpm vsce package --no-dependencies",
     "release": "pnpm vsce publish --no-dependencies",
     "lint": "eslint --cache {src,tests}/**/*.ts",

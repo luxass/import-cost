@@ -1,0 +1,1 @@
+impot {} from "node:path";
