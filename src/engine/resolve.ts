@@ -33,8 +33,6 @@ export async function resolve({ cwd, imports }: ResolveOptions): Promise<{
   const dirs = await workspace.fs.readDirectory(Uri.file(node_modules));
   log.info(`Found ${dirs} dirs in ${node_modules}`);
 
-
-
   await Promise.allSettled(
     imports.map(async (pkg) => {
       try {

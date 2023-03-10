@@ -1,5 +1,4 @@
 import { parse, resolve } from "env:path";
-
 import { Uri, workspace } from "vscode";
 
 export async function find(

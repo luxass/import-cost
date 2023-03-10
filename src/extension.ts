@@ -83,10 +83,10 @@ export async function activate(ctx: ExtensionContext) {
       window.showInformationMessage("Import Cost: toggle-declaration");
       const enableValue = config.get("enable");
       if (!enableValue) {
-        console.log(window.activeTextEditor, esbuildPath);
+        log.info(window.activeTextEditor, esbuildPath);
         if (window.activeTextEditor?.document && esbuildPath) {
           scan(window.activeTextEditor.document, esbuildPath);
-          console.log("scan");
+          log.info("scan");
         }
       } else {
         flush(window.activeTextEditor);

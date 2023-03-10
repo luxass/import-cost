@@ -22,10 +22,10 @@
   ],
   "main": "./dist/extension.js",
   "browser": "./dist/web/extension.js",
+  "icon": "media/icon.png",
   "files": [
     "dist/web/esbuild.wasm"
   ],
-  "icon": "media/icon.png",
   "engines": {
     "vscode": "^1.72.0"
   },
@@ -302,6 +302,8 @@
     "package": "pnpm vsce package --no-dependencies",
     "release": "pnpm vsce publish --no-dependencies",
     "lint": "eslint --cache {src,tests}/**/*.ts",
+    "lint:fix": "pnpm lint --fix",
+    "format": "prettier --write {src,tests}/**/*.{ts,js,json,md}",
     "browser": "vscode-test-web --extensionDevelopmentPath=.",
     "web:serve": "npx serve --cors -l 5000",
     "web:tunnel": "npx localtunnel -p 5000",
@@ -317,7 +319,7 @@
     "path-browserify": "^1.0.1"
   },
   "devDependencies": {
-    "@luxass/eslint-config": "^3.0.0",
+    "@luxass/eslint-config": "^3.0.1",
     "@luxass/prettier-config": "^1.1.9",
     "@types/node": "^18.11.17",
     "@types/pako": "^2.0.0",
@@ -325,8 +327,8 @@
     "@types/vscode": "^1.72.0",
     "@vscode/test-web": "^0.0.35",
     "esbuild": "^0.16.17",
-    "eslint": "^8.30.0",
-    "prettier": "^2.8.2",
+    "eslint": "^8.35.0",
+    "prettier": "^2.8.4",
     "tsup": "^6.6.3",
     "typescript": "^4.9.5",
     "vitest": "^0.28.5"
