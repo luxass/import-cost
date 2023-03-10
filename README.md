@@ -4,7 +4,7 @@
 
 - [ ] Debounce!!!!
 - [x] fix caching and decorators
-- [ ] Support for Browser
+- [ ] Support for Browser (binary issues and problem with symlinks)
 - [ ] Tests
 
 ### Allow custom extensions to be used
