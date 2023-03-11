@@ -56,7 +56,7 @@ export async function calculate(
         }
 
         const { build }: typeof import("esbuild") = await import(
-          "esbuild-wasm"
+          options.esbuildBinary
         );
 
         const directives = parsedImport.directives;
@@ -73,55 +73,57 @@ export async function calculate(
             resolveDir: dirname(parsedImport.fileName),
             sourcefile: parsedImport.fileName
           },
-          plugins: [
-            {
-              name: "esbuild-vscode-web",
-              setup(build) {
-                build.onResolve(
-                  {
-                    filter: /.*/
-                  },
-                  async (args) => {
-                    log.info("RESOLVE", args);
-                    const node_modules = await find(
-                      "node_modules",
-                      Uri.file(args.importer)
+          plugins: IS_WEB ?
+              [
+                {
+                  name: "esbuild-vscode-web",
+                  setup(build) {
+                    build.onResolve(
+                      {
+                        filter: /.*/
+                      },
+                      async (args) => {
+                        log.info("RESOLVE", args);
+                        const node_modules = await find(
+                          "node_modules",
+                          Uri.file(args.importer)
+                        );
+
+                        return {
+                          path: args.path,
+                          namespace: "esbuild-vscode-web",
+                          pluginData: {
+                            node_modules
+                          }
+                        };
+                      }
                     );
 
-                    return {
-                      path: args.path,
-                      namespace: "esbuild-vscode-web",
-                      pluginData: {
-                        node_modules
+                    build.onLoad(
+                      {
+                        filter: /.*/,
+                        namespace: "esbuild-vscode-web"
+                      },
+                      async (args) => {
+                        log.info("LOAD", args);
+                        const node_modules = args.pluginData.node_modules;
+                        if (node_modules) {
+                          const path = await find(
+                            args.path,
+                            Uri.file(node_modules)
+                          );
+                          log.info("PATH", path);
+                        }
+                        return {
+                          contents: args.path,
+                          loader: "text"
+                        };
                       }
-                    };
+                    );
                   }
-                );
-
-                build.onLoad(
-                  {
-                    filter: /.*/,
-                    namespace: "esbuild-vscode-web"
-                  },
-                  async (args) => {
-                    log.info("LOAD", args);
-                    const node_modules = args.pluginData.node_modules;
-                    if (node_modules) {
-                      const path = await find(
-                        args.path,
-                        Uri.file(node_modules)
-                      );
-                      log.info("PATH", path);
-                    }
-                    return {
-                      contents: args.path,
-                      loader: "text"
-                    };
-                  }
-                );
-              }
-            }
-          ],
+                }
+              ] :
+              [],
           bundle: true,
           format,
           platform,

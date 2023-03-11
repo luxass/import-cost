@@ -1,7 +1,7 @@
 // import { cache } from "import-cost-engine";
 
 import { locateESBuild } from "env:locate";
-import type { ExtensionContext } from "vscode";
+import { ExtensionContext, ExtensionMode, TextDocument } from "vscode";
 import {
   ShellExecution,
   Task,
@@ -24,13 +24,22 @@ declare global {
   const IS_WEB: boolean;
 }
 
+const debouncedScan = debounce(
+  (document: TextDocument, esbuildPath: string) =>
+    scan(document, esbuildPath),
+  300
+);
+
 export async function activate(ctx: ExtensionContext) {
   const wixImportCost = extensions.getExtension("wix.vscode-import-cost");
   if (wixImportCost) {
     window.showWarningMessage(
       "You have both Wix Import Cost and Import Cost installed. Please uninstall Wix Import Cost to avoid conflicts."
     );
-    // return;
+
+    if (ctx.extensionMode !== ExtensionMode.Development) {
+      return;
+    }
   }
 
   if (!IS_WEB) {
@@ -53,7 +62,6 @@ export async function activate(ctx: ExtensionContext) {
 
   if (IS_WEB) {
     // We initialize esbuild-wasm here
-
     const wasm = await import("esbuild-wasm");
     const uri = Uri.joinPath(ctx.extensionUri, "dist/web/esbuild.wasm");
     log.info("ESBuild wasm path", uri.fsPath);
@@ -71,11 +79,11 @@ export async function activate(ctx: ExtensionContext) {
   ctx.subscriptions.push(
     workspace.onDidChangeTextDocument(async (event) => {
       if (!event?.document || !esbuildPath || !config.get("enable")) return;
-      scan(event.document, esbuildPath);
+      await debouncedScan(event.document, esbuildPath);
     }),
     window.onDidChangeActiveTextEditor(async (event) => {
       if (!event?.document || !esbuildPath || !config.get("enable")) return;
-      scan(event.document, esbuildPath);
+      await debouncedScan(event.document, esbuildPath);
     })
   );
   ctx.subscriptions.push(
@@ -114,6 +122,28 @@ export async function activate(ctx: ExtensionContext) {
     esbuildPath &&
     config.get("enable")
   ) {
-    scan(window.activeTextEditor.document, esbuildPath);
+    await scan(window.activeTextEditor.document, esbuildPath);
   }
+}
+
+function debounce<T extends (...args: any[]) => any>(
+  fn: T,
+  wait: number
+): (...args: Parameters<T>) => Promise<ReturnType<T>> {
+  let timeoutId: NodeJS.Timeout | undefined;
+
+  return async function debounced(
+    ...args: Parameters<T>
+  ): Promise<ReturnType<T>> {
+    return new Promise((resolve) => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      timeoutId = setTimeout(async () => {
+        const result = await fn(...args);
+        resolve(result);
+      }, wait);
+    });
+  };
 }

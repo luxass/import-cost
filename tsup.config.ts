@@ -38,7 +38,10 @@ export default defineConfig([
     },
     onSuccess: async () => {
       console.log("Copying web assets...");
-      await cp("./node_modules/esbuild-wasm/esbuild.wasm", "./dist/web/esbuild.wasm");
+      await cp(
+        "./node_modules/esbuild-wasm/esbuild.wasm",
+        "./dist/web/esbuild.wasm"
+      );
     },
     tsconfig: "tsconfig.web.json",
     noExternal: globalNoExternal.concat([

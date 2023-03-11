@@ -2,9 +2,9 @@
 
 ## Whats missing?
 
-- [ ] Debounce!!!!
+- [x] Debounce
 - [x] fix caching and decorators
-- [ ] Support for Browser (binary issues and problem with symlinks)
+- [ ] Support for Browser (binary issues and problems with symlinks)
 - [ ] Tests
 
 ### Allow custom extensions to be used
