@@ -4,7 +4,14 @@
 
 - [x] Debounce
 - [x] fix caching and decorators
-- [ ] Support for Browser (binary issues and problems with symlinks)
+- [ ] Support for Browser
+  - [ ] Binary issues (the binary is 10mb, probably too much to send with the extension? Maybe we can download it instead.)
+  - [ ] Symlinks (we need to find a way to resolve the symlink to the real path)
+        Maybe we could do something with resolving every package.json and then checking the version there instead?
+        Or we could check inside the pnpm-lock.yaml file?
+
+        We also need to find a way to do this with yarn
+        
 - [ ] Tests
 
 ### Allow custom extensions to be used
