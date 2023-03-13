@@ -7,22 +7,24 @@ import type {
 import { window } from "vscode";
 
 import { config } from "./configuration";
-import type { CalculateResult, ImportResult } from "./engine/calculate";
+import type { ImportResult } from "./engine/calculate";
 import { log } from "./log";
 
 const MARGIN = 1;
 const FONT_STYLE = "normal";
 
+const decorationType = window.createTextEditorDecorationType({});
+
 export function flush(editor?: TextEditor) {
-  log.info("Flushing decorations");
   if (!editor) {
     return;
   }
+  log.info("Flushing decorations");
 
-  editor.setDecorations(window.createTextEditorDecorationType({}), []);
+  editor.setDecorations(decorationType, []);
 }
 
-export function decorate(document: TextDocument, results: CalculateResult[]) {
+export function decorate(document: TextDocument, results: ImportResult[]) {
   // TODO: Improve performance of this.
 
   const decorations: DecorationOptions[] = [];
@@ -32,10 +34,11 @@ export function decorate(document: TextDocument, results: CalculateResult[]) {
     return;
   }
   results.forEach((result) => {
-    const range = document.lineAt(result.pkg.line - 1).range;
+    log.info("Decorating", result);
+    const range = document.lineAt(result.line - 1).range;
 
-    const color = getDecorationColor(result.pkg.size);
-    const message = getDecorationMessage(result.pkg.size);
+    const color = getDecorationColor(result.size);
+    const message = getDecorationMessage(result.size);
 
     decorations.push({
       range,
@@ -43,11 +46,11 @@ export function decorate(document: TextDocument, results: CalculateResult[]) {
         ...color,
         ...message
       },
-      hoverMessage: `Size: ${result.pkg.size.minifiedFormatted} (${result.pkg.size.gzipFormatted} gzipped)`
+      hoverMessage: `Size: ${result.size.minifiedFormatted} (${result.size.gzipFormatted} gzipped)`
     });
   });
 
-  editor.setDecorations(window.createTextEditorDecorationType({}), decorations);
+  editor.setDecorations(decorationType, decorations);
 }
 
 function getDecorationColor(

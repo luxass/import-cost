@@ -1,5 +1,8 @@
+import type { Format, Platform } from "esbuild";
 import { ConfigurationTarget, workspace } from "vscode";
 import type { ConfigurationScope } from "vscode";
+
+import type { ParserPlugin } from "@babel/parser";
 
 export interface Config {
   enable: boolean;
@@ -24,7 +27,7 @@ export interface Config {
   platforms: Record<string, Platform>;
   format: Format;
   formats: Record<string, Format>;
-  plugins: string[];
+  plugins: ParserPlugin[];
 }
 
 export interface ColorsObject {
@@ -45,13 +48,13 @@ export const config = {
     const defaultValue = options?.defaultValue;
     const scope = options?.scope;
 
-    const value = !defaultValue
-      ? workspace
-          .getConfiguration(section, scope)
-          .get<PathValue<Config, T>>(key)!
-      : workspace
-          .getConfiguration(section, scope)
-          .get<PathValue<Config, T>>(key, defaultValue)!;
+    const value = !defaultValue ?
+      workspace
+        .getConfiguration(section, scope)
+        .get<PathValue<Config, T>>(key)! :
+      workspace
+        .getConfiguration(section, scope)
+        .get<PathValue<Config, T>>(key, defaultValue)!;
 
     return value;
   },
@@ -68,9 +71,9 @@ export const config = {
 type ChildPath<T, Key extends keyof T> = Key extends string
   ? T[Key] extends Record<string, any>
     ?
-        | `${Key}.${ChildPath<T[Key], Exclude<keyof T[Key], keyof any[]>> &
-            string}`
-        | `${Key}.${Exclude<keyof T[Key], keyof any[]> & string}`
+      | `${Key}.${ChildPath<T[Key], Exclude<keyof T[Key], keyof any[]>> &
+      string}`
+      | `${Key}.${Exclude<keyof T[Key], keyof any[]> & string}`
     : never
   : never;
 
@@ -83,5 +86,5 @@ type PathValue<T, P extends Path<T>> = P extends `${infer Key}.${infer Rest}`
       : never
     : never
   : P extends keyof T
-  ? T[P]
-  : never;
+    ? T[P]
+    : never;

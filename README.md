@@ -2,40 +2,29 @@
 
 ## Whats missing?
 
-- [ ] Support for Browser (We broke it again :cry:) Should be a easy fix, because we probably only need to fix the issue between Uri and URL
-- [ ] Add onConfigurationChanged event to remove the need to call `config.get` on every keystroke.
-- [x] Caching
+- [x] Debounce
+- [x] fix caching and decorators
+- [ ] Support for Browser
+  - [ ] Binary issues (the binary is 10mb, probably too much to send with the extension? Maybe we can download it instead from a site)
+  - [ ] Symlinks (we need to find a way to resolve the symlink to the real path)
+        Maybe we could do something with resolving the projects package.json and then checking the version there instead?
+        Or we could check inside the pnpm-lock.yaml file?
+        
 - [ ] Tests
-- [x] Skip configuration should be used globally. (using the `import-cost.skip` configuration)
-- [ ] Remove type imports from the calculation
-- [x] Use format and defaultFormat from the configuration
-- [x] Use platform and defaultPlatform from the configuration
-- [ ] Add support for showing size of export calculations
-- [ ] Add JetBrains Ide Plugin Support
-
-#### Export Calculation
-
-This will probably be used in a different file, but because the extension excludes every file that is coming from the project. This dependency will not be calculated.
-
-We could add some kind of extra property to the parsedImport,  that will mark this file as a dependency, so we can calculate the size.
-
-```js
-export { dirname, resolve, parse, join } from "path-browserify";
-```
 
 ### Allow custom extensions to be used
 
-```jsonc
+```json
 // .vscode/settings.json
 {
   "files.associations": {
     "*.mycustomext": "typescript",
-    "*.mycustomext2": "vue",
+    "*.mycustomext2": "vue"
   }
 }
 ```
-> The languages we allow are, `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `astro`, `svelte` and `vue` 
 
+> The languages we allow are, `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `astro`, `svelte` and `vue`
 
 ### Directives
 

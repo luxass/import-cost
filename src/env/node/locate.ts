@@ -1,9 +1,9 @@
 import { spawnSync } from "node:child_process";
-import { join } from "node:path";
 
 import { Uri, commands, window, workspace } from "vscode";
 
-import { log } from "./log";
+import { log } from "../../log";
+import { join } from "./path";
 
 const IS_WIN = process.platform === "win32";
 
