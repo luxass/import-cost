@@ -29,7 +29,7 @@
   "engines": {
     "vscode": "^1.72.0"
   },
-  "packageManager": "pnpm@7.18.0",
+  "packageManager": "yarn@3.4.1",
   "activationEvents": [
     "onStartupFinished",
     "onLanguage:javascript",
@@ -302,7 +302,7 @@
     "test": "vitest --run",
     "package": "pnpm vsce package --no-dependencies",
     "release": "pnpm vsce publish --no-dependencies",
-    "lint": "eslint --cache {src,tests}/**/*.ts",
+    "lint": "eslint {src,tests}/**/*.ts",
     "lint:fix": "pnpm lint --fix",
     "format": "prettier --write {src,tests}/**/*.{ts,js,json,md}",
     "browser": "vscode-test-web --extensionDevelopmentPath=.",

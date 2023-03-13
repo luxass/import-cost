@@ -5,7 +5,6 @@ out/
 dist/
 .output
 .DS_Store
-.eslintcache
 .pnpm-debug.log*
 .vscode-test-web
 *.vsix

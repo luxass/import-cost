@@ -1,5 +1,5 @@
 import { join } from "env:path";
-import { Uri, workspace } from "vscode";
+import { Uri, window, workspace } from "vscode";
 
 import { config } from "../configuration";
 import { find } from "../find";
@@ -23,6 +23,16 @@ export async function resolve({ cwd, imports }: ResolveOptions): Promise<{
   imports: Import[];
   externals: string[];
 }> {
+  if (IS_WEB) {
+    const isPNPM = await find("pnpm-lock.yaml", cwd);
+
+    if (isPNPM) {
+      window.showWarningMessage(
+        "pnpm is not supported on the web due to missing symlinks.\n\nIf you have a solution to this problem, please open an issue on GitHub."
+      );
+    }
+  }
+
   const node_modules = await find("node_modules", cwd);
 
   if (!node_modules) {

@@ -1,8 +1,9 @@
 // import { cache } from "import-cost-engine";
 
 import { locateESBuild } from "env:locate";
-import { ExtensionContext, ExtensionMode, TextDocument } from "vscode";
+import type { ExtensionContext, TextDocument } from "vscode";
 import {
+  ExtensionMode,
   ShellExecution,
   Task,
   TaskScope,
@@ -25,8 +26,7 @@ declare global {
 }
 
 const debouncedScan = debounce(
-  (document: TextDocument, esbuildPath: string) =>
-    scan(document, esbuildPath),
+  (document: TextDocument, esbuildPath: string) => scan(document, esbuildPath),
   300
 );
 
@@ -84,6 +84,10 @@ export async function activate(ctx: ExtensionContext) {
     window.onDidChangeActiveTextEditor(async (event) => {
       if (!event?.document || !esbuildPath || !config.get("enable")) return;
       await debouncedScan(event.document, esbuildPath);
+    }),
+    workspace.onDidChangeWorkspaceFolders(async (event) => {
+      log.info("Workspace folders changed");
+      log.info(event);
     })
   );
   ctx.subscriptions.push(
